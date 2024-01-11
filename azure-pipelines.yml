@@ -196,9 +196,9 @@ stages:
                 codeCoverageEnabled: true
                 testRunTitle: 'Acceptance Tests'
                 diagnosticsEnabled: True
-                
+
 - stage: 'DeleteTDD'
-  displayName: 'TDD'
+  displayName: 'DeleteTDD'
   dependsOn: TDD
   jobs: 
     - deployment: 'DeleteTDD'
