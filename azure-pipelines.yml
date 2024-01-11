@@ -133,7 +133,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
       - name: TDD-Resource-Group
-        value: onion-architecture-dotnet-7-containers-TDD-$(Build.BuildNumber)
+        value: onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber)
       - name: TDD-App-Name
         value: tdd-ui 
       environment: 'TDD'
@@ -163,7 +163,7 @@ stages:
 
             - task: AzureCLI@2
               inputs:
-                azureSubscription: 'dotnet-7-containerapp'
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
@@ -200,7 +200,7 @@ stages:
             - task: AzureCLI@2
               displayName: 'Delete TDD Resources'
               inputs:
-                azureSubscription: 'dotnet-7-containerapp'
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
