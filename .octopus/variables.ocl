@@ -209,16 +209,6 @@ variable "OctoInstanceURL" {
     value "https://clearmeasure.octopus.app/" {}
 }
 
-variable "EnsureEnvironmentsExist" {
-    value "True" {
-        environment = ["uat"]
-    }
-
-    value "True" {
-        environment = ["prod"]
-    }
-}
-
 variable "http_port" {
     value "8080" {}
 }
@@ -234,5 +224,15 @@ variable "DatabaseServerName" {
 
     value "#{az_login_appid}-dotnet8-tdd-#{Octopus.Release.Id | ToLower }" {
         environment = ["tdd"]
+    }
+}
+
+variable "EnsureEnvironmentsExist" {
+    value "False" {
+        environment = ["uat"]
+    }
+
+    value "False" {
+        environment = ["prod"]
     }
 }
