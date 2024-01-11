@@ -69,7 +69,7 @@ step "deploy-an-azure-resource-manager-template" {
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "DatabaseARMParameters.json"
             Octopus.Action.Azure.TemplateSource = "Package"
             Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-architecture-maui-azure-dotnet-8"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
             OctopusUseBundledTooling = "False"
         }
@@ -77,7 +77,7 @@ step "deploy-an-azure-resource-manager-template" {
 
         packages {
             acquisition_location = "Server"
-            feed = "onion-architecture-maui-azure-dotnet-8"
+            feed = "onion-arch-dotnet-7"
             package_id = "ChurchBulletin.Database"
             properties = {
                 SelectionMode = "immediate"
@@ -97,7 +97,7 @@ step "create-db-schema" {
         action_type = "Octopus.Script"
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-architecture-maui-azure-dotnet-8"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "Scripts\\UpdateAzureSql.ps1"
@@ -107,7 +107,7 @@ step "create-db-schema" {
 
         packages {
             acquisition_location = "Server"
-            feed = "onion-architecture-maui-azure-dotnet-8"
+            feed = "onion-arch-dotnet-7"
             package_id = "ChurchBulletin.Database"
             properties = {
                 SelectionMode = "immediate"
@@ -272,9 +272,6 @@ step "deploy-an-azure-resource-manager-template-2" {
                     },
                     "connection_string": {
                       "type": "SecureString"
-                    },
-                    "http_port": {
-                      "type": "int"
                     }
                   },
                   "variables": {},
@@ -298,7 +295,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                           ],          
                           "ingress": {
                             "external": true,
-                            "targetPort": "[parameters('http_port')]",
+                            "targetPort": 80,
                             "allowInsecure": false,
                             "traffic": [
                               {
@@ -324,7 +321,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                               "env": [
                                 {
                                   "name": "HTTP_PORT",
-                                  "value": "8080"
+                                  "value": "80"
                                 },
                                 {
                                   "name": "ConnectionStrings__SqlConnectionString",
@@ -355,7 +352,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                   ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"#{az_login_appkey}\"},\"connection_string\":{\"value\":\"#{connection_string}\"},\"http_port\":{\"value\":\"#{http_port}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"#{az_login_appkey}\"},\"connection_string\":{\"value\":\"#{connection_string}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -490,7 +487,8 @@ step "add-revision-to-container-app" {
                 #update - fetches the latest container image, creates a 
                 #new revision in the container app, and sets it active.
                 Write-Host "Name $container_app_name"
-                & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --image $container_image --set-env-vars ConnectionStrings__SqlConnectionString=$connection_string,HTTP_PORT=$http_port 
+                & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --image $container_image
+                & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --set-env-vars ConnectionStrings__SqlConnectionString=$connection_string
                 ###################################################################
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
@@ -508,7 +506,7 @@ step "checkversion" {
         action_type = "Octopus.Script"
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-architecture-maui-azure-dotnet-8"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "CheckVersion.ps1"
@@ -519,7 +517,7 @@ step "checkversion" {
 
         packages {
             acquisition_location = "Server"
-            feed = "onion-architecture-maui-azure-dotnet-8"
+            feed = "onion-arch-dotnet-7"
             package_id = "ChurchBulletin.Script"
             properties = {
                 SelectionMode = "immediate"
@@ -535,7 +533,7 @@ step "healthcheck" {
         action_type = "Octopus.Script"
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-architecture-maui-azure-dotnet-8"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "CallHealthCheckEndpoint.ps1"
@@ -546,7 +544,7 @@ step "healthcheck" {
 
         packages {
             acquisition_location = "Server"
-            feed = "onion-architecture-maui-azure-dotnet-8"
+            feed = "onion-arch-dotnet-7"
             package_id = "ChurchBulletin.Script"
             properties = {
                 SelectionMode = "immediate"
@@ -991,7 +989,7 @@ step "create-automation-account" {
                 }
                 
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"#{azrunbookname}\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"2025-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-maui-azure-dotnet-8/main/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"#{OctoInstanceURL}\"},\"octoRunbookValue\":{\"value\":\"#{OctoRunbookName}\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"},\"webhookId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/TDD-releases-28529-automation/webhooks/#{webhookName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"#{azrunbookname}\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"2025-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/main/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"#{OctoInstanceURL}\"},\"octoRunbookValue\":{\"value\":\"#{OctoRunbookName}\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"},\"webhookId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/TDD-releases-28529-automation/webhooks/#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -1147,7 +1145,7 @@ step "create-low-availability-metric-alert" {
                             "defaultValue": "Prod-UI Low Availability",
                             "type": "String"
                         },
-                        "components_onion_architecture_maui_azure_dotnet_8_Prod_Insights_externalid": {
+                        "components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid": {
                             "defaultValue": "",
                             "type": "String"
                         },
@@ -1167,7 +1165,7 @@ step "create-low-availability-metric-alert" {
                                 "severity": 2,
                                 "enabled": true,
                                 "scopes": [
-                                    "[parameters('components_onion_architecture_maui_azure_dotnet_8_Prod_Insights_externalid')]"
+                                    "[parameters('components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid')]"
                                 ],
                                 "evaluationFrequency": "PT1M",
                                 "windowSize": "PT5M",
@@ -1200,7 +1198,7 @@ step "create-low-availability-metric-alert" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"metricAlerts_Prod_UI_Low_Availability_name\":{\"value\":\"#{LowAvailabilityAlertName}\"},\"components_onion_architecture_maui_azure_dotnet_8_Prod_Insights_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"},\"actionGroups_Email_Alert_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/actionGroups/#{ActionName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"metricAlerts_Prod_UI_Low_Availability_name\":{\"value\":\"#{LowAvailabilityAlertName}\"},\"components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"},\"actionGroups_Email_Alert_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/actionGroups/#{ActionName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
