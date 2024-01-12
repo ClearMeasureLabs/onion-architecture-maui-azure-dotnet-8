@@ -133,7 +133,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
       - name: TDD-Resource-Group
-        value: onion-architecture-dotnet-7-containers-TDD-$(Build.BuildNumber)
+        value: onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber)
       - name: TDD-App-Name
         value: tdd-ui 
       environment: 'TDD'
@@ -163,7 +163,7 @@ stages:
 
             - task: AzureCLI@2
               inputs:
-                azureSubscription: 'dotnet-7-containerapp'
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
@@ -197,10 +197,42 @@ stages:
                 testRunTitle: 'Acceptance Tests'
                 diagnosticsEnabled: True
 
+- stage: 'DeleteTDD'
+  displayName: 'DeleteTDD'
+  dependsOn: TDD
+  jobs: 
+    - deployment: 'DeleteTDD'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Integration-Build  
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
+      - name: TDD-Resource-Group
+        value: onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber)
+      - name: TDD-App-Name
+        value: tdd-ui 
+      environment: 'TDD'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az config set extension.use_dynamic_install=yes_without_prompt
+                  $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
+                  $containerAppURL = $containerAppURL -replace '"', ''
+                  [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
+
             - task: AzureCLI@2
               displayName: 'Delete TDD Resources'
               inputs:
-                azureSubscription: 'dotnet-7-containerapp'
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
@@ -208,6 +240,7 @@ stages:
 
 - stage: 'UAT'
   displayName: 'UAT'
+  dependsOn: TDD
   jobs: 
     - deployment: 'DeployToUAT'
       pool:
