@@ -145,20 +145,6 @@ variable "ResourceGroupName" {
     }
 }
 
-variable "DatabaseServerName" {
-    value "#{az_login_appid}-sqlserver-prod" {
-        environment = ["prod"]
-    }
-
-    value "#{az_login_appid}-sqlserver-uat" {
-        environment = ["uat"]
-    }
-
-    value "#{az_login_appid}-tdd-#{Octopus.Release.Id | ToLower }" {
-        environment = ["tdd"]
-    }
-}
-
 variable "ContainerAppScaledUpReplicas" {
     value "2" {}
 }
@@ -223,16 +209,30 @@ variable "OctoInstanceURL" {
     value "https://clearmeasure.octopus.app/" {}
 }
 
-variable "EnsureEnvironmentsExist" {
-    value "False" {
+variable "http_port" {
+    value "8080" {}
+}
+
+variable "DatabaseServerName" {
+    value "#{az_login_appid}-dotnet8-sqlserver-prod" {
         environment = ["prod"]
     }
 
-    value "True" {
+    value "#{az_login_appid}-dotnet8-sqlserver-uat" {
         environment = ["uat"]
+    }
+
+    value "#{az_login_appid}-dotnet8-tdd-#{Octopus.Release.Id | ToLower }" {
+        environment = ["tdd"]
     }
 }
 
-variable "http_port" {
-    value "8080" {}
+variable "EnsureEnvironmentsExist" {
+    value "False" {
+        environment = ["uat"]
+    }
+
+    value "False" {
+        environment = ["prod"]
+    }
 }
