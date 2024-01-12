@@ -3,7 +3,7 @@ TODO: Give a short introduction of your project. Let this section explain the ob
 
 This project will create all of the required infrastructure in Azure programatically. The resoureces in the TDD environment will be torn down after automated testing is completed. The UAT and Prod resources will remain. There is an Octopus variable **EnsureEnvironmentsExist** that will tell Octopus to create all of the resources. If the variable is set to **True** Octopus will create all of the resources, if the variable is set to something else, Octopus will not create the resources. **EnsureEnvironmentsExist** should always be set to **True** for the TDD environment. This variable should be set to **False** (or anything other than **True**) for UAT and Prod to save time and preserve the existing resources during subsequent deployments.
 
-# Onion Architecture .NET 7 Container Apps Getting Started
+# Onion Architecture MAUI Azure .NET 8 Getting Started
 - [Github](#github)
 - [Azure](#azure)
   - [Create an Azure Container Registry](#create-an-azure-container-registry)
@@ -21,23 +21,6 @@ This project will create all of the required infrastructure in Azure programatic
   - [Create the Library Variable Group](#create-the-library-variable-group)
   - [Grant the pipeline access to the variable group](#grant-the-pipeline-access-to-the-variable-group)
   - [Create a Pipeline](#create-a-pipeline)
-- [Github Actions Setup:](#github-actions-setup)
-  - [Create Repository Secrets and Variables](#create-repository-secrets-and-variables)
-    - [Create Github Packages API key](#create-github-packages-api-key)
-    - [Create an Azure Service Principal](#create-an-azure-service-principal)
-    - [Create an API Key in Octopus Deploy](#create-an-api-key-in-octopus-deploy)
-    - [Create the following secrets:](#create-the-following-secrets)
-    - [Create the following variables:](#create-the-following-variables)
-  - [Connect Octopus to the Github Packages feed:](#connect-octopus-to-the-github-packages-feed)
-- [TeamCity Setup](#teamcity-setup)
-  - [Create a New Project](#create-a-new-project)
-  - [Enable UI Updates](#enable-ui-updates)
-  - [Create an Azure Service Principal](#create-an-azure-service-principal-1)
-  - [Update Project Parameters](#update-project-parameters)
-  - [Connect TeamCity to ACR](#connect-teamcity-to-acr)
-  - [Create a TeamCity Nuget Feed](#create-a-teamcity-nuget-feed)
-  - [Connect Octopus to the TeamCity feed](#connect-octopus-to-the-teamcity-feed)
-    - [In Octopus Deploy](#in-octopus-deploy-1)
 - [Octopus Deploy Runbook Setup:](#octopus-deploy-runbook-setup)
   - [Create ContainerAppReplicas variable](#create-containerappreplicas-variable)
   - [Create Scale Up Runbook](#create-scale-up-runbook)
@@ -51,19 +34,12 @@ Requirements:
 - Octopus Deploy
 - Azure
 - Github
-
-Optional:
 - Azure DevOps
-- TeamCity
 
-This project is configured to work with either Azure DevOps Pipelines or Github Actions, or TeamCity.
-Follow the [Github](#github),[Azure](#azure),[Octopus Deploy Environment Setup:](#octopus-deploy-environment-setup) and [Octopus Deploy Project Setup:](#octopus-deploy-project-setup) steps at the beginning of this document, then:
-- If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section
-- If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section
-- If using TeamCity, follow the steps in the [TeamCity Setup](#teamcity-setup) section
  
 # Github
-Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
+Create a new repository using the  [onion-architecture-maui-azure-dotnet-8](https://github.com/ClearMeasureLabs/onion-architecture-maui-azure-dotnet-8) template repo
+
 # Azure
 
 ## Create an Azure Container Registry
@@ -202,10 +178,10 @@ To create a service connection
 
 ![Alt text](images/service%20connections%201.png)
 
-  - Use the recommended authentication method (Service Principal (automatic))
+  - Use the Service Principal (automatic) authentication method
   - Select your Azure Subscriptoin
   - Leave the Resource Group section blank
-  - Name the Service Connection: dotnet-7-containerapp
+  - Name the Service Connection: onion-architecture-maui-azure-dotnet-8
   - Check 'Grant access permission to all pipelines'
 
 ![Alt text](images/service%20connections%202.png)
@@ -283,7 +259,7 @@ To create a service connection
 
 1. Navigate to Library -\> External Feeds and select ADD FEED
 2. Set the Feed type to NuGet Feed
-3. Name the feed Onion-Arch-DotNet-7
+3. Name the feed Onion-Architecture-MAUI-Azure-dotnet-8
 4. Paste in the URL that was copied from Azure DevOps
 5. Provide something in the Feed username field. It can be anything other than an empty string. It's not actually used.
 6. Provide the personal access token from Azure DevOps as the Feed Password
@@ -356,173 +332,6 @@ In the Octopus Project navigate to Variables -\> Project
 ![Alt text](images/pipeline%203.png)
 
 The pipeline will build the application, create all of the resources in the TDD environment, deploy the app to TDD, test the app, then destroy the TDD resources. Then the Azure resources in UAT will be created, and the app will be deployed to TDD. Ultimately Prod resources will be created, and the app will be deployed to Prod
-
-# Github Actions Setup:
-
-## Create Repository Secrets and Variables
-
-- In the GitHub UI, navigate to your forked repository settings and select Security > Secrets and variables > Actions.
-- Select New repository secret to add secrets, or select the Variables tab, and New repository variable to add variables.
-
-### Create Github Packages API key
-- Create a classic Github Personal Access Token that has **write:Packages** scope. Save the token for a repository secret, and for Octopus Deploy. ([https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token](https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token))
-
-### Create an Azure Service Principal
-Using the az cli run:
-- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role Contributor --sdk-auth
-- replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as it will be needed later.
-
-### Create an API Key in Octopus Deploy
-In Octopus Deploy create an API key. Save the value for a repository secret. 
-([https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key))
-  
-### Create the following secrets:
-
-Secret: Value
-1. AZURE_CREDENTIALS:	    The entire JSON output from the service principal creation step
-2. REGISTRY_LOGIN_SERVER:	The login server name of your registry (all lowercase). Example: myregistry.azurecr.io
-3. REGISTRY_USERNAME:	    The clientId from the JSON output from the service principal creation
-4. REGISTRY_PASSWORD:	    The clientSecret from the JSON output from the service principal creation  
-5. PACKAGESAPI:           The Personal Access Token that was just created
-6. OCTOPUS_URL:           The URL of your Octopus Deploy instance. e.g. https://clearmeasure.octopus.app/
-7. OCTO_API_KEY:          The value of the Octopus Deploy API key
-  
-### Create the following variables:
-
-Variable: Value
-1. OCTOPUS_PROJECT:       The name of your Octopus Deploy project
-2. OCTOPUS_SPACE:         The name of your Octopus Deploy space
-3. USERNAME:              The github username of the user that created the PAT
-4. OWNER:                 The owner of the repository. 
-
-## Connect Octopus to the Github Packages feed:
-In Octopus Deploy:
-- Navigate to Library -\> External Feeds and select ADD FEED
-- Set the Feed type to NuGet Feed
-- Name the feed Onion-Arch-DotNet-7
-- Paste in the URL of the Github Packages feed
-  1. The URL should be: https://nuget.pkg.github.com/owner/index.json
-  2. Replace **owner** with the owner of the repo
-- Set the Feed username to the github username of the user that created the PAT
-- Provide the personal access token from Github as the Feed Password
-
-## Create and Update Project Variables
-
-In the Octopus Project navigate to Variables -\> Project
-
-- Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
-- Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
-  - This login server can be found in the Overview page of the container registry in the Azure Web Portal
-- Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
-
-## Create Environments
-In Github
-1. Go to Settings -\> Environments
-2. Select New environment
-3. Create three environments.
-- TDD
-- UAT
-- Prod
-4. In the UAT and Prod environments, check Required reviewers box and select the users that need to approve that stage
-
-## Enable Github Actions Workflows
-In the forked Github repository, navigate to Actions. Select *I understand my workflows, go ahead and enable them*
-
-
-Push a commit to trigger Github Actions to run the pipeline.  
-
-
-# TeamCity Setup
-
-## Create a New Project
-Create a New Project by selecting the **New project…** button in the top right
-
-![Alt text](images/TC1.png)
-
-Select the git repository that was created as the repository to create from
-
-![Alt text](images/TC2.png)
-
-Select **Import settings from .teamcity/settings.kts and enable synchronization with the VS repository**
-
-![Alt text](images/TC3.png)
-
-Select **Proceed**
-
-## Enable UI Updates
-
-Navigate to Project settings -> Versioned settings
-Check the box **Allow editing project settings via UI**
-
-![Alt text](images/TC4.png)
-
-Select Apply
-
-## Create an Azure Service Principal
-Using the az cli run:
-- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role Contributor --sdk-auth
-- replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as some of the values will be needed.
-
-## Update Project Parameters
-Navigate to Project Settings -> Parameters
-
-Edit the following Configuration Parameters
-- AzAppId – The clientId from the JSON output from the service principal creation
-- AzPassword (password spec) - The clientSecret from the JSON output from the service principal creation
-- AzTenant (password spec) – The tenantId from the JSON output from the service principal creation
--	OctoApiKey (password spec) – API key from Octopus Deploy
-- OctoProject – Name of the Octopus Deploy project that was created
-- OctoSpace – ID of the Octopus Deploy Space that houses the project. This should be Spaces-##
-- OctoSpaceName – Name of the Octopus Deploy Space that houses the project. E.g. Default
-- OctoURL – URL of the Octopus Deploy Instance. E.g. https://clearmeasure.octopus.app
-- RegistyLogin - Login server of the Azure Container Registry
-
-![Alt text](images/TC5.png)
-
-
-## Connect TeamCity to ACR
-
--	Select Edit Project -> Connections
--	Edit the existing Onoin-Arch ACR connection
--	Set the registry address to the login server of the ACR that was created
--	Set the Username to the clientId from the JSON output from the service principal creation
--	Set the Password to the clientSecret from the JSON output from the service principal creation
-
-![Alt text](images/TC6.png)
-
-## Create a TeamCity Nuget feed
-
-- Navigate to Edit Project -> NuGet Feed
-  - If this option is not available, contact TeamCity and request a NuGet feed be enabled)
-- Name the feed Onion_Architecture_Container_Apps
-- In the Integration Build build configuration, edit the Publish Packages Build Step
-  - Set the API key value to: **%teamcity.nuget.feed.api.key%**
-  - Set the Package Source value to the nuget feed that was just created
-  - The nuget feed can be found in the hamburger dropdown menu
-
-## Connect Octopus to the TeamCity feed:
-### In Octopus Deploy
-1.	Navigate to Library -> External Feeds and select ADD FEED
-2.	Set the Feed type to NuGet Feed
-3.	Name the feed Onion-Arch-DotNet-7
-4.	Copy the v3 URL from the TeamCity Nuget feed into the URL field
-5.	Provide the username from one of the TeamCity users as the Username. 
-6.	Provide the password from the TeamCity user as the Feed Password
-- Making a TeamCity user for Octopus to connect to TeamCity is recommended
-
-![Alt text](images/TC7.png)
-
-
-## Create and Update Project Variables
-
-In the Octopus Project navigate to Variables -\> Project
-
-- Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
-- Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
-  - This login server can be found in the Overview page of the container registry in the Azure Web Portal
-- Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
-
-Push a commit to the git repo, and the pipeline will start
 
 
 # Octopus Deploy Runbook Setup:
