@@ -72,10 +72,10 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-          Write-Output "build:"
-          Get-ChildItem -Path ./build -File
-          Write-Output "src/build:"
-          Get-ChildItem -Path ./src/build -File
+            Write-Output "build:"
+            Get-ChildItem -Path ./build -File
+            Write-Output "src/build:"
+            Get-ChildItem -Path ./src/build -File
  
       - task: GooglePlayRelease@4
         displayName: 'Publish to Google Play'
