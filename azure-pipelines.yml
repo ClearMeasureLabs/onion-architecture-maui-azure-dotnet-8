@@ -54,10 +54,6 @@ stages:
           script: |
             dotnet nuget locals all --clear 
             dotnet workload install maui android ios
-      - task: DownloadSecureFile@1
-        inputs:
-          secureFile: 'onionarch.keystore'  
-        name: 'keystore'
 
       - task: DotNetCoreCLI@2
         displayName: 'Build and sign Android target'
@@ -65,13 +61,7 @@ stages:
           command: 'publish'
           projects: '**/Ui.Maui.csproj'
           publishWebProjects: false
-          arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(keystore.secureFilePath) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=onionarch -p:AndroidSigningKeyPass=OnionArch8 -o ./build'
-
-      - task: PowerShell@2
-        inputs:
-          targetType: 'inline'
-          script: |
-            Get-ChildItem -Path ./build -File
+          arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(onionarch.keystore) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=onionarch -p:AndroidSigningKeyPass=OnionArch8 -o ./build'
 
       - task: GooglePlayRelease@4
         displayName: 'Publish to Google Play'
@@ -79,7 +69,7 @@ stages:
           applicationId: 'com.companyname.ui.maui'
           serviceConnection: 'GooglePlay'
           action: 'SingleBundle'
-          bundleFile: './build/*-Signed.aab'
+          bundleFile: './src/build/*-Signed.aab'
           track: 'internal'
           userFraction: '1.0'
 
