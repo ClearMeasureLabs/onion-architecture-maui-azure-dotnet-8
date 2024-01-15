@@ -61,7 +61,7 @@ stages:
           command: 'publish'
           projects: '**/Ui.Maui.csproj'
           publishWebProjects: false
-          arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(onionarch.keystore) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=onionarch -p:AndroidSigningKeyPass=OnionArch8 -o:'$(System.DefaultWorkingDirectory)/**/build'
+          arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(onionarch.keystore) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=onionarch -p:AndroidSigningKeyPass=OnionArch8 -o:'./build'
 
       - task: GooglePlayRelease@4
         displayName: 'Publish to Google Play'
@@ -69,7 +69,7 @@ stages:
           applicationId: 'com.companyname.ui.maui'
           serviceConnection: 'GooglePlay'
           action: 'SingleBundle'
-          bundleFile: '$(System.DefaultWorkingDirectory)/**/build/*-Signed.aab'
+          bundleFile: './build/*-Signed.aab'
           track: 'internal'
           userFraction: '1.0'
 
