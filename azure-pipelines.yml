@@ -85,7 +85,7 @@ stages:
           applicationId: 'com.companyname.ui.maui'
           serviceConnection: 'GooglePlay'
           action: 'SingleBundle'
-          bundleFile: './src/build/*-Signed.aab'
+          bundleFile: './build/*-Signed.aab'
           track: 'internal'
           userFraction: '1.0'
 
