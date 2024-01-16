@@ -72,10 +72,12 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $zipfile = "./build/Maui.zip"
+            $outdir = "./build"
+            [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outdir)
             Write-Output "build:"
             Get-ChildItem -Path ./build -File
-            Write-Output "src/build:"
-            Get-ChildItem -Path ./src/build -File
  
       - task: GooglePlayRelease@4
         displayName: 'Publish to Google Play'
