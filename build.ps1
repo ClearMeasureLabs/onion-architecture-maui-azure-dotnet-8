@@ -8,6 +8,7 @@ $integrationTestProjectPath = "$source_dir\IntegrationTests"
 $acceptanceTestProjectPath = "$source_dir\AcceptanceTests"
 $uiProjectPath = "$source_dir\UI\Server"
 $databaseProjectPath = "$source_dir\Database"
+$mauiProjectPath = "$source_dir\UI\Maui"
 $projectConfig = $env:BuildConfiguration
 $framework = "net8.0"
 $version = $env:BUILD_BUILDNUMBER
@@ -150,6 +151,28 @@ Function PackageScript {
 	}
 }
 
+Function PackageMaui {    
+    exec{
+        & dotnet publish $mauiProjectPath `
+			-nologo `
+			--no-restore `
+			--no-build `
+			-v $verbosity `
+			--configuration $projectConfig `
+			-f net8.0-android `
+			-p:AndroidPackageFormat=aab `
+			-p:AndroidKeyStore=True `
+			-p:AndroidSigningKeyStore=$env:keystoreFilepath `
+			-p:AndroidSigningStorePass=$env:signingStorePass `
+			-p:AndroidSigningKeyAlias=release `
+			-p:AndroidSigningKeyPass=$env:signingKeyPass #`
+			# -o ./build
+    }
+	exec{
+		& dotnet-octo pack --id "$projectName.AcceptanceTests" --version $version --basePath $mauiProjectPath\bin\Debug\$framework\publish --outFolder $build_dir --overwrite
+	}
+}
+
 Function Package{
 	Write-Output "Packaging nuget packages"
 	dotnet tool install --global Octopus.DotNet.Cli | Write-Output $_ -ErrorAction SilentlyContinue #prevents red color is already installed
@@ -157,6 +180,7 @@ Function Package{
     PackageDatabase
     PackageAcceptanceTests
 	PackageScript
+	PackageMaui
 }
 
 Function PrivateBuild{
