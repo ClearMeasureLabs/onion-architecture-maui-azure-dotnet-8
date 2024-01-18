@@ -70,7 +70,7 @@ stages:
             [System.Environment]::SetEnvironmentVariable('signingKeyPass','$(SigningKeyPass)')
             echo $env:Version
             echo $(Build.BuildNumber)
-            #gci $(Build.SourcesDirectory) -Recurse
+            ehco $env:keyStoreFilepath
 
       - task: PowerShell@2
         displayName: Build.ps1
