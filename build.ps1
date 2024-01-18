@@ -160,10 +160,10 @@ Function PackageMaui {
 			-f net8.0-android `
 			-p:AndroidPackageFormat=aab `
 			-p:AndroidKeyStore=True `
-			-p:AndroidSigningKeyStore=$env:keystoreFilepath `
-			-p:AndroidSigningStorePass=$env:signingStorePass `
+			-p:AndroidSigningKeyStore=[Environment]::GetEnvironmentVariable("keystoreFilepath","User") `
+			-p:AndroidSigningStorePass=[Environment]::GetEnvironmentVariable("signingStorePass","User")`
 			-p:AndroidSigningKeyAlias=release `
-			-p:AndroidSigningKeyPass=$env:signingKeyPass
+			-p:AndroidSigningKeyPass=$[Environment]::GetEnvironmentVariable("signingKeyPass","User")
     }
 	exec{
 		& dotnet-octo pack --id "$projectName.AcceptanceTests" --version $version --basePath $mauiProjectPath\bin\Debug\$framework\publish --outFolder $build_dir --overwrite
@@ -196,8 +196,6 @@ Function PrivateBuild{
 
 Function CIBuild{
 	$sw = [Diagnostics.Stopwatch]::StartNew()
-	$keystoreFilepath = [Environment]::GetEnvironmentVariable("keystoreFilepath","User")
-	Write-Output "keystoreFilepath = $keystoreFilepath"
 	Init
 	Compile
 	UnitTests

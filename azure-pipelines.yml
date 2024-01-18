@@ -47,13 +47,13 @@ stages:
           packageType: 'runtime'
           version: '8.0.0'
 
-      # - task: Bash@3
-      #   displayName: Install MAUI
-      #   inputs:
-      #     targetType: 'inline'
-      #     script: |
-      #       dotnet nuget locals all --clear 
-      #       dotnet workload install maui android ios
+      - task: Bash@3
+        displayName: Install MAUI
+        inputs:
+          targetType: 'inline'
+          script: |
+            dotnet nuget locals all --clear 
+            dotnet workload install maui android ios
 
       - task: DownloadSecureFile@1
         inputs:
@@ -66,8 +66,8 @@ stages:
           script: |
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             [System.Environment]::SetEnvironmentVariable('keystoreFilepath','$(keystore.secureFilePath)', 'User')
-            [System.Environment]::SetEnvironmentVariable('signingStorePass','$(SigningStorePass)')
-            [System.Environment]::SetEnvironmentVariable('signingKeyPass','$(SigningKeyPass)')
+            [System.Environment]::SetEnvironmentVariable('signingStorePass','$(SigningStorePass)', 'User')
+            [System.Environment]::SetEnvironmentVariable('signingKeyPass','$(SigningKeyPass)', 'User')
             echo $env:Version
             echo $(Build.BuildNumber)
             echo $env:keyStoreFilepath
