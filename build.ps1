@@ -196,7 +196,8 @@ Function PrivateBuild{
 
 Function CIBuild{
 	$sw = [Diagnostics.Stopwatch]::StartNew()
-	Write-Output "keystoreFilepath = $env:keystoreFilepath"
+	$keystoreFilepath = [System.Environment]::GetEnvironmentVariable('keystoreFilepath')
+	Write-Output "keystoreFilepath = $keystoreFilepath"
 	Init
 	Compile
 	UnitTests
