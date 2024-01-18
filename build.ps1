@@ -151,7 +151,6 @@ Function PackageScript {
 }
 
 Function PackageMaui {    
-	Console.Writeline "keystoreFilepath = $env:keystoreFilepath"
     exec{
         & dotnet publish $mauiProjectPath `
 			-nologo `
@@ -197,6 +196,7 @@ Function PrivateBuild{
 
 Function CIBuild{
 	$sw = [Diagnostics.Stopwatch]::StartNew()
+	Write-Output "keystoreFilepath = $env:keystoreFilepath"
 	Init
 	Compile
 	UnitTests
