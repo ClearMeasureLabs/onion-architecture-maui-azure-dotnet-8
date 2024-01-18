@@ -47,13 +47,13 @@ stages:
           packageType: 'runtime'
           version: '8.0.0'
 
-      - task: Bash@3
-        displayName: Install MAUI
-        inputs:
-          targetType: 'inline'
-          script: |
-            dotnet nuget locals all --clear 
-            dotnet workload install maui android ios
+      # - task: Bash@3
+      #   displayName: Install MAUI
+      #   inputs:
+      #     targetType: 'inline'
+      #     script: |
+      #       dotnet nuget locals all --clear 
+      #       dotnet workload install maui android ios
 
       - task: DownloadSecureFile@1
         inputs:
