@@ -151,6 +151,7 @@ Function PackageScript {
 }
 
 Function PackageMaui {    
+	Console.Writeline "keystoreFilepath = $env:keystoreFilepath"
     exec{
         & dotnet publish $mauiProjectPath `
 			-nologo `
