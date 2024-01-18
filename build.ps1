@@ -150,7 +150,10 @@ Function PackageScript {
 	}
 }
 
-Function PackageMaui {    
+Function PackageMaui {   
+	 $keystoreFilePath = [Environment]::GetEnvironmentVariable("keystoreFilepath","User")
+	 $signingStorePass = [Environment]::GetEnvironmentVariable("signingStorePass","User")
+	 $signingKeyPass = [Environment]::GetEnvironmentVariable("signingKeyPass","User")
     exec{
         & dotnet publish $mauiProjectPath `
 			-nologo `
@@ -160,10 +163,10 @@ Function PackageMaui {
 			-f net8.0-android `
 			-p:AndroidPackageFormat=aab `
 			-p:AndroidKeyStore=True `
-			-p:AndroidSigningKeyStore=[Environment]::GetEnvironmentVariable("keystoreFilepath","User") `
-			-p:AndroidSigningStorePass=[Environment]::GetEnvironmentVariable("signingStorePass","User")`
+			-p:AndroidSigningKeyStore=$keystoreFilePath `
+			-p:AndroidSigningStorePass=$signingStorePass`
 			-p:AndroidSigningKeyAlias=release `
-			-p:AndroidSigningKeyPass=$[Environment]::GetEnvironmentVariable("signingKeyPass","User")
+			-p:AndroidSigningKeyPass=$signingKeyPass
     }
 	exec{
 		& dotnet-octo pack --id "$projectName.AcceptanceTests" --version $version --basePath $mauiProjectPath\bin\Debug\$framework\publish --outFolder $build_dir --overwrite
