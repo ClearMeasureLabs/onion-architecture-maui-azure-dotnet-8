@@ -196,7 +196,7 @@ Function PrivateBuild{
 
 Function CIBuild{
 	$sw = [Diagnostics.Stopwatch]::StartNew()
-	$keystoreFilepath = [System.Environment]::GetEnvironmentVariable('keystoreFilepath')
+	$keystoreFilepath = [Environment]::GetEnvironmentVariable("keystoreFilepath","User")
 	Write-Output "keystoreFilepath = $keystoreFilepath"
 	Init
 	Compile
