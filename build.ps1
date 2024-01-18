@@ -155,7 +155,6 @@ Function PackageMaui {
         & dotnet publish $mauiProjectPath `
 			-nologo `
 			--no-restore `
-			#--no-build `
 			-v $verbosity `
 			--configuration $projectConfig `
 			-f net8.0-android `
@@ -164,8 +163,7 @@ Function PackageMaui {
 			-p:AndroidSigningKeyStore=$env:keystoreFilepath `
 			-p:AndroidSigningStorePass=$env:signingStorePass `
 			-p:AndroidSigningKeyAlias=release `
-			-p:AndroidSigningKeyPass=$env:signingKeyPass #`
-			# -o ./build
+			-p:AndroidSigningKeyPass=$env:signingKeyPass
     }
 	exec{
 		& dotnet-octo pack --id "$projectName.AcceptanceTests" --version $version --basePath $mauiProjectPath\bin\Debug\$framework\publish --outFolder $build_dir --overwrite
