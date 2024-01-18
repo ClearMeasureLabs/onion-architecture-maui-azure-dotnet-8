@@ -1,5 +1,4 @@
 . .\BuildFunctions.ps1
-$startTime = 
 $projectName = "ChurchBulletin"
 $base_dir = resolve-path .\
 $source_dir = "$base_dir\src"
@@ -34,7 +33,7 @@ if ([string]::IsNullOrEmpty($projectConfig)) {$projectConfig = "Release"}
 Function Init {
 	& cmd.exe /c rd /S /Q build
 	
-	md $build_dir > $null
+	mkdir $build_dir > $null
 
 	exec {
 		& dotnet clean $source_dir\$projectName.sln -nologo -v $verbosity
@@ -156,7 +155,7 @@ Function PackageMaui {
         & dotnet publish $mauiProjectPath `
 			-nologo `
 			--no-restore `
-			--no-build `
+			#--no-build `
 			-v $verbosity `
 			--configuration $projectConfig `
 			-f net8.0-android `
