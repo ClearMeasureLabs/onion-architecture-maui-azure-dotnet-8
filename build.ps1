@@ -158,7 +158,7 @@ Function PackageMaui {
         & dotnet publish $mauiProjectPath -nologo --no-restore -v $verbosity --configuration $projectConfig -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True `
 		-p:AndroidSigningKeyStore=$keystoreFilePath `
 		-p:AndroidSigningStorePass=$signingStorePass `
-		-p:AndroidSigningKeyAlias=release `
+		-p:AndroidSigningKeyAlias="release" `
 		-p:AndroidSigningKeyPass=$signingKeyPass
     }
 	exec{
