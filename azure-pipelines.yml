@@ -314,10 +314,10 @@ stages:
         vmImage: 'windows-latest'
       variables:
         - group: Integration-Build    
-      - name: Prod-Resource-Group
-        value: onion-architecture-maui-azure-dotnet-8-prod
-      - name: Prod-App-Name
-        value: tdd-prod
+        - name: Prod-Resource-Group
+          value: onion-architecture-maui-azure-dotnet-8-prod
+        - name: Prod-App-Name
+          value: tdd-prod
       environment: 'Prod'
       strategy:
         runOnce:
