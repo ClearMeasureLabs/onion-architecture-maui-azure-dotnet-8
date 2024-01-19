@@ -154,13 +154,14 @@ Function PackageMaui {
 	 $keystoreFilePath = [Environment]::GetEnvironmentVariable("keystoreFilepath","User")
 	 $signingStorePass = [Environment]::GetEnvironmentVariable("signingStorePass","User")
 	 $signingKeyPass = [Environment]::GetEnvironmentVariable("signingKeyPass","User")
+	 Write-Output "keystoreFilepath: $keystoreFilePath"
     exec{
         # & dotnet publish $mauiProjectPath -nologo --no-restore -v $verbosity --configuration $projectConfig -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True `
 		# -p:AndroidSigningKeyStore=$keystoreFilePath `
 		# -p:AndroidSigningStorePass=$signingStorePass `
 		# -p:AndroidSigningKeyAlias=release `
 		# -p:AndroidSigningKeyPass=$signingKeyPass
-		& dotnet publish -c $projectConfig -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$keystoreFilePath -p:AndroidSigningStorePass=$signingStorePass -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=$signingKeyPass
+		& dotnet publish $mauiProjectPath -c $projectConfig -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$keystoreFilePath -p:AndroidSigningStorePass=$signingStorePass -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=$signingKeyPass
     }
 	exec{
 		& dotnet-octo pack --id "$projectName.Maui" --version $version --basePath $mauiProjectPath\bin\$projectConfig\net8.0-android\publish  --include "*-Signed.aab" --outFolder $build_dir --overwrite
