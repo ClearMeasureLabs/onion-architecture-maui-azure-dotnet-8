@@ -159,7 +159,7 @@ Function PackageMaui {
     }
 	exec{
 		& dotnet-octo pack --id "$projectName.Maui" --version $version --basePath $mauiProjectPath\bin\$projectConfig\net8.0-android\publish  --include "*-Signed.aab" --outFolder $build_dir --overwrite 			-p:AndroidKeyStore=True `
-		-p:AndroidSigningKeyStore=keystoreFilePath `
+		-p:AndroidSigningKeyStore=$keystoreFilePath `
 		-p:AndroidSigningStorePass=$signingStorePass `
 		-p:AndroidSigningKeyAlias=release `
 		-p:AndroidSigningKeyPass=$signingKeyPass
