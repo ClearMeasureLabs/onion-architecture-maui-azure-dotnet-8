@@ -353,7 +353,7 @@ stages:
               inputs:
                 targetType: 'inline'
                 script: |
-                  Write-Output "contents in default dir/build"
+                  Write-Output "contents in default dir\build"
                   Get-ChildItem -Path $(System.DefaultWorkingDirectory)/build
 
             - task: GooglePlayRelease@4
@@ -362,6 +362,6 @@ stages:
                 applicationId: 'com.companyname.ui.maui'
                 serviceConnection: 'GooglePlay'
                 action: 'SingleBundle'
-                bundleFile: '$(System.DefaultWorkingDirectory)/build*-Signed.aab'
+                bundleFile: '$(System.DefaultWorkingDirectory)\build*\-Signed.aab'
                 track: 'internal'
                 userFraction: '1.0'
