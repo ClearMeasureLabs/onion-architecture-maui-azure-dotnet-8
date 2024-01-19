@@ -72,13 +72,13 @@ stages:
             echo $(Build.BuildNumber)
             echo $env:keyStoreFilepath
 
-      - task: DotNetCoreCLI@2
-        displayName: 'Build and sign Android target'
-        inputs:
-          command: 'publish'
-          projects: '**/Ui.Maui.csproj'
-          publishWebProjects: false
-          arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(keystore.secureFilePath) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=OnionArch8 -o ./build'
+      # - task: DotNetCoreCLI@2
+      #   displayName: 'Build and sign Android target'
+      #   inputs:
+      #     command: 'publish'
+      #     projects: '**/Ui.Maui.csproj'
+      #     publishWebProjects: false
+      #     arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(keystore.secureFilePath) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=OnionArch8 -o ./build'
 
       # - task: GooglePlayRelease@4
       #   displayName: 'Publish to Google Play'
