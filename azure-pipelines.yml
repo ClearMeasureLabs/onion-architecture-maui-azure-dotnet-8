@@ -318,72 +318,50 @@ stages:
 #                 ShowProgress: true 
 #                 AdditionalArguments: '--deploymenttimeout=00:30:00'
 
-# - stage: 'PlayStore'
-#   displayName: 'PlayStore'  
-#   jobs: 
-#     - deployment: 'DeployToPlayStore'
-#       pool:
-#         vmImage: 'windows-latest'
-#       variables:
-#         - group: Integration-Build    
-#       environment: 'PlayStore'
-#       strategy:
-#         runOnce:
-#           deploy:
-#             steps:
+- stage: 'PlayStore'
+  displayName: 'PlayStore'  
+  dependsOn: Integration_Build
+  jobs: 
+    - deployment: 'DeployToPlayStore'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+      environment: 'PlayStore'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
       
-            # - task: UseDotNet@2
-            #   displayName: 'Install SDK 8.0.100'
-            #   inputs:
-            #     packageType: 'sdk'
-            #     version: '8.0.100'
-            # - task: UseDotNet@2
-            #   inputs:
-            #     packageType: 'runtime'
-            #     version: '6.0.0'
-            # - task: UseDotNet@2
-            #   inputs:
-            #     packageType: 'runtime'
-            #     version: '8.0.0'
+            - task: UseDotNet@2
+              inputs:
+                packageType: 'runtime'
+                version: '6.0.0'
 
-            # - task: Bash@3
-            #   displayName: Install MAUI
-            #   inputs:
-            #     targetType: 'inline'
-            #     script: |
-            #       dotnet nuget locals all --clear 
-            #       dotnet workload install maui android ios
+            - task: DownloadPackage@1
+              displayName: 'Download Maui Package'
+              inputs:
+                packageType: 'nuget'
+                feed: '$(FeedName)'
+                view: 'Local'
+                definition: 'ChurchBulletin.Maui'
+                version: '$(Build.BuildNumber)'
+                downloadPath: '$(System.DefaultWorkingDirectory)/build'
+                extract: true
+                
+            - task: PowerShell@2
+              inputs:
+                targetType: 'inline'
+                script: |
+                  Write-Output "contents in default dir/build"
+                  Get-ChildItem -Path $(System.DefaultWorkingDirectory)/build
 
-            # - task: DownloadSecureFile@1
-            #   inputs:
-            #     secureFile: 'release.keystore'  
-            #   name: 'keystore'
-
-            # - task: DotNetCoreCLI@2
-            #   displayName: 'Build and sign Android target'
-            #   inputs:
-            #     command: 'publish'
-            #     projects: '**/Ui.Maui.csproj'
-            #     publishWebProjects: false
-            #     arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(keystore.secureFilePath) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=OnionArch8 -o ./build'
-
-            # - task: PowerShell@2
-            #   inputs:
-            #     targetType: 'inline'
-            #     script: |
-            #       Add-Type -AssemblyName System.IO.Compression.FileSystem
-            #       $zipfile = "./build/Maui.zip"
-            #       $outdir = "./build"
-            #       [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outdir)
-            #       Write-Output "build:"
-            #       Get-ChildItem -Path ./build -File
-      
-            # - task: GooglePlayRelease@4
-            #   displayName: 'Publish to Google Play'
-            #   inputs:
-            #     applicationId: 'com.companyname.ui.maui'
-            #     serviceConnection: 'GooglePlay'
-            #     action: 'SingleBundle'
-            #     bundleFile: './build/*-Signed.aab'
-            #     track: 'internal'
-            #     userFraction: '1.0'
+            - task: GooglePlayRelease@4
+              displayName: 'Publish to Google Play'
+              inputs:
+                applicationId: 'com.companyname.ui.maui'
+                serviceConnection: 'GooglePlay'
+                action: 'SingleBundle'
+                bundleFile: '$(System.DefaultWorkingDirectory)/build*-Signed.aab'
+                track: 'internal'
+                userFraction: '1.0'
