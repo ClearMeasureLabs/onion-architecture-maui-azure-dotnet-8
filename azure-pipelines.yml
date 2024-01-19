@@ -72,6 +72,25 @@ stages:
             echo $(Build.BuildNumber)
             echo $env:keyStoreFilepath
 
+      - task: DotNetCoreCLI@2
+        displayName: 'Build and sign Android target'
+        inputs:
+          command: 'publish'
+          projects: '**/Ui.Maui.csproj'
+          publishWebProjects: false
+          arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(keystore.secureFilePath) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=onionarch -p:AndroidSigningKeyPass=OnionArch8 -o:'$(System.DefaultWorkingDirectory)/**/build'
+
+      # - task: GooglePlayRelease@4
+      #   displayName: 'Publish to Google Play'
+      #   inputs:
+      #     applicationId: 'com.companyname.ui.maui'
+      #     serviceConnection: 'GooglePlay'
+      #     action: 'SingleBundle'
+      #     bundleFile: '$(System.DefaultWorkingDirectory)/**/build/*-Signed.aab'
+      #     track: 'internal'
+      #     userFraction: '1.0'
+
+
       - task: PowerShell@2
         displayName: Build.ps1
         inputs:
