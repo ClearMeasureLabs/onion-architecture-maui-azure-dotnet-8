@@ -350,8 +350,9 @@ stages:
                   az config set extension.use_dynamic_install=yes_without_prompt
                   $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
                   $prodURL = $containerAppURL -replace '"', ''
-                  [System.Environment]::SetEnvironmentVariable("prodURL", $containerAppURL, "User")
-                  Write-Output $prodURL
+                  [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
+                  $prodFQDN = [Environment]::GetEnvironmentVariable("prodFQDN","User")
+                  Write-Output $prodFQDN
 
 - stage: 'PlayStore'
   displayName: 'PlayStore'  
