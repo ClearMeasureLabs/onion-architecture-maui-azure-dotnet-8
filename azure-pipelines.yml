@@ -55,14 +55,41 @@ stages:
             dotnet nuget locals all --clear 
             dotnet workload install maui android ios
 
+      - task: DownloadSecureFile@1
+        inputs:
+          secureFile: 'release.keystore'  
+        name: 'keystore'
+
       - task: PowerShell@2
         inputs:
           targetType: 'inline'
           script: |
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+            [System.Environment]::SetEnvironmentVariable('keystoreFilepath','$(keystore.secureFilePath)', 'User')
+            [System.Environment]::SetEnvironmentVariable('signingStorePass','$(SigningStorePass)', 'User')
+            [System.Environment]::SetEnvironmentVariable('signingKeyPass','$(SigningKeyPass)', 'User')
             echo $env:Version
             echo $(Build.BuildNumber)
-            #gci $(Build.SourcesDirectory) -Recurse
+            echo $env:keyStoreFilepath
+
+      # - task: DotNetCoreCLI@2
+      #   displayName: 'Build and sign Android target'
+      #   inputs:
+      #     command: 'publish'
+      #     projects: '**/Ui.Maui.csproj'
+      #     publishWebProjects: false
+      #     arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(keystore.secureFilePath) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=OnionArch8 -o ./build'
+
+      # - task: GooglePlayRelease@4
+      #   displayName: 'Publish to Google Play'
+      #   inputs:
+      #     applicationId: 'com.companyname.ui.maui'
+      #     serviceConnection: 'GooglePlay'
+      #     action: 'SingleBundle'
+      #     bundleFile: '$(System.DefaultWorkingDirectory)/**/build/*-Signed.aab'
+      #     track: 'internal'
+      #     userFraction: '1.0'
+
 
       - task: PowerShell@2
         displayName: Build.ps1
@@ -96,9 +123,9 @@ stages:
           publishVstsFeed: '$(FeedName)'
 
      
-#Phase 2:  Build the Docker container and push it to the registry for consumption in Phase 3.
-#With the application already built and packaged in phase 1, all we're doing here is fetching it,
-#extracting, and getting it into the container by way of COPY in the dockerfile.
+# #Phase 2:  Build the Docker container and push it to the registry for consumption in Phase 3.
+# #With the application already built and packaged in phase 1, all we're doing here is fetching it,
+# #extracting, and getting it into the container by way of COPY in the dockerfile.
 
     - job: 'DockerBuildandPush'
       pool:
@@ -287,6 +314,10 @@ stages:
         vmImage: 'windows-latest'
       variables:
         - group: Integration-Build    
+        - name: Prod-Resource-Group
+          value: onion-architecture-maui-azure-dotnet-8-prod
+        - name: Prod-App-Name
+          value: tdd-prod
       environment: 'Prod'
       strategy:
         runOnce:
@@ -309,3 +340,63 @@ stages:
                 Environments: 'Prod'
                 ShowProgress: true 
                 AdditionalArguments: '--deploymenttimeout=00:30:00'
+
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az config set extension.use_dynamic_install=yes_without_prompt
+                  $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
+                  $prodURL = $containerAppURL -replace '"', ''
+                  [System.Environment]::SetEnvironmentVariable("prodURL", $containerAppURL, "User")
+                  Write-Output $prodURL
+
+- stage: 'PlayStore'
+  displayName: 'PlayStore'  
+  dependsOn: Integration_Build
+  jobs: 
+    - deployment: 'DeployToPlayStore'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+      environment: 'PlayStore'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+      
+            - task: UseDotNet@2
+              inputs:
+                packageType: 'runtime'
+                version: '6.0.0'
+
+            - task: DownloadPackage@1
+              displayName: 'Download Maui Package'
+              inputs:
+                packageType: 'nuget'
+                feed: '$(FeedName)'
+                view: 'Local'
+                definition: 'ChurchBulletin.Maui'
+                version: '$(Build.BuildNumber)'
+                downloadPath: '$(System.DefaultWorkingDirectory)/build'
+                extract: true
+                
+            - task: PowerShell@2
+              inputs:
+                targetType: 'inline'
+                script: |
+                  Write-Output "contents in default dir\build"
+                  Get-ChildItem -Path $(System.DefaultWorkingDirectory)/build
+
+            - task: GooglePlayRelease@4
+              displayName: 'Publish to Google Play'
+              inputs:
+                applicationId: 'com.companyname.ui.maui'
+                serviceConnection: 'GooglePlay'
+                action: 'SingleBundle'
+                bundleFile: '$(System.DefaultWorkingDirectory)\build\*-Signed.aab'
+                track: 'internal'
+                userFraction: '1.0'

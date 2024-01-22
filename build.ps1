@@ -1,5 +1,4 @@
 . .\BuildFunctions.ps1
-$startTime = 
 $projectName = "ChurchBulletin"
 $base_dir = resolve-path .\
 $source_dir = "$base_dir\src"
@@ -8,6 +7,7 @@ $integrationTestProjectPath = "$source_dir\IntegrationTests"
 $acceptanceTestProjectPath = "$source_dir\AcceptanceTests"
 $uiProjectPath = "$source_dir\UI\Server"
 $databaseProjectPath = "$source_dir\Database"
+$mauiProjectPath = "$source_dir\UI\Maui"
 $projectConfig = $env:BuildConfiguration
 $framework = "net8.0"
 $version = $env:BUILD_BUILDNUMBER
@@ -33,7 +33,7 @@ if ([string]::IsNullOrEmpty($projectConfig)) {$projectConfig = "Release"}
 Function Init {
 	& cmd.exe /c rd /S /Q build
 	
-	md $build_dir > $null
+	mkdir $build_dir > $null
 
 	exec {
 		& dotnet clean $source_dir\$projectName.sln -nologo -v $verbosity
@@ -150,6 +150,24 @@ Function PackageScript {
 	}
 }
 
+Function PackageMaui {   
+	 $keystoreFilePath = [Environment]::GetEnvironmentVariable("keystoreFilepath","User")
+	 $signingStorePass = [Environment]::GetEnvironmentVariable("signingStorePass","User")
+	 $signingKeyPass = [Environment]::GetEnvironmentVariable("signingKeyPass","User")
+	 Write-Output "keystoreFilepath: $keystoreFilePath"
+    exec{
+        # & dotnet publish $mauiProjectPath -nologo --no-restore -v $verbosity --configuration $projectConfig -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True `
+		# -p:AndroidSigningKeyStore=$keystoreFilePath `
+		# -p:AndroidSigningStorePass=$signingStorePass `
+		# -p:AndroidSigningKeyAlias=release `
+		# -p:AndroidSigningKeyPass=$signingKeyPass
+		& dotnet publish $mauiProjectPath -nologo --no-restore -v $verbosity -c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$keystoreFilePath -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=OnionArch8
+    }
+	exec{
+		& dotnet-octo pack --id "$projectName.Maui" --version $version --basePath $mauiProjectPath\bin\$projectConfig\net8.0-android\publish  --include "*-Signed.aab" --outFolder $build_dir --overwrite
+	}
+}
+
 Function Package{
 	Write-Output "Packaging nuget packages"
 	dotnet tool install --global Octopus.DotNet.Cli | Write-Output $_ -ErrorAction SilentlyContinue #prevents red color is already installed
@@ -157,6 +175,7 @@ Function Package{
     PackageDatabase
     PackageAcceptanceTests
 	PackageScript
+	PackageMaui
 }
 
 Function PrivateBuild{
