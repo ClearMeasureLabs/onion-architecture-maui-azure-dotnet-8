@@ -19,8 +19,8 @@
         <ApplicationId>com.companyname.ui.maui</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>$env:BUILD_BUILDNUMBER</ApplicationDisplayVersion>
-        <ApplicationVersion>$env:BUILD_BUILDNUMBER</ApplicationVersion>
+        <ApplicationDisplayVersion>[Environment]::GetEnvironmentVariable('IntegerVersion', "User")</ApplicationDisplayVersion>
+        <ApplicationVersion>[Environment]::GetEnvironmentVariable('IntegerVersion', "User")</ApplicationVersion>
 
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>

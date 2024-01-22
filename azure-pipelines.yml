@@ -65,6 +65,7 @@ stages:
           targetType: 'inline'
           script: |
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+            [System.Environment]::SetEnvironmentVariable('IntegerVersion','$(Rev:r)', "User")
             [System.Environment]::SetEnvironmentVariable('keystoreFilepath','$(keystore.secureFilePath)', 'User')
             [System.Environment]::SetEnvironmentVariable('signingStorePass','$(SigningStorePass)', 'User')
             [System.Environment]::SetEnvironmentVariable('signingKeyPass','$(SigningKeyPass)', 'User')
@@ -377,8 +378,7 @@ stages:
               inputs:
                 targetType: 'inline'
                 script: |
-                  Write-Output "contents in default dir\build"
-                  Get-ChildItem -Path $(System.DefaultWorkingDirectory)/build
+                  [System.Environment]::SetEnvironmentVariable('IntegerVersion','$(Rev:r)', "User")
 
             - task: AzureCLI@2
               inputs:
