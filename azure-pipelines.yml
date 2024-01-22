@@ -391,7 +391,9 @@ stages:
                   $prodURL = $containerAppURL -replace '"', ''
                   [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
                   $prodFQDN = [Environment]::GetEnvironmentVariable("prodFQDN","User")
+                  [System.Environment]::SetEnvironmentVariable('IntegerVersion','$(Rev:r)', "User")
                   Write-Output $prodFQDN
+
 
 
             - task: GooglePlayRelease@4
