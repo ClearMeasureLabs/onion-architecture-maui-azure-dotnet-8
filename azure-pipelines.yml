@@ -314,10 +314,6 @@ stages:
         vmImage: 'windows-latest'
       variables:
         - group: Integration-Build    
-        - name: Prod-Resource-Group
-          value: onion-architecture-maui-azure-dotnet-8-prod
-        - name: Prod-App-Name
-          value: prod-ui
       environment: 'Prod'
       strategy:
         runOnce:
@@ -341,18 +337,6 @@ stages:
                 ShowProgress: true 
                 AdditionalArguments: '--deploymenttimeout=00:30:00'
 
-            - task: AzureCLI@2
-              inputs:
-                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
-                scriptType: 'ps'
-                scriptLocation: 'inlineScript'
-                inlineScript: |
-                  az config set extension.use_dynamic_install=yes_without_prompt
-                  $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
-                  $prodURL = $containerAppURL -replace '"', ''
-                  [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
-                  $prodFQDN = [Environment]::GetEnvironmentVariable("prodFQDN","User")
-                  Write-Output $prodFQDN
 
 - stage: 'PlayStore'
   displayName: 'PlayStore'  
@@ -362,7 +346,11 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-        - group: Integration-Build    
+        - group: Integration-Build  
+        - name: Prod-Resource-Group
+          value: onion-architecture-maui-azure-dotnet-8-prod
+        - name: Prod-App-Name
+          value: prod-ui          
       environment: 'PlayStore'
       strategy:
         runOnce:
@@ -391,6 +379,20 @@ stages:
                 script: |
                   Write-Output "contents in default dir\build"
                   Get-ChildItem -Path $(System.DefaultWorkingDirectory)/build
+
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az config set extension.use_dynamic_install=yes_without_prompt
+                  $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
+                  $prodURL = $containerAppURL -replace '"', ''
+                  [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
+                  $prodFQDN = [Environment]::GetEnvironmentVariable("prodFQDN","User")
+                  Write-Output $prodFQDN
+
 
             - task: GooglePlayRelease@4
               displayName: 'Publish to Google Play'
