@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Net.Http;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 using Palermo.BlazorMvc;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
-namespace UI.Maui.Pages;
+namespace UI.Shared.Pages;
 
 [Route("/fetchchurchbulletin")]
 public class FetchChurchBulletinController : ControllerComponentBase<FetchChurchBulletinView>

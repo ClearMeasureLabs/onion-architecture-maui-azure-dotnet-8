@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Web.WebView2.Core;
 
 namespace UI.Wpf
 {
@@ -26,8 +27,12 @@ namespace UI.Wpf
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddWpfBlazorWebView();
-            serviceCollection.AddScoped<IUiBus>(svc => new MvcBus(NullLogger<MvcBus>.Instance));
-            serviceCollection.AddSingleton(svc => new HttpClient { BaseAddress = new Uri("https://localhost:7174") });
+#if DEBUG
+            serviceCollection.AddBlazorWebViewDeveloperTools();
+            serviceCollection.AddLogging();
+#endif
+            serviceCollection.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
+            serviceCollection.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7174") });
             Resources.Add("services", serviceCollection.BuildServiceProvider());
         }
     }
