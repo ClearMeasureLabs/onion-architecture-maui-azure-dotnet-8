@@ -75,6 +75,22 @@ stages:
             echo $env:Version
             echo $(Build.BuildNumber)
 
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+          scriptType: 'ps'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+            $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
+            $prodURL = $prodURL -replace '"', ''
+            [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
+            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+            $splitVersion = $env:Version -split "\."
+            $intVer = $splitVersion[-1]
+            [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer, "User")
+            $intVersion = [Environment]::GetEnvironmentVariable("IntegerVersion","User")
+            Write-Output "IntegerVersion $intVersion"
       # - task: DotNetCoreCLI@2
       #   displayName: 'Build and sign Android target'
       #   inputs:
@@ -375,25 +391,6 @@ stages:
                 version: '$(Build.BuildNumber)'
                 downloadPath: '$(System.DefaultWorkingDirectory)/build'
                 extract: true
-                
-
-            - task: AzureCLI@2
-              inputs:
-                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
-                scriptType: 'ps'
-                scriptLocation: 'inlineScript'
-                inlineScript: |
-                  az config set extension.use_dynamic_install=yes_without_prompt
-                  $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
-                  $prodURL = $prodURL -replace '"', ''
-                  [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
-                  [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
-                  $splitVersion = $env:Version -split "\."
-                  $intVer = $splitVersion[-1]
-                  [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer, "User")
-                  $intVersion = [Environment]::GetEnvironmentVariable("IntegerVersion","User")
-                  Write-Output "IntegerVersion $intVersion"
-
 
             - task: GooglePlayRelease@4
               displayName: 'Publish to Google Play'
