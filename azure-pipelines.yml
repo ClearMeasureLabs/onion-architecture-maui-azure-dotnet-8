@@ -341,7 +341,7 @@ stages:
 
 - stage: 'PlayStore'
   displayName: 'PlayStore'  
-  # dependsOn: Production
+  dependsOn: Integration_Build
   jobs: 
     - deployment: 'DeployToPlayStore'
       pool:
@@ -386,11 +386,11 @@ stages:
                   $prodURL = $containerAppURL -replace '"', ''
                   [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
                   $prodFQDN = [Environment]::GetEnvironmentVariable("prodFQDN","User")
-                  [System.Environment]::SetEnvironmentVariable("IntegerVersion",$(Rev:r), "User")
-                  $IntVer = [Environment]::GetEnvironmentVariable("IntegerVersion","User")
+                  $splitVersion = $(Build.BuildNumber) -split "\."
+                  $intVer = $splitVersion[-1]
+                  [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer, "User")
                   Write-Output "Prod FQDN $prodFQDN"
-                  Write-Output "IntegerVersion $IntVer"
-
+                  Write-Output "IntegerVersion $intVer"
 
 
             - task: GooglePlayRelease@4
