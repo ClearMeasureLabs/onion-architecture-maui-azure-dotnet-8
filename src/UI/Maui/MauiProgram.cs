@@ -8,7 +8,7 @@ namespace UI.Maui
     {
         public static string BaseAddress = 
             System.Environment.GetEnvironmentVariable("prodFQDN", EnvironmentVariableTarget.User) 
-            ?? (DeviceInfo.Platform == DevicePlatform.Android ? "https://10.0.2.2:7174" : "https://localhost:7174");
+            ?? (DeviceInfo.Platform == DevicePlatform.Android ? "https://prod-ui.gentlemoss-53939ebc.southcentralus.azurecontainerapps.io" : "https://localhost:7174");
         public static MauiApp CreateMauiApp()
         {
 
