@@ -341,7 +341,7 @@ stages:
 
 - stage: 'PlayStore'
   displayName: 'PlayStore'  
-  dependsOn: Integration_Build
+  # dependsOn: Production
   jobs: 
     - deployment: 'DeployToPlayStore'
       pool:
@@ -374,11 +374,6 @@ stages:
                 downloadPath: '$(System.DefaultWorkingDirectory)/build'
                 extract: true
                 
-            - task: PowerShell@2
-              inputs:
-                targetType: 'inline'
-                script: |
-                  [System.Environment]::SetEnvironmentVariable('IntegerVersion','$(Rev:r)', "User")
 
             - task: AzureCLI@2
               inputs:
@@ -391,8 +386,10 @@ stages:
                   $prodURL = $containerAppURL -replace '"', ''
                   [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
                   $prodFQDN = [Environment]::GetEnvironmentVariable("prodFQDN","User")
-                  [System.Environment]::SetEnvironmentVariable('IntegerVersion','$(Rev:r)', "User")
-                  Write-Output $prodFQDN
+                  [System.Environment]::SetEnvironmentVariable("IntegerVersion",$(Rev:r), "User")
+                  $IntVer = [Environment]::GetEnvironmentVariable("IntegerVersion","User")
+                  Write-Output "Prod FQDN $prodFQDN"
+                  Write-Output "IntegerVersion $IntVer"
 
 
 
