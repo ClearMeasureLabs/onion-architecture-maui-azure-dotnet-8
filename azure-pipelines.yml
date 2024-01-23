@@ -58,7 +58,7 @@ stages:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
             $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
-            $prodURL = $containerAppURL -replace '"', ''
+            $prodURL = $prodURL -replace '"', ''
             [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
             $prodURL = [Environment]::GetEnvironmentVariable("prodFQDN","User")
             $splitVersion = $(Build.BuildNumber) -split "\."
