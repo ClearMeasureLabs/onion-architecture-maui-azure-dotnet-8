@@ -117,8 +117,8 @@ stages:
           targetType: filePath
           filePath: ./build.ps1
           arguments: '; CIBuild'
-          env:
-            IntegerVersion: $env:IntegerVersion
+        env:
+          IntegerVersion: $env:IntegerVersion
 
       - task: PublishTestResults@2
         displayName: 'Publish Test Results ./build/test/*.trx'
