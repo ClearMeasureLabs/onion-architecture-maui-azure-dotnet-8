@@ -67,7 +67,7 @@ stages:
             Write-Output "intver $intVer"
             [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer, "User")
             Write-Output "Prod FQDN $prodURL"
-            Write-Output "IntegerVersion $intVer
+            Write-Output "IntegerVersion $intVer"
 
 
 
