@@ -64,7 +64,7 @@ stages:
             $splitVersion = $(Build.BuildNumber) -split "\."
             $intVer = $splitVersion[-1]
             Write-Output "BuildNo $(Build.BuildNumber)"
-            Write-Output "intver $intVer"
+            Write-Output "splitver $splitVersion"
             [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer, "User")
             Write-Output "Prod FQDN $prodURL"
             Write-Output "IntegerVersion $intVer"
