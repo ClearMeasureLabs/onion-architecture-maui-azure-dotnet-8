@@ -88,10 +88,11 @@ stages:
             [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             $splitVersion = $env:Version -split "\."
-            $intVer = [int]$splitVersion[-1]
+            $stringVer = $splitVersion[-1]
+            $intVer = [int]$stringVer
             [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer)
-      # $intVersion = [Environment]::GetEnvironmentVariable("IntegerVersion","User")
-      # Write-Output "IntegerVersion $intVersion"
+            $intVersion = [Environment]::GetEnvironmentVariable("IntegerVersion")
+            Write-Output "IntegerVersion $intVersion"
       # - task: DotNetCoreCLI@2
       #   displayName: 'Build and sign Android target'
       #   inputs:
