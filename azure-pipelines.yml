@@ -84,13 +84,14 @@ stages:
             az config set extension.use_dynamic_install=yes_without_prompt
             $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
             $prodURL = $prodURL -replace '"', ''
+            $prodURL = "https://$prodURL"
             [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             $splitVersion = $env:Version -split "\."
             $intVer = $splitVersion[-1]
-            [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer, "User")
-            $intVersion = [Environment]::GetEnvironmentVariable("IntegerVersion","User")
-            Write-Output "IntegerVersion $intVersion"
+            [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer)
+      # $intVersion = [Environment]::GetEnvironmentVariable("IntegerVersion","User")
+      # Write-Output "IntegerVersion $intVersion"
       # - task: DotNetCoreCLI@2
       #   displayName: 'Build and sign Android target'
       #   inputs:
@@ -116,6 +117,8 @@ stages:
           targetType: filePath
           filePath: ./build.ps1
           arguments: '; CIBuild'
+          env:
+            IntegerVersion: $env:IntegerVersion
 
       - task: PublishTestResults@2
         displayName: 'Publish Test Results ./build/test/*.trx'
