@@ -385,11 +385,13 @@ stages:
                   $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
                   $prodURL = $containerAppURL -replace '"', ''
                   [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
-                  $prodFQDN = [Environment]::GetEnvironmentVariable("prodFQDN","User")
+                  $prodURL = [Environment]::GetEnvironmentVariable("prodFQDN","User")
                   $splitVersion = $(Build.BuildNumber) -split "\."
                   $intVer = $splitVersion[-1]
+                  Write-Output "BuildNo $(Build.BuildNumber)"
+                  Write-Output "intver $intver"
                   [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer, "User")
-                  Write-Output "Prod FQDN $prodFQDN"
+                  Write-Output "Prod FQDN $prodURL"
                   Write-Output "IntegerVersion $intVer"
 
 
