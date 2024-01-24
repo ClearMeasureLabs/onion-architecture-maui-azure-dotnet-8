@@ -106,7 +106,7 @@ stages:
           applicationId: 'com.companyname.ui.maui'
           serviceConnection: 'GooglePlay'
           action: 'SingleBundle'
-          bundleFile: '$(System.DefaultWorkingDirectory)\build\*-Signed.aab'
+          bundleFile: '$(System.DefaultWorkingDirectory)/**/build/*-Signed.aab'
           track: 'internal'
           userFraction: '1.0'
 
