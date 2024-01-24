@@ -85,13 +85,14 @@ stages:
             $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
             $prodURL = $prodURL -replace '"', ''
             $prodURL = "https://$prodURL"
-            [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "Machine")
+            [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+            [System.Environment]::SetEnvironmentVariable('IndexVersion','$(Build.BuildNumber)', 'User')
             $splitVersion = $env:Version -split "\."
             $stringVer = $splitVersion[-1]
             $intVer = [int]$stringVer
             Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
-            Write-Host "##vso[task.setvariable variable=prodFQDN]$prodURL"
+
 
       - task: DotNetCoreCLI@2
         displayName: 'Build and sign Android target'
