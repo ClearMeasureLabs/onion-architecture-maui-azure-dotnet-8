@@ -84,6 +84,7 @@ stages:
             $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
             $prodURL = $prodURL -replace '"', ''
             $prodURL = "https://$prodURL"
+            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             $splitVersion = $env:Version -split "\."
             $stringVer = $splitVersion[-1]
             $intVer = [int]$stringVer
