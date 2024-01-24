@@ -90,9 +90,7 @@ stages:
             $splitVersion = $env:Version -split "\."
             $stringVer = $splitVersion[-1]
             $intVer = [int]$stringVer
-            [System.Environment]::SetEnvironmentVariable("IntegerVersion", $intVer)
-            $intVersion = [Environment]::GetEnvironmentVariable("IntegerVersion")
-            Write-Output "IntegerVersion $intVersion"
+            Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
       # - task: DotNetCoreCLI@2
       #   displayName: 'Build and sign Android target'
       #   inputs:
@@ -118,8 +116,7 @@ stages:
           targetType: filePath
           filePath: ./build.ps1
           arguments: '; CIBuild'
-        env:
-          IntegerVersion: $env:IntegerVersion
+
 
       - task: PublishTestResults@2
         displayName: 'Publish Test Results ./build/test/*.trx'
