@@ -68,7 +68,6 @@ stages:
           targetType: 'inline'
           script: |
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
-            [System.Environment]::SetEnvironmentVariable('IntegerVersion','$(Rev:r)', "User")
             [System.Environment]::SetEnvironmentVariable('keystoreFilepath','$(keystore.secureFilePath)', 'User')
             [System.Environment]::SetEnvironmentVariable('signingStorePass','$(SigningStorePass)', 'User')
             [System.Environment]::SetEnvironmentVariable('signingKeyPass','$(SigningKeyPass)', 'User')
@@ -85,13 +84,17 @@ stages:
             $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
             $prodURL = $prodURL -replace '"', ''
             $prodURL = "https://$prodURL"
-            [System.Environment]::SetEnvironmentVariable("prodFQDN", $prodURL, "User")
-            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
-            [System.Environment]::SetEnvironmentVariable('IndexVersion','$(Build.BuildNumber)', 'User')
             $splitVersion = $env:Version -split "\."
             $stringVer = $splitVersion[-1]
             $intVer = [int]$stringVer
             Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
+
+            $appSettingsPath = "./src/UI/Maui/appsettings.json"
+            $appSettings = Get-Content $appSettingsPath | ConvertFrom-Json
+            $appSettings.BaseAddress = $prodURL
+            $json = $appSettings | ConvertTo-Json
+            Set-Content -Path $appSettingsPath -Value $json
+
 
 
       - task: DotNetCoreCLI@2
