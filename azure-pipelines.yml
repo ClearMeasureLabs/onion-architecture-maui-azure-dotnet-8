@@ -29,11 +29,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: Integration-Build
-      - name: Prod-Resource-Group
-        value: onion-architecture-maui-azure-dotnet-8-prod
-      - name: Prod-App-Name
-        value: prod-ui       
+      - group: Integration-Build      
       steps:
 
       - task: UseDotNet@2
@@ -315,9 +311,13 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-        - group: Integration-Build           
+        - group: Integration-Build   
+        - name: Prod-Resource-Group
+          value: onion-architecture-maui-azure-dotnet-8-prod
+        - name: Prod-App-Name
+          value: prod-ui                 
       environment: 'PlayStore'
-      condition: eq(variables['PlayStoreDeploy'], true)
+      condition: and(succeeded(), eq(variables['PlayStoreDeploy'], true))
       strategy:
         runOnce:
           deploy:
