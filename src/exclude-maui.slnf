@@ -10,7 +10,6 @@
       "UI.Wpf\\UI.Wpf.csproj",
       "UI\\Api\\UI.Api.csproj",
       "UI\\Client\\UI.Client.csproj",
-      "UI\\Maui\\UI.Maui.csproj",
       "UI\\Server\\UI.Server.csproj",
       "UnitTests\\UnitTests.csproj"
     ]
