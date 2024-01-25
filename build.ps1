@@ -170,7 +170,7 @@ Function Package{
     PackageDatabase
     PackageAcceptanceTests
 	PackageScript
-	PackageMaui
+	# PackageMaui
 }
 
 Function PrivateBuild{
