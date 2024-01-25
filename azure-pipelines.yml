@@ -309,7 +309,7 @@ stages:
 
 - stage: 'PlayStore'
   displayName: 'PlayStore'  
-  # dependsOn: Production
+  dependsOn: []
   condition: eq('$(PlayStoreDeploy)', 'true')
   jobs: 
     - deployment: 'DeployToPlayStore'
