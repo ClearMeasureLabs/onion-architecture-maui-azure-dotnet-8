@@ -50,7 +50,7 @@ Function Init {
 
 Function Compile{
 	exec {
-		& dotnet build $source_dir\$projectName.sln -nologo --no-restore -v `
+		& dotnet build $source_dir\exclude-maui.slnf -nologo --no-restore -v `
 			$verbosity -maxcpucount --configuration $projectConfig --no-incremental `
 			/p:TreatWarningsAsErrors="true" `
 			/p:Version=$version /p:Authors="Programming with Palermo" `
@@ -156,11 +156,6 @@ Function PackageMaui {
 	 $signingKeyPass = [Environment]::GetEnvironmentVariable("signingKeyPass","User")
 	 Write-Output "keystoreFilepath: $keystoreFilePath"
     exec{
-        # & dotnet publish $mauiProjectPath -nologo --no-restore -v $verbosity --configuration $projectConfig -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True `
-		# -p:AndroidSigningKeyStore=$keystoreFilePath `
-		# -p:AndroidSigningStorePass=$signingStorePass `
-		# -p:AndroidSigningKeyAlias=release `
-		# -p:AndroidSigningKeyPass=$signingKeyPass
 		& dotnet publish $mauiProjectPath -nologo --no-restore -v $verbosity -c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$keystoreFilePath -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=OnionArch8
     }
 	exec{

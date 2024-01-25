@@ -5,6 +5,8 @@ param(
 
 $uri = "$server/version"
 Write-Host "Getting version $uri"
+# Delay to ensure the new container app has been deployed
+Start-Sleep -Seconds 60
 Invoke-WebRequest $uri -UseBasicParsing | Foreach {
     $_.Content.Contains($version) | Foreach {
         if(-Not($_)) {
