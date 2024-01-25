@@ -310,7 +310,6 @@ stages:
 - stage: 'PlayStore'
   displayName: 'PlayStore'  
   dependsOn: []
-  condition: eq(variables['PlayStoreDeploy'], true)
   jobs: 
     - deployment: 'DeployToPlayStore'
       pool:
@@ -318,6 +317,7 @@ stages:
       variables:
         - group: Integration-Build           
       environment: 'PlayStore'
+      condition: eq(variables['PlayStoreDeploy'], true)
       strategy:
         runOnce:
           deploy:
