@@ -27,6 +27,8 @@
 
 		<AndroidManifest>Platforms\Android\AndroidManifest.xml</AndroidManifest>
 
+		<Configurations>Debug;Release;exclude-maui.slnf</Configurations>
+
     </PropertyGroup>
 
     <ItemGroup>
