@@ -36,10 +36,10 @@ Function Init {
 	mkdir $build_dir > $null
 
 	exec {
-		& dotnet clean $source_dir\$projectName.sln -nologo -v $verbosity
+		& dotnet clean $source_dir\exclude-maui.slnf -nologo -v $verbosity
 		}
 	exec {
-		& dotnet restore $source_dir\$projectName.sln -nologo --interactive -v $verbosity  
+		& dotnet restore $source_dir\exclude-maui.slnf -nologo --interactive -v $verbosity  
 		}
     
 
