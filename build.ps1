@@ -50,7 +50,7 @@ Function Init {
 
 Function Compile{
 	exec {
-		& dotnet build $source_dir\$projectName.sln -nologo --no-restore -v `
+		& dotnet build $source_dir\exclude-maui.slnf -nologo --no-restore -v `
 			$verbosity -maxcpucount --configuration $projectConfig --no-incremental `
 			/p:TreatWarningsAsErrors="true" `
 			/p:Version=$version /p:Authors="Programming with Palermo" `
