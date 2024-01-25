@@ -310,7 +310,7 @@ stages:
 - stage: 'PlayStore'
   displayName: 'PlayStore'  
   dependsOn: []
-  condition: eq(variables['PlayStoreDeploy'], 'true')
+  # condition: eq(variables['PlayStoreDeploy'], 'true')
   jobs: 
     - deployment: 'DeployToPlayStore'
       pool:
