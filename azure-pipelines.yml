@@ -305,7 +305,7 @@ stages:
 
 - stage: 'PlayStore'
   displayName: 'PlayStore'  
-  dependsOn: []
+  dependsOn: Production
   jobs: 
     - job: 'DeployToPlayStore'
       displayName: 'DeployToPlayStore'
