@@ -324,7 +324,16 @@ stages:
           secureFile: 'release.keystore'  
         name: 'keystore'
 
+      - task: Bash@3
+        displayName: Install MAUI
+        inputs:
+          targetType: 'inline'
+          script: |
+            dotnet nuget locals all --clear 
+            dotnet workload install maui android ios
+
       - task: AzureCLI@2
+        displayName: Set up env vars
         inputs:
           azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
           scriptType: 'ps'
@@ -375,31 +384,23 @@ stages:
           track: 'internal'
           userFraction: '1.0'
 
-      - task: Bash@3
-        displayName: Install MAUI
-        inputs:
-          targetType: 'inline'
-          script: |
-            dotnet nuget locals all --clear 
-            dotnet workload install maui android ios
+      # - task: DownloadPackage@1
+      #   displayName: 'Download Maui Package'
+      #   inputs:
+      #     packageType: 'nuget'
+      #     feed: '$(FeedName)'
+      #     view: 'Local'
+      #     definition: 'ChurchBulletin.Maui'
+      #     version: '$(Build.BuildNumber)'
+      #     downloadPath: '$(System.DefaultWorkingDirectory)/build'
+      #     extract: true
 
-      - task: DownloadPackage@1
-        displayName: 'Download Maui Package'
-        inputs:
-          packageType: 'nuget'
-          feed: '$(FeedName)'
-          view: 'Local'
-          definition: 'ChurchBulletin.Maui'
-          version: '$(Build.BuildNumber)'
-          downloadPath: '$(System.DefaultWorkingDirectory)/build'
-          extract: true
-
-      - task: GooglePlayRelease@4
-        displayName: 'Publish to Google Play'
-        inputs:
-          applicationId: 'com.companyname.ui.maui'
-          serviceConnection: 'GooglePlay'
-          action: 'SingleBundle'
-          bundleFile: '$(System.DefaultWorkingDirectory)\build\*-Signed.aab'
-          track: 'internal'
-          userFraction: '1.0'
+      # - task: GooglePlayRelease@4
+      #   displayName: 'Publish to Google Play'
+      #   inputs:
+      #     applicationId: 'com.companyname.ui.maui'
+      #     serviceConnection: 'GooglePlay'
+      #     action: 'SingleBundle'
+      #     bundleFile: '$(System.DefaultWorkingDirectory)\build\*-Signed.aab'
+      #     track: 'internal'
+      #     userFraction: '1.0'
