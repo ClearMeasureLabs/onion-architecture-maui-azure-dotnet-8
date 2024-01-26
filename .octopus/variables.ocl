@@ -228,11 +228,11 @@ variable "DatabaseServerName" {
 }
 
 variable "EnsureEnvironmentsExist" {
-    value "False" {
-        environment = ["uat"]
+    value "True" {
+        environment = ["prod"]
     }
 
     value "True" {
-        environment = ["prod"]
+        environment = ["uat"]
     }
 }
