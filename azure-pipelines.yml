@@ -324,13 +324,13 @@ stages:
           secureFile: 'release.keystore'  
         name: 'keystore'
 
-      - task: Bash@3
-        displayName: Install MAUI
-        inputs:
-          targetType: 'inline'
-          script: |
-            dotnet nuget locals all --clear 
-            dotnet workload install maui android ios
+      # - task: Bash@3
+      #   displayName: Install MAUI
+      #   inputs:
+      #     targetType: 'inline'
+      #     script: |
+      #       dotnet nuget locals all --clear 
+      #       dotnet workload install maui android ios
 
       - task: AzureCLI@2
         displayName: Set up env vars
