@@ -52,7 +52,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.Wpf", "UI.Wpf\UI.Wpf.csp
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "UI.Wpf.Install", "UI.Wpf.Install\UI.Wpf.Install.wapproj", "{BF394FED-6BBC-4CFB-BE82-CC89CC01D8E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI.Shared", "UI.Shared\UI.Shared.csproj", "{66B452FC-D12A-42A9-80E9-FC97074AC2B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.Shared", "UI.Shared\UI.Shared.csproj", "{66B452FC-D12A-42A9-80E9-FC97074AC2B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
