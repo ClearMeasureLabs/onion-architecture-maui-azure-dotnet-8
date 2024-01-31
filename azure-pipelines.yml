@@ -407,7 +407,7 @@ stages:
 
 - stage: 'AmazonAppStore'
   displayName: 'AmazonAppStore'  
-  dependsOn: Production
+  dependsOn: []
   jobs: 
     - job: 'DeployToAmazonStore'
       displayName: 'DeployToAmazonStore'
@@ -426,28 +426,28 @@ stages:
           secureFile: 'release.keystore'  
         name: 'keystore'
 
-      - task: AzureCLI@2
-        displayName: Set up env vars
-        inputs:
-          azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
-          scriptType: 'ps'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            az config set extension.use_dynamic_install=yes_without_prompt
-            $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
-            $prodURL = $prodURL -replace '"', ''
-            $prodURL = "https://$prodURL"
-            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
-            $splitVersion = $env:Version -split "\."
-            $stringVer = $splitVersion[-1]
-            $intVer = [int]$stringVer
-            Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
+      # - task: AzureCLI@2
+      #   displayName: Set up env vars
+      #   inputs:
+      #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+      #     scriptType: 'ps'
+      #     scriptLocation: 'inlineScript'
+      #     inlineScript: |
+      #       az config set extension.use_dynamic_install=yes_without_prompt
+      #       $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
+      #       $prodURL = $prodURL -replace '"', ''
+      #       $prodURL = "https://$prodURL"
+      #       [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+      #       $splitVersion = $env:Version -split "\."
+      #       $stringVer = $splitVersion[-1]
+      #       $intVer = [int]$stringVer
+      #       Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
 
-            $appSettingsPath = "./src/UI/Maui/appsettings.json"
-            $appSettings = Get-Content $appSettingsPath | ConvertFrom-Json
-            $appSettings.BaseAddress = $prodURL
-            $json = $appSettings | ConvertTo-Json
-            Set-Content -Path $appSettingsPath -Value $json
+      #       $appSettingsPath = "./src/UI/Maui/appsettings.json"
+      #       $appSettings = Get-Content $appSettingsPath | ConvertFrom-Json
+      #       $appSettings.BaseAddress = $prodURL
+      #       $json = $appSettings | ConvertTo-Json
+      #       Set-Content -Path $appSettingsPath -Value $json
 
       - task: DotNetCoreCLI@2
         displayName: 'Build and sign Android target'
