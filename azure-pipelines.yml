@@ -162,16 +162,16 @@ stages:
             #     DeploymentProgress: true
             #     AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDD-Resource-Group) --variable=container_app_name:$(TDD-App-Name)' 
 
-            # - task: AzureCLI@2
-            #   inputs:
-            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
-            #     scriptType: 'ps'
-            #     scriptLocation: 'inlineScript'
-            #     inlineScript: |
-            #       az config set extension.use_dynamic_install=yes_without_prompt
-            #       $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
-            #       $containerAppURL = $containerAppURL -replace '"', ''
-            #       [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az config set extension.use_dynamic_install=yes_without_prompt
+                  $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
+                  $containerAppURL = $containerAppURL -replace '"', ''
+                  [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
 
             - task: DownloadPackage@1
               displayName: 'Download Acceptance Test Package'
