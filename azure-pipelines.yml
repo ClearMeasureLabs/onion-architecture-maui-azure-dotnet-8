@@ -473,7 +473,11 @@ stages:
           clientId: $(AmazonStoreClientID)
           clientSecret: $(AmazonStoreClientSecret)
           appId: $(AmazonAppID)
-
+      - task: AmazonAppStoreEditTask@0
+        inputs:
+          appId: '$(AmazonAppID)'
+          language: 'en-US'
+          
       - task: AmazonAppStoreReplaceApkTask@0
         inputs:
           appId: $(AmazonAppID)
