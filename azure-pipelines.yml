@@ -124,6 +124,7 @@ stages:
 #DeploytoTDD should be a second stage
 - stage: 'TDD'
   displayName: 'TDD'
+  dependsOn: []
   jobs: 
     - deployment: 'DeployToTDD'
       pool:
@@ -133,7 +134,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
       - name: TDD-Resource-Group
-        value: onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber)
+        value: onion-architecture-maui-azure-dotnet-8-TDD-1.1.198
       - name: TDD-App-Name
         value: tdd-ui 
       environment: 'TDD'
@@ -142,24 +143,24 @@ stages:
           deploy:
             steps:
 
-            - task: OctoInstaller@5
-              displayName: 'Install octo cli tools on Windows agent'
-              inputs:
-                version: '*'
+            # - task: OctoInstaller@5
+            #   displayName: 'Install octo cli tools on Windows agent'
+            #   inputs:
+            #     version: '*'
 
-            - task: OctopusCreateRelease@5
-              name: 'CreateRelease'
-              inputs:
-                OctoConnectedServiceName: 'octoServiceConnection'
-                Space: '$(OctoSpace)'
-                ProjectGroup: '$(OctoProjectGroup)'
-                ProjectName: '$(OctoProjectName)'
-                ReleaseNumber: '$(Build.BuildNumber)'
-                Channel: 'Default'
-                GitRef: '$(branch)'
-                DeployToEnvironment: 'TDD'
-                DeploymentProgress: true
-                AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDD-Resource-Group) --variable=container_app_name:$(TDD-App-Name)' 
+            # - task: OctopusCreateRelease@5
+            #   name: 'CreateRelease'
+            #   inputs:
+            #     OctoConnectedServiceName: 'octoServiceConnection'
+            #     Space: '$(OctoSpace)'
+            #     ProjectGroup: '$(OctoProjectGroup)'
+            #     ProjectName: '$(OctoProjectName)'
+            #     ReleaseNumber: '$(Build.BuildNumber)'
+            #     Channel: 'Default'
+            #     GitRef: '$(branch)'
+            #     DeployToEnvironment: 'TDD'
+            #     DeploymentProgress: true
+            #     AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDD-Resource-Group) --variable=container_app_name:$(TDD-App-Name)' 
 
             - task: AzureCLI@2
               inputs:
@@ -182,6 +183,14 @@ stages:
                 version: '$(Build.BuildNumber)'
                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
                 extract: true
+
+            - task: PowerShell@2
+              displayName: Build.ps1
+              inputs:
+                targetType: filePath
+                filePath: ./net8.0/playwright.ps1
+                arguments: 'install'
+
 
             - task: VSTest@2
               displayName: 'VsTest - AcceptanceTests'
