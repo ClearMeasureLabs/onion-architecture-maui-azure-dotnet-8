@@ -184,12 +184,11 @@ stages:
                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
                 extract: true
 
-            - task: PowerShell@2
-              displayName: Build.ps1
-              inputs:
-                targetType: inline
-                  script: |
-                  Get-Location
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                Get-Location
 
             - task: PowerShell@2
               displayName: Build.ps1
