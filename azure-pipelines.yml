@@ -473,7 +473,12 @@ stages:
           clientId: $(AmazonStoreClientID)
           clientSecret: $(AmazonStoreClientSecret)
           appId: 'com.companyname.ui.cmmaui'
-        
+
+      - task: AmazonAppStoreReplaceApkTask@0
+        inputs:
+          appId: 'com.companyname.ui.cmmaui'
+          apkFilePath: './build/*-Signed.apk'
+
       - task: AmazonAppStoreCommitTask@0
         inputs:
           appId: 'com.companyname.ui.cmmaui'
