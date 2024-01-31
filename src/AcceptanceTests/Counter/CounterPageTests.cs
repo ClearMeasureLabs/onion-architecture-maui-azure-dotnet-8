@@ -1,7 +1,7 @@
 ﻿using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests
+namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Counter
 {
     [Parallelizable(ParallelScope.Self)]
     [TestFixture]
