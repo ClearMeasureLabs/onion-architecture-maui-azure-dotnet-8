@@ -472,13 +472,13 @@ stages:
         inputs:
           clientId: $(AmazonStoreClientID)
           clientSecret: $(AmazonStoreClientSecret)
-          appId: 'amzn1.devportal.mobileapp.06aa51500a8f4463affd4c5c5c8f6de2'
+          appId: $(AmazonAppID)
 
       - task: AmazonAppStoreReplaceApkTask@0
         inputs:
-          appId: 'com.companyname.ui.cmmaui'
-          apkFilePath: './build/*-Signed.apk'
+          appId: $(AmazonAppID)
+          apkFilePath: './build/com.companyname.ui.cmmaui-Signed.apk'
 
       - task: AmazonAppStoreCommitTask@0
         inputs:
-          appId: 'com.companyname.ui.cmmaui'
+          appId: $(AmazonAppID)
