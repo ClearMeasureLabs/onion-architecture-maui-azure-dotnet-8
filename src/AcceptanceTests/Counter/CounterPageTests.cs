@@ -31,14 +31,21 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Counter
 
             var button = Page.GetByRole(AriaRole.Button, new() { Name = "Click me" });
 
+            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+            await TakeScreenshotAsync(10, TestContext.CurrentContext.Test.FullName, "Arrange");
+
             // Act
             for (int i = 0; i < numberOfClicks; i++)
             {
                 await button.ClickAsync();
+                await TakeScreenshotAsync(20 + i, TestContext.CurrentContext.Test.FullName, "Act");
             }
 
             // Assert
             var totalCount = Page.GetByRole(AriaRole.Status);
+
+            await TakeScreenshotAsync(30, TestContext.CurrentContext.Test.FullName, "Assert");
 
             await Expect(totalCount).ToContainTextAsync($"{expectedCount}");
         }
@@ -58,6 +65,18 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Counter
             {
                 BaseURL = $"https://{Environment.GetEnvironmentVariable("containerAppURL", EnvironmentVariableTarget.User)}"
             };
+        }
+
+        private async Task TakeScreenshotAsync(int stepNumber, string testName, string stepName)
+        {
+            var fileName = $"{testName}-{stepNumber}-{stepName}.png";
+
+            await Page.ScreenshotAsync(new()
+            {
+                Path = fileName
+            });
+            
+            TestContext.AddTestAttachment(Path.GetFullPath(fileName));
         }
     }
 }
