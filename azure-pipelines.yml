@@ -468,5 +468,12 @@ stages:
             Write-Output "build:"
             Get-ChildItem -Path ./build -File
 
-
+      - task: AmazonAppStorePrepareTask@0
+        inputs:
+          clientId: $(AmazonStoreClientID)
+          clientSecret: $(AmazonStoreClientSecret)
+          appId: 'com.companyname.ui.cmmaui'
         
+      - task: AmazonAppStoreCommitTask@0
+        inputs:
+          appId: 'com.companyname.ui.cmmaui'
