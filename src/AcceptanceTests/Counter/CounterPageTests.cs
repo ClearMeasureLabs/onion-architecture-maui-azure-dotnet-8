@@ -33,19 +33,19 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Counter
 
             await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-            await TakeScreenshotAsync(10, TestContext.CurrentContext.Test.FullName, "Arrange");
+            await TakeScreenshotAsync(10, TestContext.CurrentContext.Test.Name, "Arrange");
 
             // Act
             for (int i = 0; i < numberOfClicks; i++)
             {
                 await button.ClickAsync();
-                await TakeScreenshotAsync(20 + i, TestContext.CurrentContext.Test.FullName, "Act");
+                await TakeScreenshotAsync(20 + i, TestContext.CurrentContext.Test.Name, "Act");
             }
 
             // Assert
             var totalCount = Page.GetByRole(AriaRole.Status);
 
-            await TakeScreenshotAsync(30, TestContext.CurrentContext.Test.FullName, "Assert");
+            await TakeScreenshotAsync(30, TestContext.CurrentContext.Test.Name, "Assert");
 
             await Expect(totalCount).ToContainTextAsync($"{expectedCount}");
         }
