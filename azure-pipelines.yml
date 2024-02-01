@@ -477,6 +477,7 @@ stages:
         inputs:
           appId: '$(AmazonAppID)'
           language: 'en'
+          recentChanges: "Version bump to test automated publish"
           
       - task: AmazonAppStoreReplaceApkTask@0
         inputs:
