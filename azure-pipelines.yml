@@ -197,6 +197,39 @@ stages:
                 testRunTitle: 'Acceptance Tests'
                 diagnosticsEnabled: True
 
+
+- stage: 'UAT'
+  displayName: 'UAT'
+  dependsOn: TDD
+  jobs: 
+    - deployment: 'DeployToUAT'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+      environment: 'UAT'  
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+
+            - task: OctoInstaller@5
+              displayName: 'Install octo cli tools on Windows agent'
+              inputs:
+                version: '*'
+
+            - task: OctopusDeployRelease@5
+              name: deploytoUAT
+              inputs:
+                OctoConnectedServiceName: 'octoServiceConnection'
+                Space: '$(OctoSpace)'
+                ProjectGroup: '$(OctoProjectGroup)'
+                Project: '$(OctoProjectName)'
+                ReleaseNumber: '$(Build.BuildNumber)'
+                Environments: 'UAT'
+                ShowProgress: true
+                AdditionalArguments: '--deploymenttimeout=00:30:00'
+          
 - stage: 'DeleteTDD'
   displayName: 'DeleteTDD'
   dependsOn: TDD
@@ -238,41 +271,9 @@ stages:
                 inlineScript: |
                   az group delete -n $(TDD-Resource-Group) --yes
 
-- stage: 'UAT'
-  displayName: 'UAT'
-  dependsOn: TDD
-  jobs: 
-    - deployment: 'DeployToUAT'
-      pool:
-        vmImage: 'windows-latest'
-      variables:
-        - group: Integration-Build    
-      environment: 'UAT'  
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-
-            - task: OctoInstaller@5
-              displayName: 'Install octo cli tools on Windows agent'
-              inputs:
-                version: '*'
-
-            - task: OctopusDeployRelease@5
-              name: deploytoUAT
-              inputs:
-                OctoConnectedServiceName: 'octoServiceConnection'
-                Space: '$(OctoSpace)'
-                ProjectGroup: '$(OctoProjectGroup)'
-                Project: '$(OctoProjectName)'
-                ReleaseNumber: '$(Build.BuildNumber)'
-                Environments: 'UAT'
-                ShowProgress: true
-                AdditionalArguments: '--deploymenttimeout=00:30:00'
-          
-
 - stage: 'Production'
   displayName: 'Prod'  
+  dependsOn: UAT
   jobs: 
     - deployment: 'DeployToProd'
       pool:
