@@ -19,8 +19,8 @@
         <ApplicationId>com.companyname.ui.cmmaui</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>2</ApplicationDisplayVersion>
-        <ApplicationVersion>2</ApplicationVersion>
+        <ApplicationDisplayVersion>$(IntegerVersion)</ApplicationDisplayVersion>
+        <ApplicationVersion>$(IntegerVersion)</ApplicationVersion>
 
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
