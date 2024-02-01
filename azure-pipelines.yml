@@ -476,7 +476,7 @@ stages:
       - task: AmazonAppStoreEditTask@0
         inputs:
           appId: '$(AmazonAppID)'
-          language: 'en-US'
+          language: 'en'
           
       - task: AmazonAppStoreReplaceApkTask@0
         inputs:
