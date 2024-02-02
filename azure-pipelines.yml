@@ -258,24 +258,11 @@ stages:
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
       - name: TDD-Resource-Group
         value: onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber)
-      - name: TDD-App-Name
-        value: tdd-ui 
       environment: 'TDD'
       strategy:
         runOnce:
           deploy:
             steps:
-
-            - task: AzureCLI@2
-              inputs:
-                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
-                scriptType: 'ps'
-                scriptLocation: 'inlineScript'
-                inlineScript: |
-                  az config set extension.use_dynamic_install=yes_without_prompt
-                  $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
-                  $containerAppURL = $containerAppURL -replace '"', ''
-                  [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
 
             - task: AzureCLI@2
               displayName: 'Delete TDD Resources'
