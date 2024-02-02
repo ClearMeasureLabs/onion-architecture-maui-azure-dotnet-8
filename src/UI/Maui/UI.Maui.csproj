@@ -16,7 +16,7 @@
         <ApplicationTitle>UI.Maui</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.ui.cmmaui</ApplicationId>
+        <ApplicationId>com.companyname.ui.maui</ApplicationId>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>$(IntegerVersion)</ApplicationDisplayVersion>
