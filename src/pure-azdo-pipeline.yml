@@ -1,0 +1,93 @@
+trigger:
+    - "*"
+    
+variables:
+    major: 1
+    minor: 1
+name: $(major).$(minor).$(Rev:r)
+
+stages:
+- stage: 'Integration_Build'
+  displayName: 'Build Application'
+
+  jobs:
+    - job: 'Build'
+      displayName: 'Build job'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Integration-build
+      steps:
+      - task: UseDotNet@2
+        displayName: 'Install SDK 8.0.100'
+        inputs:
+          packageType: 'sdk'
+          version: '8.0.100'
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'runtime'
+          version: '6.0.0'
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'runtime'
+          version: '8.0.0'
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+            echo $env:Version
+            echo $(Build.BuildNumber)
+      - task: PowerShell@2
+        displayName: Build.ps1
+        inputs:
+          targetType: filePath
+          filePath: ./build.ps1
+          arguments: '; CIBuild'
+      - task: PublishTestResults@2
+        displayName: 'Publish Test Results ./build/test/*.trx'
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: 'build/test/**/*.trx'
+          mergeTestResults: true
+          testRunTitle: 'CI Tests'
+        continueOnError: true
+        condition: succeededOrFailed()
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish code coverage UnitTests'
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
+      - task: NuGetCommand@2
+        inputs:
+          command: 'push'
+          packagesToPush: '.\build\*.nupkg'
+          publishVstsFeed: '$(FeedName)'
+
+    - job: 'DockerBuildandPush'
+      pool:
+        vmImage: 'ubuntu-latest'
+      variables:
+        - group: Integration-Build
+      dependsOn: Build
+ 
+      steps:
+      - task: DownloadPackage@1
+        displayName: 'Download UI Package'
+        inputs:
+          packageType: 'nuget'
+          feed: '$(FeedName)'
+          view: 'Local'
+          definition: 'ChurchBulletin.UI'
+          version: '$(Build.BuildNumber)'
+          downloadPath: '$(System.DefaultWorkingDirectory)/built'
+          extract: true
+
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'OnionArchACRServiceConnection'
+          repository: 'ChurchBulletin.UI'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: |
+            $(Build.BuildNumber)
