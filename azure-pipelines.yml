@@ -498,7 +498,7 @@ stages:
       - task: AmazonAppStoreReplaceApkTask@0
         inputs:
           appId: $(AmazonAppID)
-          apkFilePath: './build/com.companyname.ui.cmmaui-Signed.apk'
+          apkFilePath: './build/com.companyname.ui.maui-Signed.apk'
 
       - task: AmazonAppStoreCommitTask@0
         inputs:
