@@ -62,7 +62,7 @@ stages:
         inputs:
           command: 'push'
           packagesToPush: '.\build\*.nupkg'
-          publishVstsFeed: '$(FeedName)'
+          publishVstsFeed: '$(AzDOFeedName)'
 
     - job: 'DockerBuildandPush'
       pool:
@@ -76,7 +76,7 @@ stages:
         displayName: 'Download UI Package'
         inputs:
           packageType: 'nuget'
-          feed: '$(FeedName)'
+          feed: '$(AzDOFeedName)'
           view: 'Local'
           definition: 'ChurchBulletin.UI'
           version: '$(Build.BuildNumber)'
