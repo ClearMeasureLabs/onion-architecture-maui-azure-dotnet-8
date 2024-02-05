@@ -16,7 +16,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: Integration-build
+      - group: AzDO-Integration-Build
       steps:
       - task: UseDotNet@2
         displayName: 'Install SDK 8.0.100'
@@ -62,13 +62,13 @@ stages:
         inputs:
           command: 'push'
           packagesToPush: '.\build\*.nupkg'
-          publishVstsFeed: '$(FeedName)'
+          publishVstsFeed: '$(AzDOFeedName)'
 
     - job: 'DockerBuildandPush'
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        - group: Integration-Build
+        - group: AzDO-Integration-Build
       dependsOn: Build
  
       steps:
@@ -76,7 +76,7 @@ stages:
         displayName: 'Download UI Package'
         inputs:
           packageType: 'nuget'
-          feed: '$(FeedName)'
+          feed: '$(AzDOFeedName)'
           view: 'Local'
           definition: 'ChurchBulletin.UI'
           version: '$(Build.BuildNumber)'
