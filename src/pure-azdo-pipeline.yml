@@ -16,7 +16,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: AzDO-Integration-Build
+      - group: Integration-Build
       steps:
       - task: UseDotNet@2
         displayName: 'Install SDK 8.0.100'
