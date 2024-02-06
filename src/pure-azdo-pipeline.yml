@@ -16,7 +16,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: Pure-Azure-Build
+      - group: Integration-Build
       steps:
       # Dependencies
       - task: UseDotNet@2
@@ -38,9 +38,7 @@ stages:
           targetType: 'inline'
           script: |
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
-            [System.Environment]::SetEnvironmentVariable('DatabaseAction', '$(DatabaseAction)')
             echo $env:Version
-            echo $env:DatabaseAction
             echo $(Build.BuildNumber)
 
       - task: PowerShell@2
@@ -81,7 +79,7 @@ stages:
         displayName: 'Download UI Package'
         inputs:
           packageType: 'nuget'
-          feed: '$(AzDOFeedName)'
+          feed: '$(AzureFeedName)'
           view: 'Local'
           definition: 'ChurchBulletin.UI'
           version: '$(Build.BuildNumber)'
