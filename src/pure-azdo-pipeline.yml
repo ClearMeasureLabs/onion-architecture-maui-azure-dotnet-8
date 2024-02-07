@@ -117,7 +117,7 @@ stages:
             - task: AzureCLI@2
               displayName: 'Create resource group'
               inputs:
-                azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+                azureSubscription: 'onion-architecture-maui-dotnet-8-azdo'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
