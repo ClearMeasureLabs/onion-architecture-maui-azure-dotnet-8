@@ -135,6 +135,7 @@ stages:
             - task: AzureResourceGroupDeployment@2
               displayName: 'Create database resource in Azure'
               inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Database/DatabaseARM.json
