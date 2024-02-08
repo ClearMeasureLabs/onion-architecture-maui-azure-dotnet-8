@@ -114,7 +114,7 @@ stages:
           deploy:
             steps:
 
-            - checkout: '$(branch)'
+            - checkout: self
 
             - task: AzureCLI@2
               displayName: 'Create resource group'
