@@ -108,10 +108,13 @@ stages:
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
         value: '$(ResourceGroupName)-TDD-$(Build.BuildNumber)'
+      environment: 'TDD'
       strategy:
         runOnce:
           deploy:
             steps:
+
+            - checkout: self
 
             - task: AzureCLI@2
               displayName: 'Create resource group'
@@ -120,8 +123,4 @@ stages:
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
-
-            # - task: AzureResourceGroupDeployment@2
-            #   displayName: 'Create database'
-            #   inputs:
      
