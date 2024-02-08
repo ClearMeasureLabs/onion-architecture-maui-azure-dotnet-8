@@ -114,12 +114,12 @@ stages:
           deploy:
             steps:
 
-            - checkout: self
+            - checkout: $(branch)
 
             - task: AzureCLI@2
               displayName: 'Create resource group'
               inputs:
-                azureSubscription: 'onion-architecture-maui-dotnet-8-azdo'
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
