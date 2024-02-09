@@ -132,17 +132,33 @@ stages:
                   Get-Location
                   Get-ChildItem
 
-            - task: AzureResourceGroupDeployment@2
-              displayName: 'Create database resource in Azure'
+            - task: AzureCLI@2
+              displayName: 'Log info'
               inputs:
                 azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-                resourceGroupName: $(TDDResourceGroup)
-                location: $(AzureLocation)
-                csmFile: src/Database/DatabaseARM.json
-                overrideParameters: -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: az account show
+
+            # - task: AzureResourceGroupDeployment@2
+            #   displayName: 'Create database resource in Azure'
+            #   inputs:
+            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+            #     resourceGroupName: $(TDDResourceGroup)
+            #     location: $(AzureLocation)
+            #     csmFile: src/Database/DatabaseARM.json
+            #     overrideParameters: -databaseserverName -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
 
             # - task: PowerShell@2
             #   displayName: 'Create database schema'
             #   inputs:
             #     targetType: filePath
             #     filePath: src/Database/UpdateAzureSql.ps1
+
+            # - task: PowerShell@2
+            #   displayName: 'Get database connection string'
+            #   inputs: |
+            #     $connstring = az sql db show-connection-string --server $DatabaseServerName --name $DatabaseName --client ado.net
+            #     $connstring = $connstring -replace '<username>', $(DatabaseUserTest) -replace '<password>', $(DatabasePasswordTest) -replace '"', ''\
+            #     Write-Host $connstring
+                
