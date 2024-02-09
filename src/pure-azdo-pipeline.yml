@@ -138,7 +138,7 @@ stages:
                 azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
-                inlineScript: az group show
+                inlineScript: az group show --name Octopus-Onion-Containers
 
             # - task: AzureResourceGroupDeployment@2
             #   displayName: 'Create database resource in Azure'
