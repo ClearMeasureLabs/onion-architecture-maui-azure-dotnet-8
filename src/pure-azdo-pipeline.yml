@@ -138,7 +138,7 @@ stages:
                 azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
-                inlineScript: az account show
+                inlineScript: az group show
 
             # - task: AzureResourceGroupDeployment@2
             #   displayName: 'Create database resource in Azure'
