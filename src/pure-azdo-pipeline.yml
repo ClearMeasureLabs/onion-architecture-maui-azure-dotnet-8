@@ -2,6 +2,7 @@ trigger:
     - "*"
     
 variables:
+    subscriptionId: 7077ad68-92ba-412e-9bf8-67eb78f9481b
     major: 1
     minor: 1
 name: $(major).$(minor).$(Rev:r)
@@ -131,16 +132,15 @@ stages:
                 script: |
                   Get-Location
                   Get-ChildItem
-                  Write-Output "Container Id - $(Build.ContainerId)"
 
-            # - task: AzureResourceGroupDeployment@2
-            #   displayName: 'Create database resource in Azure'
-            #   inputs:
-            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-            #     resourceGroupName: $(TDDResourceGroup)
-            #     location: $(AzureLocation)
-            #     csmFile: src/Database/DatabaseARM.json
-            #     overrideParameters: -databaseserverName -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'Create database resource in Azure'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                resourceGroupName: $(TDDResourceGroup)
+                location: $(AzureLocation)
+                csmFile: src/Database/DatabaseARM.json
+                overrideParameters: -databaseserverName $(subscriptionId)-dotnet8-tdd-$(Build.BuildNumber) -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
 
             # - task: PowerShell@2
             #   displayName: 'Create database schema'
