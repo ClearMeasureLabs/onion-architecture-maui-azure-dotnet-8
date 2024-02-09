@@ -140,7 +140,7 @@ stages:
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Database/DatabaseARM.json
-                overrideParameters: -databaseserverName $(subscriptionId)-dotnet8-tdd-$(Build.BuildNumber) -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
+                overrideParameters: -databaseserverName $(subscriptionId)-dotnet8-tdd -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
 
             # - task: PowerShell@2
             #   displayName: 'Create database schema'
