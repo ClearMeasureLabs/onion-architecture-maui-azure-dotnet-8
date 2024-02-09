@@ -131,14 +131,7 @@ stages:
                 script: |
                   Get-Location
                   Get-ChildItem
-
-            - task: AzureCLI@2
-              displayName: 'Log info'
-              inputs:
-                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-                scriptType: 'ps'
-                scriptLocation: 'inlineScript'
-                inlineScript: az group show --name Octopus-Onion-Containers
+                  Write-Output "Container Id - $(Build.ContainerId)"
 
             # - task: AzureResourceGroupDeployment@2
             #   displayName: 'Create database resource in Azure'
