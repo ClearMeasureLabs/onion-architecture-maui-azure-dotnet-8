@@ -146,7 +146,7 @@ stages:
               displayName: 'Create database schema'
               inputs:
                 targetType: filePath
-                filePath: src/Database/UpdateAzurePipelineSql.ps1
+                filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
                 arguments: -DatabaseServer '$(subscriptionId-dotnet8-tdd.database.windows.net)' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
 
             # - task: PowerShell@2
