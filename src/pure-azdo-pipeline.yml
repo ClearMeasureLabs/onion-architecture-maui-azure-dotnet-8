@@ -142,11 +142,12 @@ stages:
                 csmFile: src/Database/DatabaseARM.json
                 overrideParameters: -databaseserverName $(subscriptionId)-dotnet8-tdd -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
 
-            # - task: PowerShell@2
-            #   displayName: 'Create database schema'
-            #   inputs:
-            #     targetType: filePath
-            #     filePath: src/Database/UpdateAzureSql.ps1
+            - task: PowerShell@2
+              displayName: 'Create database schema'
+              inputs:
+                targetType: filePath
+                filePath: src/Database/UpdateAzurePipelineSql.ps1
+                arguments: -DatabaseServer '$(subscriptionId-dotnet8-tdd.database.windows.net)' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
 
             # - task: PowerShell@2
             #   displayName: 'Get database connection string'
