@@ -149,12 +149,17 @@ stages:
                 filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
                 arguments: -DatabaseServer '$(subscriptionId-dotnet8-tdd.database.windows.net)' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
 
-            - task: PowerShell@2
+            - task: AzureCLI@2
               displayName: 'Get database connection string'
-              inputs: |
-                $connstring = az sql db show-connection-string --server $DatabaseServerName --name $DatabaseName --client ado.net
-                $connstring = $connstring -replace '<username>', $(DatabaseUserTest) -replace '<password>', $(DatabasePasswordTest) -replace '"', ''\
-                Write-Host "##vso[task.setvariable variable=dbConnString;isOutput=true]Storing database connection string"
+              inputs: 
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript' 
+                inlineScript: |
+                  az config set extension.use_dynamic_install=yes_without_prompt
+                  $connstring = az sql db show-connection-string --server $DatabaseServerName --name $DatabaseName --client ado.net
+                  $connstring = $connstring -replace '<username>', $(DatabaseUserTest) -replace '<password>', $(DatabasePasswordTest) -replace '"', ''\
+                  Write-Host "##vso[task.setvariable variable=dbConnString;isOutput=true]Storing database connection string"
 
             # - task: AzureResourceGroupDeployment@2
             #   displayName: 'Create container app environment'
