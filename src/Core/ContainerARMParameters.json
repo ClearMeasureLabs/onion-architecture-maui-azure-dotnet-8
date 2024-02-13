@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "containerappName": {
+      "value": "#{container_app_name}"
+    },
+    "location": {
+      "value": "#{az_location}"
+    },
+    "environment_name": {
+      "value": "#{container_app_environment_name}"
+    },
+    "container_image": {
+      "value": "#{container_image}"
+    },
+    "registry_password": {
+      "value": "#{az_login_appkey}"
+    },
+    "connection_string": {
+      "value": "#{connection_string}"
+    },
+    "http_port": {
+      "value": "#{http_port}"
+    }
+  }
+}

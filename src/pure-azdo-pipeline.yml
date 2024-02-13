@@ -149,10 +149,28 @@ stages:
                 filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
                 arguments: -DatabaseServer '$(subscriptionId-dotnet8-tdd.database.windows.net)' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
 
-            # - task: PowerShell@2
-            #   displayName: 'Get database connection string'
-            #   inputs: |
-            #     $connstring = az sql db show-connection-string --server $DatabaseServerName --name $DatabaseName --client ado.net
-            #     $connstring = $connstring -replace '<username>', $(DatabaseUserTest) -replace '<password>', $(DatabasePasswordTest) -replace '"', ''\
-            #     Write-Host $connstring
+            - task: PowerShell@2
+              displayName: 'Get database connection string'
+              inputs: |
+                $connstring = az sql db show-connection-string --server $DatabaseServerName --name $DatabaseName --client ado.net
+                $connstring = $connstring -replace '<username>', $(DatabaseUserTest) -replace '<password>', $(DatabasePasswordTest) -replace '"', ''\
+                Write-Host "##vso[task.setvariable variable=dbConnString;isOutput=true]Storing database connection string"
+
+            # - task: AzureResourceGroupDeployment@2
+            #   displayName: 'Create container app environment'
+            #   inputs:
+            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+            #     resourceGroupName: $(TDDResourceGroup)
+            #     location: $(AzureLocation)
+            #     csmFile: src/Core/ContainerEnvironmentARM.json
+            #     arguments:
+
+            # - task: AzureResourceGroupDeployment@2
+            #   displayName: 'Create container app'
+            #   inputs:
+            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+            #     resourceGroupName: $(TDDResourceGroup)
+            #     location: $(AzureLocation)
+            #     csmFile: src/Core/ContainerARM.json
+            #     arguments:
                 

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "containerappName": {
+      "defaultValue": "mycontainerapp",
+      "type": "String"
+    },
+    "location": {
+      "defaultValue": "canadacentral",
+      "type": "String"
+    },
+    "environment_name": {
+      "defaultValue": "myenvironment",
+      "type": "String"
+    },
+    "container_image": {
+      "type": "String"
+    },
+    "registry_password": {
+      "type": "SecureString"
+    },
+    "connection_string": {
+      "type": "SecureString"
+    },
+    "http_port": {
+      "type": "int"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2022-03-01",
+      "type": "Microsoft.App/containerApps",
+      "name": "[parameters('containerappName')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "None"
+      },
+      "properties": {
+        "managedEnvironmentId": "[resourceId('Microsoft.App/managedEnvironments', parameters('environment_name'))]",
+        "configuration": {
+          "secrets": [
+            {
+              "name": "registrypassword",
+              "value": "[parameters('registry_password')]"
+            }
+          ],
+          "ingress": {
+            "external": true,
+            "targetPort": "[parameters('http_port')]",
+            "allowInsecure": false,
+            "traffic": [
+              {
+                "latestRevision": true,
+                "weight": 100
+              }
+            ]
+          },
+          "registries": [
+            {
+              "server": "#{registry_login_server}",
+              "username": "#{az_login_appid}",
+              "passwordSecretRef": "registrypassword"
+            }
+          ]
+        },
+        "template": {
+          "revisionSuffix": "[uniqueString(resourceGroup().id, deployment().name)]",
+          "containers": [
+            {
+              "name": "main",
+              "image": "[parameters('container_image')]",
+              "env": [
+                {
+                  "name": "HTTP_PORT",
+                  "value": "8080"
+                },
+                {
+                  "name": "ConnectionStrings__SqlConnectionString",
+                  "value": "[parameters('connection_string')]"
+                }
+              ],
+              "resources": {
+                "cpu": 0.25,
+                "memory": "0.5Gi"
+              }
+            }
+          ],
+          "scale": {
+            "minReplicas": 0,
+            "maxReplicas": 1,
+            "rules": [
+              {
+                "name": "http-rule",
+                "http": {
+                  "metadata": {
+                    "concurrentRequests": "1"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
