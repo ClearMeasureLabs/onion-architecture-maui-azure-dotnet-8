@@ -3,7 +3,9 @@
 
 
 trigger:
-    - "*"
+  branches:
+    exclude:
+    - second-azdo-pipeline
 
 variables:
    major: 1
