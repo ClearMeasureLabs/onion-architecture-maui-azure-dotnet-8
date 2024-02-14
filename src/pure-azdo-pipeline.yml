@@ -42,59 +42,59 @@ stages:
             echo $env:Version
             echo $(Build.BuildNumber)
 
-      - task: PowerShell@2
-        displayName: Build.ps1
-        inputs:
-          targetType: filePath
-          filePath: ./build.ps1
-          arguments: '; CIBuild'
-      - task: PublishTestResults@2
-        displayName: 'Publish Test Results ./build/test/*.trx'
-        inputs:
-          testResultsFormat: VSTest
-          testResultsFiles: 'build/test/**/*.trx'
-          mergeTestResults: true
-          testRunTitle: 'CI Tests'
-        continueOnError: true
-        condition: succeededOrFailed()
-      - task: PublishCodeCoverageResults@1
-        displayName: 'Publish code coverage UnitTests'
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
-      - task: NuGetCommand@2
-        inputs:
-          command: 'push'
-          packagesToPush: '.\build\*.nupkg'
-          publishVstsFeed: '$(AzureFeedName)'
+    #   - task: PowerShell@2
+    #     displayName: Build.ps1
+    #     inputs:
+    #       targetType: filePath
+    #       filePath: ./build.ps1
+    #       arguments: '; CIBuild'
+    #   - task: PublishTestResults@2
+    #     displayName: 'Publish Test Results ./build/test/*.trx'
+    #     inputs:
+    #       testResultsFormat: VSTest
+    #       testResultsFiles: 'build/test/**/*.trx'
+    #       mergeTestResults: true
+    #       testRunTitle: 'CI Tests'
+    #     continueOnError: true
+    #     condition: succeededOrFailed()
+    #   - task: PublishCodeCoverageResults@1
+    #     displayName: 'Publish code coverage UnitTests'
+    #     inputs:
+    #       codeCoverageTool: Cobertura
+    #       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
+    #   - task: NuGetCommand@2
+    #     inputs:
+    #       command: 'push'
+    #       packagesToPush: '.\build\*.nupkg'
+    #       publishVstsFeed: '$(AzureFeedName)'
 
-    - job: 'DockerBuildandPush'
-      pool:
-        vmImage: 'ubuntu-latest'
-      variables:
-        - group: Pure-Azure-Build
-      dependsOn: Build
+    # - job: 'DockerBuildandPush'
+    #   pool:
+    #     vmImage: 'ubuntu-latest'
+    #   variables:
+    #     - group: Pure-Azure-Build
+    #   dependsOn: Build
  
-      steps:
-      - task: DownloadPackage@1
-        displayName: 'Download UI Package'
-        inputs:
-          packageType: 'nuget'
-          feed: '$(AzureFeedName)'
-          view: 'Local'
-          definition: 'ChurchBulletin.UI'
-          version: '$(Build.BuildNumber)'
-          downloadPath: '$(System.DefaultWorkingDirectory)/built'
-          extract: true
+    #   steps:
+    #   - task: DownloadPackage@1
+    #     displayName: 'Download UI Package'
+    #     inputs:
+    #       packageType: 'nuget'
+    #       feed: '$(AzureFeedName)'
+    #       view: 'Local'
+    #       definition: 'ChurchBulletin.UI'
+    #       version: '$(Build.BuildNumber)'
+    #       downloadPath: '$(System.DefaultWorkingDirectory)/built'
+    #       extract: true
 
-      - task: Docker@2
-        inputs:
-          containerRegistry: 'OnionArchACRServiceConnection'
-          repository: 'ChurchBulletin.UI'
-          command: 'buildAndPush'
-          Dockerfile: '**/Dockerfile'
-          tags: |
-            $(Build.BuildNumber)
+    #   - task: Docker@2
+    #     inputs:
+    #       containerRegistry: 'OnionArchACRServiceConnection'
+    #       repository: 'ChurchBulletin.UI'
+    #       command: 'buildAndPush'
+    #       Dockerfile: '**/Dockerfile'
+    #       tags: |
+    #         $(Build.BuildNumber)
 
 # Deploying to TDD
 - stage: 'TDD'
@@ -130,8 +130,11 @@ stages:
               inputs:
                 targetType: 'inline'
                 script: |
-                  Get-Location
-                  Get-ChildItem
+                  [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+                  $splitVersion = $env:Version -split "\."
+                  $stringVer = $splitVersion[-1]
+                  $intVer = [int]$stringVer
+                  Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
 
             - task: AzureResourceGroupDeployment@2
               displayName: 'Create database resource in Azure'
@@ -140,14 +143,14 @@ stages:
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Database/DatabaseARM.json
-                overrideParameters: -databaseserverName $(subscriptionId)-dotnet8-tdd -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
+                overrideParameters: -databaseserverName $(subscriptionId)-dotnet8-tdd-$(IntergerVersion) -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
 
             - task: PowerShell@2
               displayName: 'Create database schema'
               inputs:
                 targetType: filePath
                 filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
-                arguments: -DatabaseServer '$(subscriptionId-dotnet8-tdd.database.windows.net)' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
+                arguments: -DatabaseServer '$(subscriptionId)-dotnet8-tdd-$(IntergerVersion).database.windows.net' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
 
             - task: AzureCLI@2
               displayName: 'Get database connection string'
