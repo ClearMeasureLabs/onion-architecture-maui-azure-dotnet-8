@@ -126,7 +126,7 @@ stages:
                 inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
 
             - task: PowerShell@2
-              displayName: 'Pwsh Directory Info'
+              displayName: 'Generate version integer for database server name'
               inputs:
                 targetType: 'inline'
                 script: |
@@ -164,13 +164,14 @@ stages:
                   $connstring = $connstring -replace '<username>', '$(DatabaseUserTest)' -replace '<password>', '$(DatabasePasswordTest)' -replace '"', ''
                   Write-Host "##vso[task.setvariable variable=dbConnString;isOutput=true]Storing database connection string"
 
-            # - task: AzureResourceGroupDeployment@2
-            #   displayName: 'Create container app environment'
-            #   inputs:
-            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-            #     resourceGroupName: $(TDDResourceGroup)
-            #     location: $(AzureLocation)
-            #     csmFile: src/Core/ContainerEnvironmentARM.json
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'Create container app environment'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                resourceGroupName: $(TDDResourceGroup)
+                location: $(AzureLocation)
+                csmFile: src/Core/ContainerEnvironmentARM.json
+                overrideParameters: -location $(AzureLocation) -environmentName $(ResourceGroupName)-TDD-cae
 
             # - task: AzureResourceGroupDeployment@2
             #   displayName: 'Create container app'
