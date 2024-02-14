@@ -168,7 +168,6 @@ stages:
             #     resourceGroupName: $(TDDResourceGroup)
             #     location: $(AzureLocation)
             #     csmFile: src/Core/ContainerEnvironmentARM.json
-            #     arguments:
 
             # - task: AzureResourceGroupDeployment@2
             #   displayName: 'Create container app'
@@ -177,5 +176,4 @@ stages:
             #     resourceGroupName: $(TDDResourceGroup)
             #     location: $(AzureLocation)
             #     csmFile: src/Core/ContainerARM.json
-            #     arguments:
                 
