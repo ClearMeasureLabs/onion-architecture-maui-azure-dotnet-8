@@ -115,6 +115,15 @@ stages:
           deploy:
             steps:
 
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'Your Azure Service Connection Name'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  SUBSCRIPTION_ID=$(az account show --query id --output tsv)
+                  echo "##vso[task.setvariable variable=subscriptionId]$SUBSCRIPTION_ID"
+
             - checkout: self
 
             - task: AzureCLI@2
@@ -180,4 +189,33 @@ stages:
             #     resourceGroupName: $(TDDResourceGroup)
             #     location: $(AzureLocation)
             #     csmFile: src/Core/ContainerARM.json
+            #     overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -connection_string $(dbConnString)
+
+            # - task: AzureCLI@2
+            #   displayName: 'Get the Fully Qualified Domain Name for the container app'
+            #   inputs:
+            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+            #     scriptType: 'ps'
+            #     scriptLocation: 'inlineScript'
+            #     inlineScript:
+
+            # - task: AzureCLI@2
+            #   displayName: 'Add revision to container app'
+            #   inputs:
+            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+            #     scriptType: 'ps'
+            #     scriptLocation: 'inlineScript'
+            #     inlineScript:
+
+            # - task: PowerShell@2
+            #   displayName: 'Check version of deployed app'
+            #   inputs:
+            #     targetType: 'filePath'
+            #     filePath: src/UI/Server/CheckVersion.ps1
+
+            # - task: PowerShell@2
+            #   displayName: 'Perform healthcheck for server on container app'
+            #   inputs:
+            #     targetType: 'filePath'
+            #     filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
                 
