@@ -161,7 +161,7 @@ stages:
                 inlineScript: |
                   az config set extension.use_dynamic_install=yes_without_prompt
                   $connstring = az sql db show-connection-string --server $DatabaseServerName --name $DatabaseName --client ado.net
-                  $connstring = $connstring -replace '<username>', '$(DatabaseUserTest)' -replace '<password>', '$(DatabasePasswordTest)' -replace '"', ''\
+                  $connstring = $connstring -replace '<username>', '$(DatabaseUserTest)' -replace '<password>', '$(DatabasePasswordTest)' -replace '"', ''
                   Write-Host "##vso[task.setvariable variable=dbConnString;isOutput=true]Storing database connection string"
 
             # - task: AzureResourceGroupDeployment@2
