@@ -171,7 +171,7 @@ stages:
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Core/ContainerEnvironmentARM.json
-                overrideParameters: -location $(AzureLocation) -environmentName $(ResourceGroupName)-TDD-cae
+                overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae
 
             # - task: AzureResourceGroupDeployment@2
             #   displayName: 'Create container app'

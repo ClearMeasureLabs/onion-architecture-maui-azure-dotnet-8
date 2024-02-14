@@ -5,7 +5,7 @@
     "location": {
       "value": "#{Location}"
     },
-    "environmentName": {
+    "environment_name": {
       "value": "#{EnvironmentName}"
     }
   }
