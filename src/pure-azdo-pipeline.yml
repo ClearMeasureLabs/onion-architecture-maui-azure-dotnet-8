@@ -1,5 +1,5 @@
 trigger:
-    - "*"
+    - "secondary-azdo-pipeline"
     
 variables:
     subscriptionId: 7077ad68-92ba-412e-9bf8-67eb78f9481b
