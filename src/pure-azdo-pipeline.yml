@@ -117,7 +117,7 @@ stages:
 
             - task: AzureCLI@2
               inputs:
-                azureSubscription: 'Your Azure Service Connection Name'
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
                 scriptType: 'bash'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
