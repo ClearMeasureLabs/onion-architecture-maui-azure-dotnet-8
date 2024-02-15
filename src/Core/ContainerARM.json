@@ -25,6 +25,12 @@
     },
     "http_port": {
       "type": "int"
+    },
+    "registry_login_server": {
+      "type": "string"
+    },
+    "app_id": {
+      "type": "string"
     }
   },
   "variables": {},
@@ -59,8 +65,8 @@
           },
           "registries": [
             {
-              "server": "#{registry_login_server}",
-              "username": "#{az_login_appid}",
+              "server": "[parameters('registry_login_server')]",
+              "username": "[parameters('app_id')]",
               "passwordSecretRef": "registrypassword"
             }
           ]
