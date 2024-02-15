@@ -207,6 +207,7 @@ stages:
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Core/ContainerARM.json
+                overrideParameters: -containerappName "$(ContainerAppNameTest)" -location "$(AzureLocation)" -environment_name "$(ResourceGroupName)-TDD-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "$(ContainerRegistryPassword)" -connection_string "$(DbConnString)" -http_port "$(HttpPort)" -registry_login_server "$(RegistryLoginServer)" -app_id "$(AcrContainerAppId)"
 
             # - task: AzureCLI@2
             #   displayName: 'Get the Fully Qualified Domain Name for the container app'
@@ -216,6 +217,7 @@ stages:
             #     scriptLocation: 'inlineScript'
             #     inlineScript: |
             #       $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
+            #       Write-Host "##vso[task.setvariable variable=Fqdn]$fqdn"
 
             # - task: AzureCLI@2
             #   displayName: 'Add revision to container app'
@@ -224,6 +226,7 @@ stages:
             #     scriptType: 'ps'
             #     scriptLocation: 'inlineScript'
             #     inlineScript:
+            #       az containerapp update --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString=$(DbConnString), HTTP_PORT=$(HttpPort) 
 
             # - task: PowerShell@2
             #   displayName: 'Check version of deployed app'
