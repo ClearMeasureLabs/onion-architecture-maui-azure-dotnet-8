@@ -115,6 +115,7 @@ stages:
             steps:
 
             - task: AzureCLI@2
+              displayName: 'Query and store subscription id for unique resource name'
               inputs:
                 azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
                 scriptType: 'bash'
@@ -181,14 +182,14 @@ stages:
                 csmFile: src/Core/ContainerEnvironmentARM.json
                 overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae
 
-            # - task: AzureResourceGroupDeployment@2
-            #   displayName: 'Create container app'
-            #   inputs:
-            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-            #     resourceGroupName: $(TDDResourceGroup)
-            #     location: $(AzureLocation)
-            #     csmFile: src/Core/ContainerARM.json
-            #     overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -connection_string $(DbConnString)
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'Create container app'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                resourceGroupName: $(TDDResourceGroup)
+                location: $(AzureLocation)
+                csmFile: src/Core/ContainerARM.json
+                overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -connection_string $(DbConnString) -container_image '$(registry_login_server)/churchbulletin.ui:$(Build.BuildNumber)' -registry_password $(ContainerRegistryPassword)
 
             # - task: AzureCLI@2
             #   displayName: 'Get the Fully Qualified Domain Name for the container app'
@@ -196,7 +197,8 @@ stages:
             #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
             #     scriptType: 'ps'
             #     scriptLocation: 'inlineScript'
-            #     inlineScript:
+            #     inlineScript: |
+            #       $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
 
             # - task: AzureCLI@2
             #   displayName: 'Add revision to container app'
