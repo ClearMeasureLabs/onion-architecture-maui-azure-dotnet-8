@@ -182,6 +182,19 @@ stages:
                 csmFile: src/Core/ContainerEnvironmentARM.json
                 overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae
 
+            - task: PowerShell@2
+              displayName: 'Debug'
+              inputs:
+                targetType: 'inline'
+                script: |
+                  echo "Container app name - $(ContainerAppNameTest)"
+                  echo "Location - $(AzureLocation)"
+                  echo "Env Name - $(ResourceGroupName)-TDD-cae"
+                  echo "Container Img - $(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)"
+                  echo "Db Conn Str - $(DbConnString)"
+                  echo "Registry Pw - $(ContainerRegistryPassword)"
+                  echo "Http Port - $(HttpPort)"
+
             - task: AzureResourceGroupDeployment@2
               displayName: 'Create container app'
               inputs:
