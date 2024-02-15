@@ -15,7 +15,7 @@
       "type": "String"
     },
     "container_image": {
-      "defaultValue": "cImg",
+      "defaultValue": "onionarchitecturemauidotnet8azdo.azurecr.io/churchbulletin.ui:1.1.66",
       "type": "String"
     },
     "registry_password": {
