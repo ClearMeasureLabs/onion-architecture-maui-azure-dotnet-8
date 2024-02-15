@@ -109,6 +109,8 @@ stages:
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
         value: '$(ResourceGroupName)-TDD-$(Build.BuildNumber)'
+      - name: ContainerImage
+        value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
       environment: 'TDD'
       strategy:
         runOnce:
@@ -205,7 +207,7 @@ stages:
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Core/ContainerARM.json
-                overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -container_image '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)' -registry_password $(ContainerRegistryPassword) -connection_string $(DbConnString) -http_port $(HttpPort) -registry_login_server $(RegistryLoginServer) -app_id $(AcrContainerAppId)
+                overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -container_image $(ContainerImage) -registry_password $(ContainerRegistryPassword) -connection_string $(DbConnString) -http_port $(HttpPort) -registry_login_server $(RegistryLoginServer) -app_id $(AcrContainerAppId)
 
             # - task: AzureCLI@2
             #   displayName: 'Get the Fully Qualified Domain Name for the container app'
