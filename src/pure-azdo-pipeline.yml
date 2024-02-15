@@ -2,7 +2,6 @@ trigger:
     - "second-azdo-pipeline"
     
 variables:
-    subscriptionId: 7077ad68-92ba-412e-9bf8-67eb78f9481b
     major: 1
     minor: 1
 name: $(major).$(minor).$(Rev:r)
@@ -122,7 +121,7 @@ stages:
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   SUBSCRIPTION_ID=$(az account show --query id --output tsv)
-                  echo "##vso[task.setvariable variable=subscriptionId]$SUBSCRIPTION_ID"
+                  echo "##vso[task.setvariable variable=SubscriptionId]$SUBSCRIPTION_ID"
 
             - checkout: self
 
@@ -152,14 +151,14 @@ stages:
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Database/DatabaseARM.json
-                overrideParameters: -databaseserverName $(subscriptionId)-dotnet8-tdd-$(IntegerVersion) -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
+                overrideParameters: -databaseserverName $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
 
             - task: PowerShell@2
               displayName: 'Create database schema'
               inputs:
                 targetType: filePath
                 filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
-                arguments: -DatabaseServer '$(subscriptionId)-dotnet8-tdd-$(IntegerVersion).database.windows.net' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
+                arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-tdd-$(IntegerVersion).database.windows.net' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
 
             - task: AzureCLI@2
               displayName: 'Get database connection string'
@@ -169,9 +168,9 @@ stages:
                 scriptLocation: 'inlineScript' 
                 inlineScript: |
                   az config set extension.use_dynamic_install=yes_without_prompt
-                  $connstring = az sql db show-connection-string --server $(subscriptionId)-dotnet8-tdd-$(IntegerVersion) --name $(DatabaseNameTest) --client ado.net
+                  $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) --name $(DatabaseNameTest) --client ado.net
                   $connstring = $connstring -replace '<username>', '$(DatabaseUserTest)' -replace '<password>', '$(DatabasePasswordTest)' -replace '"', ''
-                  Write-Host "##vso[task.setvariable variable=dbConnString;isOutput=true]Storing database connection string"
+                  Write-Host "##vso[task.setvariable variable=DbConnString]Storing database connection string"
 
             - task: AzureResourceGroupDeployment@2
               displayName: 'Create container app environment'
@@ -189,7 +188,7 @@ stages:
             #     resourceGroupName: $(TDDResourceGroup)
             #     location: $(AzureLocation)
             #     csmFile: src/Core/ContainerARM.json
-            #     overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -connection_string $(dbConnString)
+            #     overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -connection_string $(DbConnString)
 
             # - task: AzureCLI@2
             #   displayName: 'Get the Fully Qualified Domain Name for the container app'
