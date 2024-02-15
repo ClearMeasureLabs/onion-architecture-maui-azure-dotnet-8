@@ -189,7 +189,7 @@ stages:
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Core/ContainerARM.json
-                overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -container_image $(registry_login_server)/churchbulletin.ui:$(Build.BuildNumber) -connection_string $(DbConnString) -registry_password $(ContainerRegistryPassword)
+                overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -container_image $(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber) -connection_string $(DbConnString) -registry_password $(ContainerRegistryPassword) -http_port $(HttpPort)
 
             # - task: AzureCLI@2
             #   displayName: 'Get the Fully Qualified Domain Name for the container app'
