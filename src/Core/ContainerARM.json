@@ -15,21 +15,27 @@
       "type": "String"
     },
     "container_image": {
+      "defaultValue": "cImg",
       "type": "String"
     },
     "registry_password": {
+      "defaultValue": "registryPass",
       "type": "SecureString"
     },
     "connection_string": {
+      "defaultValue": "connStr",
       "type": "SecureString"
     },
     "http_port": {
+      "defaultValue": "httpPort",
       "type": "int"
     },
     "registry_login_server": {
+      "defaultValue": "registryLogin",
       "type": "string"
     },
     "app_id": {
+      "defaultValue": "appId",
       "type": "string"
     }
   },
