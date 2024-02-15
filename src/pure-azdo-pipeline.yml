@@ -171,7 +171,7 @@ stages:
                   az config set extension.use_dynamic_install=yes_without_prompt
                   $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) --name $(DatabaseNameTest) --client ado.net
                   $connstring = $connstring -replace '<username>', '$(DatabaseUserTest)' -replace '<password>', '$(DatabasePasswordTest)' -replace '"', ''
-                  Write-Host "##vso[task.setvariable variable=DbConnString]Storing database connection string"
+                  Write-Host "##vso[task.setvariable variable=DbConnString]$connstring"
 
             - task: AzureResourceGroupDeployment@2
               displayName: 'Create container app environment'
@@ -189,7 +189,7 @@ stages:
                 resourceGroupName: $(TDDResourceGroup)
                 location: $(AzureLocation)
                 csmFile: src/Core/ContainerARM.json
-                overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -connection_string $(DbConnString) -container_image '$(registry_login_server)/churchbulletin.ui:$(Build.BuildNumber)' -registry_password $(ContainerRegistryPassword)
+                overrideParameters: -containerappName $(ContainerAppNameTest) -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae -container_image $(registry_login_server)/churchbulletin.ui:$(Build.BuildNumber) -connection_string $(DbConnString) -registry_password $(ContainerRegistryPassword)
 
             # - task: AzureCLI@2
             #   displayName: 'Get the Fully Qualified Domain Name for the container app'
