@@ -184,21 +184,6 @@ stages:
                 csmFile: src/Core/ContainerEnvironmentARM.json
                 overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae
 
-            - task: PowerShell@2
-              displayName: 'Debug'
-              inputs:
-                targetType: 'inline'
-                script: |
-                  echo "Container app name - $(ContainerAppNameTest)"
-                  echo "Location - $(AzureLocation)"
-                  echo "Env Name - $(ResourceGroupName)-TDD-cae"
-                  echo "Container Img - $(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)"
-                  echo "Db Conn Str - $(DbConnString)"
-                  echo "Registry Pw - $(ContainerRegistryPassword)"
-                  echo "Http Port - $(HttpPort)"
-                  echo "Registry Server - $(RegistryLoginServer)"
-                  echo "App Id - $(AcrContainerAppId)"
-
             - task: AzureResourceGroupDeployment@2
               displayName: 'Create container app'
               inputs:
@@ -216,7 +201,8 @@ stages:
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
-                  Write-Host "##vso[task.setvariable variable=Fqdn]$fqdn"
+                  Write-Host "##vso[task.setvariable variable=FullyQualifiedDomainName]$fqdn"
+                  Write-Host $(FullyQualifiedDomainName)
 
             - task: AzureCLI@2
               displayName: 'Add revision to container app'
@@ -231,14 +217,14 @@ stages:
               inputs:
                 targetType: 'filePath'
                 filePath: src/UI/Server/CheckVersion.ps1
-                arguments: -server "$(Fqdn)" -version "$(Build.BuildNumber)"
+                arguments: -server "$(FullyQualifiedDomainName)" -version "$(Build.BuildNumber)"
 
             - task: PowerShell@2
               displayName: 'Perform healthcheck for server on container app'
               inputs:
                 targetType: 'filePath'
                 filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
-                arguments: -server "$(Fqdn)"
+                arguments: -server "$(FullyQualifiedDomainName)"
 
 - stage: 'DeleteTDD'
   displayName: 'DeleteTDD'
