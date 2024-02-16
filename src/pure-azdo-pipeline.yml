@@ -41,64 +41,63 @@ stages:
             echo $env:Version
             echo $(Build.BuildNumber)
 
-    #   - task: PowerShell@2
-    #     displayName: Build.ps1
-    #     inputs:
-    #       targetType: filePath
-    #       filePath: ./build.ps1
-    #       arguments: '; CIBuild'
-    #   - task: PublishTestResults@2
-    #     displayName: 'Publish Test Results ./build/test/*.trx'
-    #     inputs:
-    #       testResultsFormat: VSTest
-    #       testResultsFiles: 'build/test/**/*.trx'
-    #       mergeTestResults: true
-    #       testRunTitle: 'CI Tests'
-    #     continueOnError: true
-    #     condition: succeededOrFailed()
-    #   - task: PublishCodeCoverageResults@1
-    #     displayName: 'Publish code coverage UnitTests'
-    #     inputs:
-    #       codeCoverageTool: Cobertura
-    #       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
-    #   - task: NuGetCommand@2
-    #     inputs:
-    #       command: 'push'
-    #       packagesToPush: '.\build\*.nupkg'
-    #       publishVstsFeed: '$(AzureFeedName)'
+      - task: PowerShell@2
+        displayName: Build.ps1
+        inputs:
+          targetType: filePath
+          filePath: ./build.ps1
+          arguments: '; CIBuild'
+      - task: PublishTestResults@2
+        displayName: 'Publish Test Results ./build/test/*.trx'
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: 'build/test/**/*.trx'
+          mergeTestResults: true
+          testRunTitle: 'CI Tests'
+        continueOnError: true
+        condition: succeededOrFailed()
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish code coverage UnitTests'
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
+      - task: NuGetCommand@2
+        inputs:
+          command: 'push'
+          packagesToPush: '.\build\*.nupkg'
+          publishVstsFeed: '$(AzureFeedName)'
 
-    # - job: 'DockerBuildandPush'
-    #   pool:
-    #     vmImage: 'ubuntu-latest'
-    #   variables:
-    #     - group: Pure-Azure-Build
-    #   dependsOn: Build
+    - job: 'DockerBuildandPush'
+      pool:
+        vmImage: 'ubuntu-latest'
+      variables:
+        - group: Pure-Azure-Build
+      dependsOn: Build
  
-    #   steps:
-    #   - task: DownloadPackage@1
-    #     displayName: 'Download UI Package'
-    #     inputs:
-    #       packageType: 'nuget'
-    #       feed: '$(AzureFeedName)'
-    #       view: 'Local'
-    #       definition: 'ChurchBulletin.UI'
-    #       version: '$(Build.BuildNumber)'
-    #       downloadPath: '$(System.DefaultWorkingDirectory)/built'
-    #       extract: true
+      steps:
+      - task: DownloadPackage@1
+        displayName: 'Download UI Package'
+        inputs:
+          packageType: 'nuget'
+          feed: '$(AzureFeedName)'
+          view: 'Local'
+          definition: 'ChurchBulletin.UI'
+          version: '$(Build.BuildNumber)'
+          downloadPath: '$(System.DefaultWorkingDirectory)/built'
+          extract: true
 
-    #   - task: Docker@2
-    #     inputs:
-    #       containerRegistry: 'OnionArchACRServiceConnection'
-    #       repository: 'ChurchBulletin.UI'
-    #       command: 'buildAndPush'
-    #       Dockerfile: '**/Dockerfile'
-    #       tags: |
-    #         $(Build.BuildNumber)
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'OnionArchACRServiceConnection'
+          repository: 'ChurchBulletin.UI'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: |
+            $(Build.BuildNumber)
 
 # Deploying to TDD
 - stage: 'TDD'
   displayName: 'TDD'
-  dependsOn: []
   jobs:
     - deployment: 'DeployToTDD'
       pool:
@@ -209,34 +208,76 @@ stages:
                 csmFile: src/Core/ContainerARM.json
                 overrideParameters: -containerappName "$(ContainerAppNameTest)" -location "$(AzureLocation)" -environment_name "$(ResourceGroupName)-TDD-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "$(ContainerRegistryPassword)" -connection_string "$(DbConnString)" -http_port "$(HttpPort)" -registry_login_server "$(RegistryLoginServer)" -app_id "$(AcrContainerAppId)"
 
-            # - task: AzureCLI@2
-            #   displayName: 'Get the Fully Qualified Domain Name for the container app'
-            #   inputs:
-            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-            #     scriptType: 'ps'
-            #     scriptLocation: 'inlineScript'
-            #     inlineScript: |
-            #       $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
-            #       Write-Host "##vso[task.setvariable variable=Fqdn]$fqdn"
+            - task: AzureCLI@2
+              displayName: 'Get the Fully Qualified Domain Name for the container app'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
+                  Write-Host "##vso[task.setvariable variable=Fqdn]$fqdn"
 
-            # - task: AzureCLI@2
-            #   displayName: 'Add revision to container app'
-            #   inputs:
-            #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-            #     scriptType: 'ps'
-            #     scriptLocation: 'inlineScript'
-            #     inlineScript:
-            #       az containerapp update --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString=$(DbConnString), HTTP_PORT=$(HttpPort) 
+            - task: AzureCLI@2
+              displayName: 'Add revision to container app'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript:
+                  az containerapp update --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString=$(DbConnString), HTTP_PORT=$(HttpPort) 
 
-            # - task: PowerShell@2
-            #   displayName: 'Check version of deployed app'
-            #   inputs:
-            #     targetType: 'filePath'
-            #     filePath: src/UI/Server/CheckVersion.ps1
+            - task: PowerShell@2
+              displayName: 'Check version of deployed app'
+              inputs:
+                targetType: 'filePath'
+                filePath: src/UI/Server/CheckVersion.ps1
+                arguments: -server "$(Fqdn)" -version "$(Build.BuildNumber)"
 
-            # - task: PowerShell@2
-            #   displayName: 'Perform healthcheck for server on container app'
-            #   inputs:
-            #     targetType: 'filePath'
-            #     filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
-                
+            - task: PowerShell@2
+              displayName: 'Perform healthcheck for server on container app'
+              inputs:
+                targetType: 'filePath'
+                filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
+                arguments: -server "$(Fqdn)"
+
+- stage: 'DeleteTDD'
+  displayName: 'DeleteTDD'
+  dependsOn: TDD
+  jobs: 
+    - deployment: 'DeleteTDD'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Pure-Azure-Build 
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
+      - name: TDD-Resource-Group
+        value: '$(ResourceGroupName)-TDD-$(Build.BuildNumber)'
+      - name: TDD-App-Name
+        value: tdd-ui 
+      environment: 'TDD'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az config set extension.use_dynamic_install=yes_without_prompt
+                  $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
+                  $containerAppURL = $containerAppURL -replace '"', ''
+                  [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
+
+            - task: AzureCLI@2
+              displayName: 'Delete TDD Resources'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az group delete -n $(TDD-Resource-Group) --yes
