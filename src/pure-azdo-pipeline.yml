@@ -224,8 +224,7 @@ stages:
                 azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
-                inlineScript: |
-                  az containerapp update --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString=$(DbConnString) HTTP_PORT=$(HttpPort) 
+                inlineScript: az containerapp update --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=$(HttpPort) 
 
             - task: PowerShell@2
               displayName: 'Check version of deployed app'
