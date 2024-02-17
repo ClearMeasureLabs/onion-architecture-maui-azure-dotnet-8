@@ -202,7 +202,12 @@ stages:
                 inlineScript: |
                   $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
                   Write-Host "##vso[task.setvariable variable=fullyQualifiedDomainName]$fqdn"
-                  Write-Host "$(fullyQualifiedDomainName)"
+                  echo $fqdn
+
+            - task: PowerShell@2
+              inputs:
+                targetType: 'inline'
+                script: Write-Host "FQDN - $(fullyQualifiedDomainName)"
 
             - task: AzureCLI@2
               displayName: 'Add revision to container app'
