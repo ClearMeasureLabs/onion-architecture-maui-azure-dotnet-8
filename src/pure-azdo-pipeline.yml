@@ -201,8 +201,8 @@ stages:
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
-                  Write-Host "##vso[task.setvariable variable=FullyQualifiedDomainName]$fqdn"
-                  Write-Host $(FullyQualifiedDomainName)
+                  Write-Host "##vso[task.setvariable variable=fullyQualifiedDomainName]$fqdn"
+                  Write-Host "$(fullyQualifiedDomainName)"
 
             - task: AzureCLI@2
               displayName: 'Add revision to container app'
@@ -217,14 +217,14 @@ stages:
               inputs:
                 targetType: 'filePath'
                 filePath: src/UI/Server/CheckVersion.ps1
-                arguments: -server "$(FullyQualifiedDomainName)" -version "$(Build.BuildNumber)"
+                arguments: -server "$(fullyQualifiedDomainName)" -version "$(Build.BuildNumber)"
 
             - task: PowerShell@2
               displayName: 'Perform healthcheck for server on container app'
               inputs:
                 targetType: 'filePath'
                 filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
-                arguments: -server "$(FullyQualifiedDomainName)"
+                arguments: -server "$(fullyQualifiedDomainName)"
 
 - stage: 'DeleteTDD'
   displayName: 'DeleteTDD'
