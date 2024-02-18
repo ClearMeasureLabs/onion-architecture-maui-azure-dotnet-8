@@ -6,7 +6,9 @@ param(
 Write-Host "Server: $server"
 Write-Host "Version: $version"
 
-$uri = "$server/version"
+$containerUrl = $server.Trim('"')
+
+$uri = "$containerUrl/version"
 Write-Host "Getting version $uri"
 # Delay to ensure the new container app has been deployed
 Start-Sleep -Seconds 60
