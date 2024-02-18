@@ -6,8 +6,7 @@ param(
 Write-Host "Provided server url: $server"
 Write-Host "Provided version: $version"
 
-$containerUrl = $server.Trim('"')
-$uri = "$containerUrl/version"
+$uri = "$server/version"
 
 Write-Host "Checking version at $uri"
 

@@ -201,6 +201,7 @@ stages:
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
+                  $fqdn = $fqdn -replace '"', ''
                   [System.Environment]::SetEnvironmentVariable("containerAppURL", $fqdn, "User")
                   Write-Host "##vso[task.setvariable variable=fullyQualifiedDomainName]$fqdn"
                   echo $fqdn

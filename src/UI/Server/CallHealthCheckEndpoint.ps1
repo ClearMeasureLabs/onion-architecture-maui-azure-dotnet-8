@@ -3,10 +3,9 @@ param(
 )
 
 Write-Host "Provided server url: $server"
-$containerUrl = $server.Trim('"')
 
 Start-Sleep -Seconds 90
-$uri = "$containerUrl/_healthcheck"
+$uri = "$server/_healthcheck"
 Write-Host "Smoke testing $uri"
 
 Invoke-WebRequest $uri -UseBasicParsing | Foreach {
