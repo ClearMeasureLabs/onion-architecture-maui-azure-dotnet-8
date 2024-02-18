@@ -3,6 +3,9 @@ param(
     [string]$version
 )
 
+Write-Host "Server: $server"
+Write-Host "Version: $version"
+
 $uri = "$server/version"
 Write-Host "Getting version $uri"
 # Delay to ensure the new container app has been deployed
