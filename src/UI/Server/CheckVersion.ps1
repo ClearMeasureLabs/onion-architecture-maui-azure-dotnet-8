@@ -3,13 +3,14 @@ param(
     [string]$version
 )
 
-Write-Host "Server: $server"
-Write-Host "Version: $version"
+Write-Host "Provided server url: $server"
+Write-Host "Provided version: $version"
 
 $containerUrl = $server.Trim('"')
-
 $uri = "$containerUrl/version"
-Write-Host "Getting version $uri"
+
+Write-Host "Checking version at $uri"
+
 # Delay to ensure the new container app has been deployed
 Start-Sleep -Seconds 60
 Invoke-WebRequest $uri -UseBasicParsing | Foreach {
