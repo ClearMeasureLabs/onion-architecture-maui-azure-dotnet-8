@@ -222,14 +222,14 @@ stages:
               inputs:
                 targetType: 'filePath'
                 filePath: src/UI/Server/CheckVersion.ps1
-                arguments: -server "$(fullyQualifiedDomainName)" -version "$(Build.BuildNumber)"
+                arguments: -server '$(fullyQualifiedDomainName)' -version '$(Build.BuildNumber)'
 
             - task: PowerShell@2
               displayName: 'Perform healthcheck for server on container app'
               inputs:
                 targetType: 'filePath'
                 filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
-                arguments: -server "$(fullyQualifiedDomainName)"
+                arguments: -server '$(fullyQualifiedDomainName)'
 
 - stage: 'DeleteTDD'
   displayName: 'DeleteTDD'
