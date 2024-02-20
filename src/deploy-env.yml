@@ -46,7 +46,7 @@ parameters:
               azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
               scriptType: 'ps'
               scriptLocation: 'inlineScript'
-              inlineScript: az group create --name $(ResourceGroupName) --location $(AzureLocation)
+              inlineScript: az group create --name ${{ parameters.ResourceGroupName }} --location ${{ parameters.AzureLocation }}
 
           - task: PowerShell@2
             displayName: 'Generate version integer for database server name'
@@ -66,14 +66,14 @@ parameters:
               resourceGroupName: $(TDDResourceGroup)
               location: $(AzureLocation)
               csmFile: src/Database/DatabaseARM.json
-              overrideParameters: -databaseserverName $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
+              overrideParameters: -databaseserverName $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) -databaseLogin ${{ parameters.DatabaseUser }} -databaseLoginPassword ${{ parameters.DatabasePassword }} -skuCapacity 1 -databaseName ${{ parameters.DatabaseName }} -requestedServiceObjectiveName ${{ parameters.DatabasePerformanceLevel }}
 
           - task: PowerShell@2
             displayName: 'Create database schema'
             inputs:
               targetType: filePath
               filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
-              arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-tdd-$(IntegerVersion).database.windows.net' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
+              arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-tdd-$(IntegerVersion).database.windows.net' -DatabaseName '${{ parameters.DatabaseNameTest }}' -DatabaseAction '${{ parameters.DatabaseAction }}' -DatabaseUser '${{ parameters.DatabaseUser }}' -DatabasePassword '${{ parameters.DatabasePassword }}'
 
           - task: AzureCLI@2
             displayName: 'Get database connection string'
@@ -83,27 +83,27 @@ parameters:
               scriptLocation: 'inlineScript' 
               inlineScript: |
                 az config set extension.use_dynamic_install=yes_without_prompt
-                $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) --name $(DatabaseNameTest) --client ado.net
-                $connstring = $connstring -replace '<username>', '$(DatabaseUserTest)' -replace '<password>', '$(DatabasePasswordTest)' -replace '"', ''
+                $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) --name ${{ parameters.DatabaseName }} --client ado.net
+                $connstring = $connstring -replace '<username>', '${{ parameters.DatabaseUserTest }}' -replace '<password>', '${{ parameters.DatabasePasswordTest }}' -replace '"', ''
                 Write-Host "##vso[task.setvariable variable=DbConnString]$connstring"
 
           - task: AzureResourceGroupDeployment@2
             displayName: 'Create container app environment'
             inputs:
               azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              resourceGroupName: $(TDDResourceGroup)
-              location: $(AzureLocation)
+              resourceGroupName: ${{ parameters.ResourceGroupName }}
+              location: ${{ parameters.AzureLocation }}
               csmFile: src/Core/ContainerEnvironmentARM.json
-              overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-cae
+              overrideParameters: -location ${{ parameters.AzureLocation }} -environment_name ${{ parameters.ResourceGroupName }}-cae
 
           - task: AzureResourceGroupDeployment@2
             displayName: 'Create container app'
             inputs:
               azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              resourceGroupName: $(TDDResourceGroup)
-              location: $(AzureLocation)
+              resourceGroupName: ${{ parameters.ResourceGroupName }}
+              location: ${{ parameters.AzureLocation }}
               csmFile: src/Core/ContainerARM.json
-              overrideParameters: -containerappName "$(ContainerAppNameTest)" -location "$(AzureLocation)" -environment_name "$(ResourceGroupName)-TDD-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "$(ContainerRegistryPassword)" -connection_string "$(DbConnString)" -http_port "$(HttpPort)" -registry_login_server "$(RegistryLoginServer)" -app_id "$(AcrContainerAppId)"
+              overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{ parameters.ResourceGroupName }}-${{ parameters.environmentName }}-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}" -connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }}"
 
           - task: AzureCLI@2
             displayName: 'Get the Fully Qualified Domain Name for the container app'
@@ -112,7 +112,7 @@ parameters:
               scriptType: 'ps'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
+                $fqdn = az containerapp show --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --query properties.configuration.ingress.fqdn
                 $fqdn = $fqdn -replace '"', ''
                 [System.Environment]::SetEnvironmentVariable("containerAppURL", $fqdn, "User")
                 Write-Host "##vso[task.setvariable variable=fullyQualifiedDomainName]$fqdn"
@@ -124,7 +124,7 @@ parameters:
               azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
               scriptType: 'ps'
               scriptLocation: 'inlineScript'
-              inlineScript: az containerapp update --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=$(HttpPort) 
+              inlineScript: az containerapp update --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --image ${{ parameters.ContainerImage }} --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=${{ parameters.HttpPort }}
 
           - task: PowerShell@2
             displayName: 'Check version of deployed app'
@@ -144,7 +144,7 @@ parameters:
             displayName: 'Download Acceptance Test Package'
             inputs:
               packageType: 'nuget'
-              feed: '$(AzureFeedName)'
+              feed: '${{ parameters.AzureFeedName }}'
               view: 'Local'
               definition: 'ChurchBulletin.AcceptanceTests'
               version: '$(Build.Buildnumber)'
