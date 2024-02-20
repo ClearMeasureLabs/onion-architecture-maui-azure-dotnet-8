@@ -11,6 +11,9 @@ parameters:
   DatabasePassword: ''
   DatabaseUser: ''
   DatabasePerformanceLevel: ''
+  deployAmazon: ''
+  deployApple: ''
+  deployGoogle: ''
   environmentName: ''
   HttpPort: ''
   ResourceGroupName: ''
@@ -189,4 +192,52 @@ parameters:
             parameters:
               ResourceGroupName: '${{ parameters.ResourceGroupName }}'
 
- 
+- stage: deployAmazon
+  condition: eq({{ paramters.deployAmazon }}, true)
+  jobs:
+  
+  - deployment: Deploy
+    pool:
+      name: 'windows-latest'
+
+    strategy:
+      runOnce:
+        deploy:
+
+          steps:
+          - task:
+            #do Amazon deploy stuff
+
+- stage: deployApple
+  #condition checks for a yes/no from the library, but it should probably also check branch or environment to stop TDD code from rushing out to app stores.
+  condition: eq({{ paramters.deployApple }}, true) 
+  jobs:
+  
+  - deployment: Deploy
+    pool:
+      name: 'windows-latest'
+
+    strategy:
+      runOnce:
+        deploy:
+
+          steps:
+          - task:
+            #do Apple deploy stuff
+
+- stage: deployGoogle
+  #condition checks for a yes/no from the library, but it should probably also check branch or environment to stop TDD code from rushing out to app stores.
+  condition: eq({{ paramters.deployGoogle }}, true)
+  jobs:
+  
+  - deployment: Deploy
+    pool:
+      name: 'windows-latest'
+
+    strategy:
+      runOnce:
+        deploy:
+
+          steps:
+          - task:
+            #do Google deploy stuff
