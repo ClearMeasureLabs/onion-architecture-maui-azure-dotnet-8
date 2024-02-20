@@ -1,29 +1,8 @@
-  AzureFeedName: ''
-  AzureLocation: ''
-  ContainerAppName: ''
-  ContainerRegistryPassword: ''
-  ContainerImage: ''
-  DatabaseAction: ''
-  DatabaseName: ''
-  DatabasePassword: ''
-  DatabaseUser: ''
-  DatabasePerformanceLevel: ''
-  environmentName: ''
-  HttpPort: ''
-  ResourceGroupName: ''
-  RegistryLoginServer: ''
+  parameters:
+    ResourceGroupName: ''
+
 
 steps:
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az config set extension.use_dynamic_install=yes_without_prompt
-      $containerAppURL = az containerapp show --resource-group $(Resource-Group) --name $(App-Name) --query properties.configuration.ingress.fqdn
-      $containerAppURL = $containerAppURL -replace '"', ''
-      [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
 
 - task: AzureCLI@2
   displayName: 'Delete TDD Resources'
@@ -32,4 +11,4 @@ steps:
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az group delete -n $(Resource-Group) --yes
+      az group delete -n ${{ parameters.ResourceGroupName }} --yes

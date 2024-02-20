@@ -1,7 +1,9 @@
 parameters:
+  AcrContainerAppId: ''
   AzureFeedName: ''
   AzureLocation: ''
   ContainerAppName: ''
+  ContainerAppUrl: ''
   ContainerRegistryPassword: ''
   ContainerImage: ''
   DatabaseAction: ''
@@ -14,7 +16,7 @@ parameters:
   ResourceGroupName: ''
   RegistryLoginServer: ''
 
-- stage: deploy_to_environment
+- stage: deploy_env
 
   jobs:
   - deployment: Deploy
@@ -44,7 +46,7 @@ parameters:
               azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
               scriptType: 'ps'
               scriptLocation: 'inlineScript'
-              inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
+              inlineScript: az group create --name $(ResourceGroupName) --location $(AzureLocation)
 
           - task: PowerShell@2
             displayName: 'Generate version integer for database server name'
@@ -92,7 +94,7 @@ parameters:
               resourceGroupName: $(TDDResourceGroup)
               location: $(AzureLocation)
               csmFile: src/Core/ContainerEnvironmentARM.json
-              overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae
+              overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-cae
 
           - task: AzureResourceGroupDeployment@2
             displayName: 'Create container app'
@@ -170,9 +172,10 @@ parameters:
               testRunTitle: 'Acceptance Tests'
               diagnosticsEnabled: True
 
-- stage: deploy_to_environment
-
+- stage: delete_tdd
+  condition: eq({{ paramters.environmentName }}, "TDD")
   jobs:
+  
   - deployment: Deploy
     pool:
       name: 'windows-latest'
@@ -183,4 +186,7 @@ parameters:
 
           steps:
           - template: .\delete-tdd.yml
+            parameters:
+              ResourceGroupName: '${{ parameters.ResourceGroupName }}'
+
  
