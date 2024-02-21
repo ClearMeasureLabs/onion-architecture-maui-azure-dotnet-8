@@ -27,15 +27,18 @@ stages:
           packageType: 'sdk'
           version: '8.0.100'
       - task: UseDotNet@2
+        displayName: 'Install 6.0.0 Runtime'
         inputs:
           packageType: 'runtime'
           version: '6.0.0'
       - task: UseDotNet@2
+        displayName: 'Install 8.0.0 Runtime'
         inputs:
           packageType: 'runtime'
           version: '8.0.0'
       # Set environment variables
       - task: PowerShell@2
+        displayName: 'Set Environment Variables'
         inputs:
           targetType: 'inline'
           script: |
@@ -64,6 +67,7 @@ stages:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
       - task: NuGetCommand@2
+        displayName: 'NuGet Push'
         inputs:
           command: 'push'
           packagesToPush: '.\build\*.nupkg'
