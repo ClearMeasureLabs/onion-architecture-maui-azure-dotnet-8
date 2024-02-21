@@ -90,7 +90,7 @@ steps:
     resourceGroupName: ${{ parameters.ResourceGroupName }}
     location: ${{ parameters.AzureLocation }}
     csmFile: src/Core/ContainerEnvironmentARM.json
-    overrideParameters: -location ${{ parameters.AzureLocation }} -environment_name ${{ parameters.ResourceGroupName }}-cae
+    overrideParameters: -location ${{ parameters.AzureLocation }} -environment_name ${{ parameters.containerAppEnvironmentName }}
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app'
