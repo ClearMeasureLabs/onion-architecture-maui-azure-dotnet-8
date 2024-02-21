@@ -6,6 +6,7 @@ variables:
     minor: 1
 name: $(major).$(minor).$(Rev:r)
 
+
 stages:
 - stage: 'Integration_Build'
   displayName: 'Build Application'
@@ -134,8 +135,8 @@ stages:
                 RegistryLoginServer: $(RegistryLoginServer)
 
 - stage: 'DeleteTDD'
-  condition: contains(variables['ResourceGroupName'], "TDD"))
-  displayName: 'TDD'
+  #condition: and(succeeded(), eq(variables['ResourceGroupName'], onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber) ))
+  displayName: 'DeleteTDD'
   jobs:
     - deployment: 'DeleteTDD'
       pool:
