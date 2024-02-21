@@ -134,7 +134,7 @@ stages:
                 RegistryLoginServer: $(RegistryLoginServer)
 
 - stage: 'DeleteTDD'
-  condition: and(succeeded(), contains(variables['ResourceGroupName'], "TDD"))
+  condition: contains(variables['ResourceGroupName'], "TDD"))
   displayName: 'TDD'
   jobs:
     - deployment: 'DeleteTDD'
