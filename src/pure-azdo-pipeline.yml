@@ -166,6 +166,9 @@ stages:
                 DatabasePassword: $(DatabasePassword)
                 DatabaseUser: $(DatabaseUser)
                 DatabasePerformanceLevel: $(DatabasePerformanceLevel)
+                deployAmazon: $(deployAmazon)
+                deployApple: $(deployApple)
+                deployGoogle: $(deployGoogle)
                 environmentName: "UAT"
                 HttpPort: '8080'
                 ResourceGroupName: $(ResourceGroupName)

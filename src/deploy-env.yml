@@ -205,8 +205,14 @@ parameters:
         deploy:
 
           steps:
-          - task:
-            #do Amazon deploy stuff
+          - task: AzureCLI@2
+            displayName: 'Deploy Amazon App'
+            inputs:
+              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+              scriptType: 'ps'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host "This is where the Amazon app deploy will happen"
 
 - stage: deployApple
   #condition checks for a yes/no from the library, but it should probably also check branch or environment to stop TDD code from rushing out to app stores.
@@ -222,8 +228,14 @@ parameters:
         deploy:
 
           steps:
-          - task:
-            #do Apple deploy stuff
+          - task: AzureCLI@2
+            displayName: 'Deploy Apple App'
+            inputs:
+              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+              scriptType: 'ps'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host "This is where the Apple app deploy will happen"
 
 - stage: deployGoogle
   #condition checks for a yes/no from the library, but it should probably also check branch or environment to stop TDD code from rushing out to app stores.
@@ -239,5 +251,11 @@ parameters:
         deploy:
 
           steps:
-          - task:
-            #do Google deploy stuff
+          - task: AzureCLI@2
+            displayName: 'Deploy Google App'
+            inputs:
+              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+              scriptType: 'ps'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host "This is where the Google app deploy will happen"
