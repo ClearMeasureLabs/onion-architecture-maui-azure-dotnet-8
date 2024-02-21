@@ -169,35 +169,3 @@ steps:
     diagnosticsEnabled: True
 
 
-
-- task: AzureCLI@2
-  condition:  and(succeeded(), eq( ${{ parameters.deployAmazon, true) }} ))
-  displayName: 'Deploy Amazon App'
-  inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      Write-Host "This is where the Amazon app deploy will happen"
-
-
-- task: AzureCLI@2
-  condition: and(succeeded(), eq( ${{ parameters.deployApple, true) }} ))
-  displayName: 'Deploy Apple App'
-  inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      Write-Host "This is where the Apple app deploy will happen"
-
-
-- task: AzureCLI@2
-  condition: and(succeeded(), eq( ${{ parameters.deployGoogle, true) }} ))
-  displayName: 'Deploy Google App'
-  inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      Write-Host "This is where the Google app deploy will happen"

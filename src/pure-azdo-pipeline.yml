@@ -197,3 +197,90 @@ stages:
                 HttpPort: '8080'
                 ResourceGroupName: $(ResourceGroupName)
                 RegistryLoginServer: $(RegistryLoginServer)
+
+- stage: 'DeployAmazonApp'
+  condition:  and(succeeded(), eq($(deployAmazon), true))
+  displayName: 'DeployAmazonApp'
+  jobs:
+    - deployment: 'DeployAmazonApp'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Pure-Azure-Build-UAT
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
+      #- name: $(environmentName)ResourceGroup
+      #  value: '$(ResourceGroupName)-UAT-$(Build.BuildNumber)'
+      - name: ContainerImage
+        value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      #environment: 'UAT'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: AzureCLI@2
+              displayName: 'Deploy Amazon App'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  Write-Host "This is where the Amazon app deploy will happen"
+
+- stage: 'DeployAppleApp'
+  condition:  and(succeeded(), eq($(deployApple), true))
+  displayName: 'DeployAppleApp'
+  jobs:
+    - deployment: 'DeployApplenApp'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Pure-Azure-Build-UAT
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
+      #- name: $(environmentName)ResourceGroup
+      #  value: '$(ResourceGroupName)-UAT-$(Build.BuildNumber)'
+      - name: ContainerImage
+        value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      #environment: 'UAT'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: AzureCLI@2
+              displayName: 'Deploy Apple App'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  Write-Host "This is where the Apple app deploy will happen"
+
+- stage: 'DeployGooleApp'
+  condition:  and(succeeded(), eq($(deployGoogle), true))
+  displayName: 'DeployGoogleApp'
+  jobs:
+    - deployment: 'DeployGoogleApp'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Pure-Azure-Build-UAT
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
+      #- name: $(environmentName)ResourceGroup
+      #  value: '$(ResourceGroupName)-UAT-$(Build.BuildNumber)'
+      - name: ContainerImage
+        value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      #environment: 'UAT'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: AzureCLI@2
+              displayName: 'Deploy Google App'
+              inputs:
+                azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  Write-Host "This is where the Google app deploy will happen"
