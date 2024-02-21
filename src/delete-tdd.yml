@@ -1,5 +1,5 @@
-  parameters:
-    ResourceGroupName: ''
+parameters:
+  ResourceGroupName: ''
 
 
 steps:
