@@ -134,7 +134,7 @@ stages:
                 RegistryLoginServer: $(RegistryLoginServer)
 
 - stage: 'DeleteTDD'
-  condition: and(succeeded(), eq($(ResourceGroupName), "onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber)"))
+  condition: and(succeeded(), eq(variables['ResourceGroupName'], "onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber)"))
   displayName: 'TDD'
   jobs:
     - deployment: 'DeleteTDD'
@@ -199,7 +199,7 @@ stages:
                 RegistryLoginServer: $(RegistryLoginServer)
 
 - stage: 'DeployAmazonApp'
-  condition:  and(succeeded(), eq($(deployAmazon), true))
+  condition:  and(succeeded(), eq(variables[deployAmazon], true))
   displayName: 'DeployAmazonApp'
   jobs:
     - deployment: 'DeployAmazonApp'
@@ -228,7 +228,7 @@ stages:
                   Write-Host "This is where the Amazon app deploy will happen"
 
 - stage: 'DeployAppleApp'
-  condition:  and(succeeded(), eq($(deployApple), true))
+  condition:  and(succeeded(), eq($variables[deployApple], true))
   displayName: 'DeployAppleApp'
   jobs:
     - deployment: 'DeployApplenApp'
@@ -257,7 +257,7 @@ stages:
                   Write-Host "This is where the Apple app deploy will happen"
 
 - stage: 'DeployGooleApp'
-  condition:  and(succeeded(), eq($(deployGoogle), true))
+  condition:  and(succeeded(), eq(variables[deployGoogle], true))
   displayName: 'DeployGoogleApp'
   jobs:
     - deployment: 'DeployGoogleApp'
