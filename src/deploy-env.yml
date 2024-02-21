@@ -19,243 +19,185 @@ parameters:
   ResourceGroupName: ''
   RegistryLoginServer: ''
 
-- stage: deploy_env
 
-  jobs:
-  - deployment: Deploy
-    pool:
-      name: 'windows-latest'
 
-    strategy:
-      runOnce:
-        deploy:
 
-          steps:
-          - task: AzureCLI@2
-            displayName: 'Query and store subscription id for unique resource name'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                SUBSCRIPTION_ID=$(az account show --query id --output tsv)
-                echo "##vso[task.setvariable variable=SubscriptionId]$SUBSCRIPTION_ID"
 
-          - checkout: self
+steps:
+- task: AzureCLI@2
+  displayName: 'Query and store subscription id for unique resource name'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      SUBSCRIPTION_ID=$(az account show --query id --output tsv)
+      echo "##vso[task.setvariable variable=SubscriptionId]$SUBSCRIPTION_ID"
 
-          - task: AzureCLI@2
-            displayName: 'Create resource group'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript'
-              inlineScript: az group create --name ${{ parameters.ResourceGroupName }} --location ${{ parameters.AzureLocation }}
+- checkout: self
 
-          - task: PowerShell@2
-            displayName: 'Generate version integer for database server name'
-            inputs:
-              targetType: 'inline'
-              script: |
-                [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
-                $splitVersion = $env:Version -split "\."
-                $stringVer = $splitVersion[-1]
-                $intVer = [int]$stringVer
-                Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
+- task: AzureCLI@2
+  displayName: 'Create resource group'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: az group create --name ${{ parameters.ResourceGroupName }} --location ${{ parameters.AzureLocation }}
 
-          - task: AzureResourceGroupDeployment@2
-            displayName: 'Create database resource in Azure'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              resourceGroupName: $(TDDResourceGroup)
-              location: $(AzureLocation)
-              csmFile: src/Database/DatabaseARM.json
-              overrideParameters: -databaseserverName $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) -databaseLogin ${{ parameters.DatabaseUser }} -databaseLoginPassword ${{ parameters.DatabasePassword }} -skuCapacity 1 -databaseName ${{ parameters.DatabaseName }} -requestedServiceObjectiveName ${{ parameters.DatabasePerformanceLevel }}
+- task: PowerShell@2
+  displayName: 'Generate version integer for database server name'
+  inputs:
+    targetType: 'inline'
+    script: |
+      [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+      $splitVersion = $env:Version -split "\."
+      $stringVer = $splitVersion[-1]
+      $intVer = [int]$stringVer
+      Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
 
-          - task: PowerShell@2
-            displayName: 'Create database schema'
-            inputs:
-              targetType: filePath
-              filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
-              arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-tdd-$(IntegerVersion).database.windows.net' -DatabaseName '${{ parameters.DatabaseNameTest }}' -DatabaseAction '${{ parameters.DatabaseAction }}' -DatabaseUser '${{ parameters.DatabaseUser }}' -DatabasePassword '${{ parameters.DatabasePassword }}'
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Create database resource in Azure'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    resourceGroupName: $(TDDResourceGroup)
+    location: $(AzureLocation)
+    csmFile: src/Database/DatabaseARM.json
+    overrideParameters: -databaseserverName $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) -databaseLogin ${{ parameters.DatabaseUser }} -databaseLoginPassword ${{ parameters.DatabasePassword }} -skuCapacity 1 -databaseName ${{ parameters.DatabaseName }} -requestedServiceObjectiveName ${{ parameters.DatabasePerformanceLevel }}
 
-          - task: AzureCLI@2
-            displayName: 'Get database connection string'
-            inputs: 
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript' 
-              inlineScript: |
-                az config set extension.use_dynamic_install=yes_without_prompt
-                $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) --name ${{ parameters.DatabaseName }} --client ado.net
-                $connstring = $connstring -replace '<username>', '${{ parameters.DatabaseUserTest }}' -replace '<password>', '${{ parameters.DatabasePasswordTest }}' -replace '"', ''
-                Write-Host "##vso[task.setvariable variable=DbConnString]$connstring"
+- task: PowerShell@2
+  displayName: 'Create database schema'
+  inputs:
+    targetType: filePath
+    filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
+    arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-tdd-$(IntegerVersion).database.windows.net' -DatabaseName '${{ parameters.DatabaseNameTest }}' -DatabaseAction '${{ parameters.DatabaseAction }}' -DatabaseUser '${{ parameters.DatabaseUser }}' -DatabasePassword '${{ parameters.DatabasePassword }}'
 
-          - task: AzureResourceGroupDeployment@2
-            displayName: 'Create container app environment'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              resourceGroupName: ${{ parameters.ResourceGroupName }}
-              location: ${{ parameters.AzureLocation }}
-              csmFile: src/Core/ContainerEnvironmentARM.json
-              overrideParameters: -location ${{ parameters.AzureLocation }} -environment_name ${{ parameters.ResourceGroupName }}-cae
+- task: AzureCLI@2
+  displayName: 'Get database connection string'
+  inputs: 
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript' 
+    inlineScript: |
+      az config set extension.use_dynamic_install=yes_without_prompt
+      $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) --name ${{ parameters.DatabaseName }} --client ado.net
+      $connstring = $connstring -replace '<username>', '${{ parameters.DatabaseUserTest }}' -replace '<password>', '${{ parameters.DatabasePasswordTest }}' -replace '"', ''
+      Write-Host "##vso[task.setvariable variable=DbConnString]$connstring"
 
-          - task: AzureResourceGroupDeployment@2
-            displayName: 'Create container app'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              resourceGroupName: ${{ parameters.ResourceGroupName }}
-              location: ${{ parameters.AzureLocation }}
-              csmFile: src/Core/ContainerARM.json
-              overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{ parameters.ResourceGroupName }}-${{ parameters.environmentName }}-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}" -connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }}"
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Create container app environment'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    resourceGroupName: ${{ parameters.ResourceGroupName }}
+    location: ${{ parameters.AzureLocation }}
+    csmFile: src/Core/ContainerEnvironmentARM.json
+    overrideParameters: -location ${{ parameters.AzureLocation }} -environment_name ${{ parameters.ResourceGroupName }}-cae
 
-          - task: AzureCLI@2
-            displayName: 'Get the Fully Qualified Domain Name for the container app'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                $fqdn = az containerapp show --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --query properties.configuration.ingress.fqdn
-                $fqdn = $fqdn -replace '"', ''
-                [System.Environment]::SetEnvironmentVariable("containerAppURL", $fqdn, "User")
-                Write-Host "##vso[task.setvariable variable=fullyQualifiedDomainName]$fqdn"
-                echo $fqdn
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Create container app'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    resourceGroupName: ${{ parameters.ResourceGroupName }}
+    location: ${{ parameters.AzureLocation }}
+    csmFile: src/Core/ContainerARM.json
+    overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{ parameters.ResourceGroupName }}-${{ parameters.environmentName }}-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}" -connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }}"
 
-          - task: AzureCLI@2
-            displayName: 'Add revision to container app'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript'
-              inlineScript: az containerapp update --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --image ${{ parameters.ContainerImage }} --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=${{ parameters.HttpPort }}
+- task: AzureCLI@2
+  displayName: 'Get the Fully Qualified Domain Name for the container app'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      $fqdn = az containerapp show --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --query properties.configuration.ingress.fqdn
+      $fqdn = $fqdn -replace '"', ''
+      [System.Environment]::SetEnvironmentVariable("containerAppURL", $fqdn, "User")
+      Write-Host "##vso[task.setvariable variable=fullyQualifiedDomainName]$fqdn"
+      echo $fqdn
 
-          - task: PowerShell@2
-            displayName: 'Check version of deployed app'
-            inputs:
-              targetType: 'filePath'
-              filePath: src/UI/Server/CheckVersion.ps1
-              arguments: -server '$(fullyQualifiedDomainName)' -version '$(Build.BuildNumber)'
+- task: AzureCLI@2
+  displayName: 'Add revision to container app'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: az containerapp update --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --image ${{ parameters.ContainerImage }} --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=${{ parameters.HttpPort }}
 
-          - task: PowerShell@2
-            displayName: 'Perform healthcheck for server on container app'
-            inputs:
-              targetType: 'filePath'
-              filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
-              arguments: -server '$(fullyQualifiedDomainName)'
+- task: PowerShell@2
+  displayName: 'Check version of deployed app'
+  inputs:
+    targetType: 'filePath'
+    filePath: src/UI/Server/CheckVersion.ps1
+    arguments: -server '$(fullyQualifiedDomainName)' -version '$(Build.BuildNumber)'
 
-          - task: DownloadPackage@1
-            displayName: 'Download Acceptance Test Package'
-            inputs:
-              packageType: 'nuget'
-              feed: '${{ parameters.AzureFeedName }}'
-              view: 'Local'
-              definition: 'ChurchBulletin.AcceptanceTests'
-              version: '$(Build.Buildnumber)'
-              downloadPath: '$(System.DefaultWorkingDirectory)/tests'
-              extract: true
+- task: PowerShell@2
+  displayName: 'Perform healthcheck for server on container app'
+  inputs:
+    targetType: 'filePath'
+    filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
+    arguments: -server '$(fullyQualifiedDomainName)'
 
-          - task: PowerShell@2
-            displayName: 'Download Playwright'
-            inputs:
-              targetType: filePath
-              filePath: ./tests/playwright.ps1
-              arguments: 'install'
+- task: DownloadPackage@1
+  displayName: 'Download Acceptance Test Package'
+  inputs:
+    packageType: 'nuget'
+    feed: '${{ parameters.AzureFeedName }}'
+    view: 'Local'
+    definition: 'ChurchBulletin.AcceptanceTests'
+    version: '$(Build.Buildnumber)'
+    downloadPath: '$(System.DefaultWorkingDirectory)/tests'
+    extract: true
 
-          - task: VSTest@2
-            displayName: 'VsTest - AcceptanceTests'
-            inputs:
-              testSelector: 'testAssemblies'
-              testAssemblyVer2: |
-                **\*AcceptanceTests.dll
-                !**\*TestAdapter.dll
-                !**\obj\**
-                searchFolder: '$(System.DefaultWorkingDirectory)/tests'
-              uiTests: true
-              codeCoverageEnabled: true
-              testRunTitle: 'Acceptance Tests'
-              diagnosticsEnabled: True
+- task: PowerShell@2
+  displayName: 'Download Playwright'
+  inputs:
+    targetType: filePath
+    filePath: ./tests/playwright.ps1
+    arguments: 'install'
 
-- stage: delete_tdd
-  condition: eq({{ paramters.environmentName }}, "TDD")
-  jobs:
-  
-  - deployment: Deploy
-    pool:
-      name: 'windows-latest'
+- task: VSTest@2
+  displayName: 'VsTest - AcceptanceTests'
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*AcceptanceTests.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+      searchFolder: '$(System.DefaultWorkingDirectory)/tests'
+    uiTests: true
+    codeCoverageEnabled: true
+    testRunTitle: 'Acceptance Tests'
+    diagnosticsEnabled: True
 
-    strategy:
-      runOnce:
-        deploy:
 
-          steps:
-          - template: .\delete-tdd.yml
-            parameters:
-              ResourceGroupName: '${{ parameters.ResourceGroupName }}'
 
-- stage: deployAmazon
-  condition: eq({{ paramters.deployAmazon }}, true)
-  jobs:
-  
-  - deployment: Deploy
-    pool:
-      name: 'windows-latest'
+- task: AzureCLI@2
+  condition:  and(succeeded(), eq( ${{ parameters.deployAmazon, true) }} ))
+  displayName: 'Deploy Amazon App'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      Write-Host "This is where the Amazon app deploy will happen"
 
-    strategy:
-      runOnce:
-        deploy:
 
-          steps:
-          - task: AzureCLI@2
-            displayName: 'Deploy Amazon App'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                Write-Host "This is where the Amazon app deploy will happen"
+- task: AzureCLI@2
+  condition: and(succeeded(), eq( ${{ parameters.deployApple, true) }} ))
+  displayName: 'Deploy Apple App'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      Write-Host "This is where the Apple app deploy will happen"
 
-- stage: deployApple
-  #condition checks for a yes/no from the library, but it should probably also check branch or environment to stop TDD code from rushing out to app stores.
-  condition: eq({{ paramters.deployApple }}, true) 
-  jobs:
-  
-  - deployment: Deploy
-    pool:
-      name: 'windows-latest'
 
-    strategy:
-      runOnce:
-        deploy:
-
-          steps:
-          - task: AzureCLI@2
-            displayName: 'Deploy Apple App'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                Write-Host "This is where the Apple app deploy will happen"
-
-- stage: deployGoogle
-  #condition checks for a yes/no from the library, but it should probably also check branch or environment to stop TDD code from rushing out to app stores.
-  condition: eq({{ paramters.deployGoogle }}, true)
-  jobs:
-  
-  - deployment: Deploy
-    pool:
-      name: 'windows-latest'
-
-    strategy:
-      runOnce:
-        deploy:
-
-          steps:
-          - task: AzureCLI@2
-            displayName: 'Deploy Google App'
-            inputs:
-              azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-              scriptType: 'ps'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                Write-Host "This is where the Google app deploy will happen"
+- task: AzureCLI@2
+  condition: and(succeeded(), eq( ${{ parameters.deployGoogle, true) }} ))
+  displayName: 'Deploy Google App'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      Write-Host "This is where the Google app deploy will happen"

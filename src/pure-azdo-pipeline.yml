@@ -133,6 +133,30 @@ stages:
                 ResourceGroupName: $(ResourceGroupName)
                 RegistryLoginServer: $(RegistryLoginServer)
 
+- stage: 'DeleteTDD'
+  condition: and(succeeded(), eq($(ResourceGroupName), "onion-architecture-maui-azure-dotnet-8-TDD-$(Build.BuildNumber)"))
+  displayName: 'TDD'
+  jobs:
+    - deployment: 'DeleteTDD'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Pure-Azure-Build-TDD
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
+      #- name: $(environmentName)ResourceGroup
+      #  value: '$(ResourceGroupName)-TDD-$(Build.BuildNumber)'
+      - name: ContainerImage
+        value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      #environment: 'TDD'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - template: .\delete-tdd.yml
+              parameters: 
+                ResourceGroupName: $(ResourceGroupName)
+
 - stage: 'UAT'
   displayName: 'UAT'
   jobs:
