@@ -1,5 +1,6 @@
 trigger:
-    - "second-azdo-pipeline"
+    #- "second-azdo-pipeline"
+    - none
     
 variables:
     major: 1
