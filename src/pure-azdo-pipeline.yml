@@ -134,7 +134,7 @@ stages:
                 RegistryLoginServer: $(RegistryLoginServer)
 
 - stage: 'DeleteTDD'
-  condition: and(succeeded(), contains(variables.ResourceGroupName, "onion-architecture-maui-azure-dotnet-8-TDD-))
+  condition: and(succeeded(), contains(variables.ResourceGroupName, "onion-architecture-maui-azure-dotnet-8-TDD-"))
   displayName: 'TDD'
   jobs:
     - deployment: 'DeleteTDD'
