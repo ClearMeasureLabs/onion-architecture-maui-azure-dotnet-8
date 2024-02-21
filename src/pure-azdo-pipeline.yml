@@ -229,7 +229,7 @@ stages:
                   Write-Host "This is where the Amazon app deploy will happen"
 
 - stage: 'DeployAppleApp'
-  condition:  and(succeeded(), eq($variables.deployApple, true))
+  condition:  and(succeeded(), eq(variables.deployApple, true))
   displayName: 'DeployAppleApp'
   jobs:
     - deployment: 'DeployApplenApp'
