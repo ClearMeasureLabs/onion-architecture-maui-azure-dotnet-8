@@ -96,7 +96,7 @@ steps:
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app'
   inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
     resourceGroupName: ${{ parameters.ResourceGroupName }}
     location: ${{ parameters.AzureLocation }}
     csmFile: src/Core/ContainerARM.json
