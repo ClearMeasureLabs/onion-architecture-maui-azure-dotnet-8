@@ -5,6 +5,7 @@ parameters:
   ContainerAppName: ''
   ContainerAppUrl: ''
   ContainerRegistryPassword: ''
+  containerAppEnvironmentName: ''
   ContainerImage: ''
   DatabaseAction: ''
   DatabaseName: ''
