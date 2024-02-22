@@ -137,6 +137,7 @@ stages:
                 DatabasePerformanceLevel: $(DatabasePerformanceLevel)
                 environmentName: "TDD"
                 HttpPort: '8080'
+                passwordSecretRef: $(passwordSecretRef)
                 ResourceGroupName: $(ResourceGroupName)
                 RegistryLoginServer: $(RegistryLoginServer)
 

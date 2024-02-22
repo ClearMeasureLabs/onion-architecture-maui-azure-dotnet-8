@@ -19,7 +19,7 @@
       "type": "String"
     },
     "passwordSecretRef": {
-      "defaultValue": "registryPass",
+      "defaultValue": "pwsr",
       "type": "String"
     },
     "registry_password": {
@@ -31,7 +31,7 @@
       "type": "SecureString"
     },
     "http_port": {
-      "defaultValue": "httpPort",
+      "defaultValue": 8080,
       "type": "int"
     },
     "registry_login_server": {
