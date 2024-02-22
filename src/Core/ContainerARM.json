@@ -31,7 +31,6 @@
       "type": "SecureString"
     },
     "http_port": {
-      "defaultValue": 8080,
       "type": "int"
     },
     "registry_login_server": {
