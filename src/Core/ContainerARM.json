@@ -18,7 +18,6 @@
       "defaultValue": "onionarchitecturemauidotnet8azdo.azurecr.io/churchbulletin.ui:1.1.66",
       "type": "String"
     },
-
     "registry_password": {
       "defaultValue": "registryPass",
       "type": "SecureString"
@@ -28,7 +27,7 @@
       "type": "SecureString"
     },
     "http_port": {
-      "defaultValue": "8080",
+      "defaultValue": "httpPort",
       "type": "int"
     },
     "registry_login_server": {
@@ -37,10 +36,6 @@
     },
     "app_id": {
       "defaultValue": "appId",
-      "type": "string"
-    },
-    "passwordSecretRef": {
-      "defaultValue": "wheredothisgo",
       "type": "string"
     }
   },
@@ -77,8 +72,8 @@
           "registries": [
             {
               "server": "[parameters('registry_login_server')]",
-              "username": "[parameters('app_id')]"
-              
+              "username": "[parameters('app_id')]",
+              "passwordSecretRef": "registrypassword"
             }
           ]
         },
