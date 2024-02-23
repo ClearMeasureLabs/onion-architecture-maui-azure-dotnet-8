@@ -38,6 +38,10 @@
     "app_id": {
       "defaultValue": "appId",
       "type": "string"
+    },
+    "passwordSecretRef": {
+      "defaultValue": "wheredothisgo",
+      "type": "string"
     }
   },
   "variables": {},
