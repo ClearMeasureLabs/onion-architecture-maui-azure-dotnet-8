@@ -26,6 +26,15 @@ parameters:
 
 
 steps:
+
+- task: PowerShell@2
+  displayName: 'TS-check for empty parameters'
+  inputs:
+    targetType: 'inline'
+    script: |
+      Write-Host "pwsr:  " ${{ parameters.passwordSecretRef }}
+      Write-Host "Http Port:  "${{ parameters.HttpPort}}
+
 - task: AzureCLI@2
   displayName: 'Query and store subscription id for unique resource name'
   inputs:
