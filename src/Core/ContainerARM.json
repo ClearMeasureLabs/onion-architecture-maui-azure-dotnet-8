@@ -78,7 +78,7 @@
             {
               "server": "[parameters('registry_login_server')]",
               "username": "[parameters('app_id')]",
-              "passwordSecretRef": "areweevenusingthis"
+              
             }
           ]
         },
