@@ -28,13 +28,13 @@ parameters:
 steps:
 
 - task: PowerShell@2
-  displayName: 'TS-check for empty parameters'
+  displayName: 'check for empty parameters'
   inputs:
     targetType: 'inline'
     script: |
       Write-Host "pwsr:  " ${{ parameters.passwordSecretRef }}
       Write-Host "Http Port:  "${{ parameters.HttpPort}}
-
+      
 - task: AzureCLI@2
   displayName: 'Query and store subscription id for unique resource name'
   inputs:
@@ -110,8 +110,8 @@ steps:
     resourceGroupName: ${{ parameters.ResourceGroupName }}
     location: ${{ parameters.AzureLocation }}
     csmFile: src/Core/ContainerARM.json
-    overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{  parameters.containerAppEnvironmentName }}" -container_image "${{ parameters.RegistryLoginServer }}/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}" -passwordSecretRef "${{ parameters.passwordSecretRef }}" "-connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }}"
-
+    overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{  parameters.containerAppEnvironmentName }}" -container_image "${{ parameters.RegistryLoginServer }}/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}" -passwordSecretRef "${{ parameters.passwordSecretRef }}" -connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }} -passwordSecretRef "${{ parameters.passwordSecretRef }}"
+    
 - task: AzureCLI@2
   displayName: 'Get the Fully Qualified Domain Name for the container app'
   inputs:
