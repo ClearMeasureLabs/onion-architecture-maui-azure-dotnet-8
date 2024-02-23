@@ -103,23 +103,15 @@ steps:
     csmFile: src/Core/ContainerEnvironmentARM.json
     overrideParameters: -location ${{ parameters.AzureLocation }} -environment_name ${{ parameters.containerAppEnvironmentName }}
 
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Create container app'
-#  inputs:
-#    azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
-#    resourceGroupName: ${{ parameters.ResourceGroupName }}
-#    location: ${{ parameters.AzureLocation }}
-#    csmFile: src/Core/ContainerARM.json
-#    overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{  parameters.containerAppEnvironmentName }}" -container_image "${{ parameters.RegistryLoginServer }}/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}"  -connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }}"
-
-- task: AzureCLI@2
-  displayName: 'Get the Fully Qualified Domain Name for the container app'
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Create container app'
   inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+    resourceGroupName: ${{ parameters.ResourceGroupName }}
+    location: ${{ parameters.AzureLocation }}
+    csmFile: src/Core/ContainerARM.json
+    overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{  parameters.containerAppEnvironmentName }}" -container_image "${{ parameters.RegistryLoginServer }}/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}"  -connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }}"
+
 
 - task: AzureCLI@2
   displayName: 'Get the Fully Qualified Domain Name for the container app'
