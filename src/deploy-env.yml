@@ -119,14 +119,7 @@ steps:
     scriptType: 'ps'
     scriptLocation: 'inlineScript' 
     inlineScript: |
-      az containerapp create \
-      --name ${{ parameters.ContainerAppName }} \
-      --resource-group ${{ parameters.ResourceGroupName }} \
-      --environment ${{ parameters.containerAppEnvironmentName }} \
-      --image onionarchitecturemauiazuredotnet8.azurecr.io/churchbulletin.ui:$(Build.BuildNumber) \
-      --target-port ${{ parameters.HttpPort }} \
-      --ingress 'external' \
-      --query properties.configuration.ingress.fqdn
+      az containerapp create --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --environment ${{ parameters.containerAppEnvironmentName }} --image onionarchitecturemauiazuredotnet8.azurecr.io/churchbulletin.ui:$(Build.BuildNumber) --target-port ${{ parameters.HttpPort }} --ingress 'external' --query properties.configuration.ingress.fqdn
 
 
 - task: AzureCLI@2
