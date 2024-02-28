@@ -103,7 +103,7 @@ steps:
     csmFile: src/Core/ContainerEnvironmentARM.json
     overrideParameters: -location ${{ parameters.AzureLocation }} -environment_name ${{ parameters.containerAppEnvironmentName }}
 
-#- task: AzureResourceGroupDeployment@2
+- task: AzureResourceGroupDeployment@2
   displayName: 'Create container app'
   inputs:
     azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
