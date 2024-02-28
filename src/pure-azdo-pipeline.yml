@@ -94,7 +94,7 @@ stages:
 
       - task: Docker@2
         inputs:
-          containerRegistry: 'OnionArchitectureMauiDotnet8AzDO'
+          containerRegistry: 'MauiOnionDN8'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
