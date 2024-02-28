@@ -97,7 +97,7 @@ steps:
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app environment'
   inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
     resourceGroupName: ${{ parameters.ResourceGroupName }}
     location: ${{ parameters.AzureLocation }}
     csmFile: src/Core/ContainerEnvironmentARM.json
@@ -106,7 +106,7 @@ steps:
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app'
   inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
     resourceGroupName: ${{ parameters.ResourceGroupName }}
     location: ${{ parameters.AzureLocation }}
     csmFile: src/Core/ContainerARM.json
