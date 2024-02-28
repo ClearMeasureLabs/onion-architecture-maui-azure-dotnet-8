@@ -1,5 +1,7 @@
 trigger:
-    - "second-azdo-pipeline"
+    #Commenting out branch trigger during testing
+    #- "second-azdo-pipeline"
+    - none
     
 variables:
     major: 1
