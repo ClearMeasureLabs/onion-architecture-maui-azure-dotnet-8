@@ -167,7 +167,7 @@ steps:
       #the container app from an image in the acr.
       ###############################################################################
       az acr login --name onionarchitecturemauiazuredotnet8 -u $(Rev:r)  -p $TOKEN_FINAL
-      az containerapp create --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --environment ${{ parameters.containerAppEnvironmentName }} --image onionarchitecturemauiazuredotnet8.azurecr.io/churchbulletin.ui:$(Build.BuildNumber) --target-port ${{ parameters.HttpPort }} --ingress 'external' --query properties.configuration.ingress.fqdn
+      az containerapp create --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --environment ${{ parameters.containerAppEnvironmentName }} --image ${{ parameters.RegistryLoginServer }}/churchbulletin.ui:$(Build.BuildNumber) --target-port ${{ parameters.HttpPort }} --ingress 'external' --query properties.configuration.ingress.fqdn
 
 
 - task: AzureCLI@2
