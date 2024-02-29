@@ -51,7 +51,7 @@ steps:
   displayName: 'Create resource group'
   inputs:
     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'ps'
+    scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: az group create --name ${{ parameters.ResourceGroupName }} --location ${{ parameters.AzureLocation }}
 
@@ -86,7 +86,7 @@ steps:
   displayName: 'Get database connection string'
   inputs: 
     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'ps'
+    scriptType: 'bash'
     scriptLocation: 'inlineScript' 
     inlineScript: |
       az config set extension.use_dynamic_install=yes_without_prompt
@@ -103,23 +103,71 @@ steps:
     csmFile: src/Core/ContainerEnvironmentARM.json
     overrideParameters: -location ${{ parameters.AzureLocation }} -environment_name ${{ parameters.containerAppEnvironmentName }}
 
-- task: AzureResourceGroupDeployment@2
-  displayName: 'Create container app'
-  inputs:
-    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    resourceGroupName: ${{ parameters.ResourceGroupName }}
-    location: ${{ parameters.AzureLocation }}
-    csmFile: src/Core/ContainerARM.json
-    overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{  parameters.containerAppEnvironmentName }}" -container_image "${{ parameters.RegistryLoginServer }}/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}"  -connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }}"
-
-#- task: AzureCLI@2
-#  displayName: 'Create Container App via CI'
-#  inputs: 
+#- task: AzureResourceGroupDeployment@2
+#  displayName: 'Create container app'
+#  inputs:
 #    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-#    scriptType: 'ps'
-#    scriptLocation: 'inlineScript' 
-#    inlineScript: |
-#      az containerapp create --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --environment ${{ parameters.containerAppEnvironmentName }} --image onionarchitecturemauiazuredotnet8.azurecr.io/churchbulletin.ui:$(Build.BuildNumber) --target-port ${{ parameters.HttpPort }} --ingress 'external' --query properties.configuration.ingress.fqdn
+#    resourceGroupName: ${{ parameters.ResourceGroupName }}
+#    location: ${{ parameters.AzureLocation }}
+#    csmFile: src/Core/ContainerARM.json
+#    overrideParameters: -containerappName "${{ parameters.ContainerAppName }}" -location "${{ parameters.AzureLocation }}" -environment_name "${{  parameters.containerAppEnvironmentName }}" -container_image "${{ parameters.RegistryLoginServer }}/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "${{ parameters.ContainerRegistryPassword }}"  -connection_string "$(DbConnString)" -http_port "${{ parameters.HttpPort }}" -registry_login_server "${{ parameters.RegistryLoginServer }}" -app_id "${{ parameters.AcrContainerAppId }}"
+
+- task: AzureCLI@2
+  displayName: 'Create Container App via CI'
+  inputs: 
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript' 
+    inlineScript: |
+      ###############################################################################
+      #jq is here to fetch the password out of the token we'll get from the ACR.
+      #It's not natively installed on any ubuntu image but readily available via
+      #apt.
+      ###############################################################################
+      sudo apt install jq -y
+
+      ###############################################################################
+      #ACR tokens include passwords, which a) we don't want on screen and b) we'll
+      #have to parse out for login. Accordingly, we're directing the output of 
+      #az acr token create to a text file and we'll have to massage it later.
+      ###############################################################################
+      TOKEN=$(az acr token create --name $(Rev:r) --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --output json)
+      echo $TOKEN | jq '.credentials.passwords[0].value' >>acrp.txt
+      
+      ###############################################################################
+      #Reading the password from the file we just wrote.  This, unfortunately, 
+      #includes double quotes around the password string and az acr login Does Not
+      #Like quotes around the -p field.  There has to be a better, more direct way
+      #of reading the text into the variable than this, and that's on the TODO list.
+      ###############################################################################
+      TOKEN_PWD=$(<acrp.txt)
+
+      ###############################################################################
+      #Now we've got an environment variable set for TOKEN_PWD and the value set from
+      #the az acr token output parsed through jq.  Still has quotes and we can't have
+      #that, so we're sedding the quote marks out.  Again, this is redirected to text
+      #to avoid exposing the password in plain text, and because it simplifies the 
+      #next variable we have to assign.
+      ###############################################################################
+      sed -e 's/^"//' -e 's/"$//' <<<"$TOKEN_PWD" >> final.txt
+
+      ###############################################################################
+      #Now that sed's pulled the quotes out from around the string, we assign to a 
+      #new variable and that's what we'll pass into az acr login. We could (maybe 
+      #should) recycle the $TOKEN_PWD variable and that's also on the list.  We're
+      #not doing it here because the new variable has been tested and works, and
+      #doesn't afford opportunities for variable assignment weirdness to flunk our
+      #az acr login.
+      ###############################################################################
+      TOKEN_FINAL=$(<final.txt)
+
+      ###############################################################################
+      All that to get to this - the acr login that's weirdly difficult to achieve
+      #with RBAC/ARM.  This gets us in, and affords us the access we'll need to build 
+      #the container app from an image in the acr.
+      ###############################################################################
+      az acr login --name onionarchitecturemauiazuredotnet8 -u $(Rev:r)  -p $TOKEN_FINAL
+      az containerapp create --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --environment ${{ parameters.containerAppEnvironmentName }} --image onionarchitecturemauiazuredotnet8.azurecr.io/churchbulletin.ui:$(Build.BuildNumber) --target-port ${{ parameters.HttpPort }} --ingress 'external' --query properties.configuration.ingress.fqdn
 
 
 - task: AzureCLI@2
