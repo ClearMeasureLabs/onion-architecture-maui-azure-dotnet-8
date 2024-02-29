@@ -107,7 +107,7 @@ stages:
   jobs:
     - deployment: 'DeployToTDD'
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'windows-latest'
       variables:
       - group: Pure-Azure-Build-TDD
       - name: branch
