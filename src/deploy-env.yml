@@ -124,6 +124,7 @@ steps:
       #It's not natively installed on any ubuntu image but readily available via
       #apt.
       ###############################################################################
+      sudo apt update
       sudo apt install jq -y
 
       ###############################################################################
@@ -149,7 +150,7 @@ steps:
       #to avoid exposing the password in plain text, and because it simplifies the 
       #next variable we have to assign.
       ###############################################################################
-      sed -e 's/^"//' -e 's/"$//' <<<"$TOKEN_PWD" >> final.txt
+      wsl -e /bin/bash -c "sed -e 's/^"//' -e 's/"$//' <<<"$TOKEN_PWD" >> final.txt"
 
       ###############################################################################
       #Now that sed's pulled the quotes out from around the string, we assign to a 
