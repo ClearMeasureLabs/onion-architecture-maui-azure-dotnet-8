@@ -120,19 +120,12 @@ steps:
     scriptLocation: 'inlineScript' 
     inlineScript: |
       ###############################################################################
-      #jq is here to fetch the password out of the token we'll get from the ACR.
-      #It's not natively installed on any ubuntu image but readily available via
-      #apt.
-      ###############################################################################
-      apt update
-      apt install jq -y
-
-      ###############################################################################
       #ACR tokens include passwords, which a) we don't want on screen and b) we'll
       #have to parse out for login. Accordingly, we're directing the output of 
       #az acr token create to a text file and we'll have to massage it later.
       ###############################################################################
-      TOKEN=$(az acr token create --name $(Rev:r) --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --output json)
+      DATE=$(date '+%Y%m%d')
+      TOKEN=$(az acr token create --name $DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --output json)
       echo $TOKEN | jq '.credentials.passwords[0].value' >>acrp.txt
       
       ###############################################################################
