@@ -86,7 +86,7 @@ steps:
   displayName: 'Get database connection string'
   inputs: 
     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'bash'
+    scriptType: 'ps'
     scriptLocation: 'inlineScript' 
     inlineScript: |
       az config set extension.use_dynamic_install=yes_without_prompt
