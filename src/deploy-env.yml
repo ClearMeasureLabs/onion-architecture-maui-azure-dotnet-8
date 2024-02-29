@@ -126,7 +126,7 @@ steps:
       #another command to generate the passwords for the acr login.
       ###############################################################################
       $DATE = Get-Date -format "yyyymmddHHMM"
-      $TOKEN=$(az acr token create --name T$DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --no-passwords --output json) 
+      $TOKEN=$(az acr token create --name T$DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read metadata/read metadata/write --no-passwords --output json) 
       az acr token credential generate -n T$DATE -r onionarchitecturemauiazuredotnet8 --password1 --expiration-in-days 30 --output json >> .\temp.json
       
       #cat temp.txt | jq '.passwords[0].value' >>acrp.txt
