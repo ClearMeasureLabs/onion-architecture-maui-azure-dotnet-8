@@ -163,7 +163,7 @@ steps:
       #TOKEN_FINAL=$(<final.txt)
 
       ###############################################################################
-      All that to get to this - the acr login that's weirdly difficult to achieve
+      #All that to get to this - the acr login that's weirdly difficult to achieve
       #with RBAC/ARM.  This gets us in, and affords us the access we'll need to build 
       #the container app from an image in the acr.
       ###############################################################################
