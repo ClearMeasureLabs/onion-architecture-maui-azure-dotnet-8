@@ -120,13 +120,16 @@ steps:
     scriptLocation: 'inlineScript' 
     inlineScript: |
       ###############################################################################
-      #ACR tokens include passwords, which a) we don't want on screen and b) we'll
-      #have to parse out for login. Accordingly, we're directing the output of 
-      #az acr token create to a text file and we'll have to massage it later.
+      #The default az acr token create command prints the password to the screen and
+      #as of November 2023 that remains totally uncontrollable behavior.  Rather than
+      #live with it, we're going to generate that token without passwords and use
+      #another command to generate the passwords for the acr login.
       ###############################################################################
       DATE=$(date '+%Y%m%d')
-      TOKEN=$(az acr token create --name T$DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --output json)
-      echo $TOKEN | jq '.credentials.passwords[0].value' >>acrp.txt
+      TOKEN=$(az acr token create --name T$DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --no-passwords --output json) 
+      az acr token credential generate -n T$DATE -r onionarchitecturemauiazuredotnet8 --password1 --expiration-in-days 30 --output json >> temp.txt
+      
+      cat temp.txt | jq '.passwords[0].value' >>acrp.txt
       
       ###############################################################################
       #Reading the password from the file we just wrote.  This, unfortunately, 
@@ -160,7 +163,7 @@ steps:
       #with RBAC/ARM.  This gets us in, and affords us the access we'll need to build 
       #the container app from an image in the acr.
       ###############################################################################
-      az acr login --name onionarchitecturemauiazuredotnet8 -u $(Rev:r)  -p $TOKEN_FINAL
+      az acr login --name onionarchitecturemauiazuredotnet8 -u T$DATE  -p $TOKEN_FINAL
       az containerapp create --name ${{ parameters.ContainerAppName }} --resource-group ${{ parameters.ResourceGroupName }} --environment ${{ parameters.containerAppEnvironmentName }} --image ${{ parameters.RegistryLoginServer }}/churchbulletin.ui:$(Build.BuildNumber) --target-port ${{ parameters.HttpPort }} --ingress 'external' --query properties.configuration.ingress.fqdn
 
 
