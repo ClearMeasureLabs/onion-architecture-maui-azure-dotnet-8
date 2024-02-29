@@ -116,7 +116,7 @@ steps:
   displayName: 'Create Container App via CI'
   inputs: 
     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
-    scriptType: 'bash'
+    scriptType: 'ps'
     scriptLocation: 'inlineScript' 
     inlineScript: |
       ###############################################################################
@@ -125,11 +125,15 @@ steps:
       #live with it, we're going to generate that token without passwords and use
       #another command to generate the passwords for the acr login.
       ###############################################################################
-      DATE=$(date '+%Y%m%d')
-      TOKEN=$(az acr token create --name T$DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --no-passwords --output json) 
-      az acr token credential generate -n T$DATE -r onionarchitecturemauiazuredotnet8 --password1 --expiration-in-days 30 --output json >> temp.txt
+      $DATE = Get-Date -format "yyyymmddHHMM"
+      $TOKEN=$(az acr token create --name T$DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --no-passwords --output json) 
+      az acr token credential generate -n T$DATE -r onionarchitecturemauiazuredotnet8 --password1 --expiration-in-days 30 --output json >> .\temp.json
       
-      cat temp.txt | jq '.passwords[0].value' >>acrp.txt
+      #cat temp.txt | jq '.passwords[0].value' >>acrp.txt
+      
+      $pwjson = get-content .\temp.json | Out-String | ConvertFrom-Json
+      $TOKEN_FINAL = $pwjson.passwords.value
+
       
       ###############################################################################
       #Reading the password from the file we just wrote.  This, unfortunately, 
@@ -137,7 +141,7 @@ steps:
       #Like quotes around the -p field.  There has to be a better, more direct way
       #of reading the text into the variable than this, and that's on the TODO list.
       ###############################################################################
-      TOKEN_PWD=$(<acrp.txt)
+      #TOKEN_PWD=$(<acrp.txt)
 
       ###############################################################################
       #Now we've got an environment variable set for TOKEN_PWD and the value set from
@@ -146,7 +150,7 @@ steps:
       #to avoid exposing the password in plain text, and because it simplifies the 
       #next variable we have to assign.
       ###############################################################################
-      wsl -e /bin/bash -c "sed -e 's/^"//' -e 's/"$//' <<<"$TOKEN_PWD" >> final.txt"
+      #wsl -e /bin/bash -c "sed -e 's/^"//' -e 's/"$//' <<<"$TOKEN_PWD" >> final.txt"
 
       ###############################################################################
       #Now that sed's pulled the quotes out from around the string, we assign to a 
@@ -156,7 +160,7 @@ steps:
       #doesn't afford opportunities for variable assignment weirdness to flunk our
       #az acr login.
       ###############################################################################
-      TOKEN_FINAL=$(<final.txt)
+      #TOKEN_FINAL=$(<final.txt)
 
       ###############################################################################
       All that to get to this - the acr login that's weirdly difficult to achieve
