@@ -124,8 +124,8 @@ steps:
       #It's not natively installed on any ubuntu image but readily available via
       #apt.
       ###############################################################################
-      sudo apt update
-      sudo apt install jq -y
+      apt update
+      apt install jq -y
 
       ###############################################################################
       #ACR tokens include passwords, which a) we don't want on screen and b) we'll
