@@ -125,7 +125,7 @@ steps:
       #az acr token create to a text file and we'll have to massage it later.
       ###############################################################################
       DATE=$(date '+%Y%m%d')
-      TOKEN=$(az acr token create --name $DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --output json)
+      TOKEN=$(az acr token create --name T$DATE --registry onionarchitecturemauiazuredotnet8.azurecr.io --repository churchbulletin.ui/* content/write content/read --output json)
       echo $TOKEN | jq '.credentials.passwords[0].value' >>acrp.txt
       
       ###############################################################################
