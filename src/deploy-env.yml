@@ -56,7 +56,7 @@ steps:
     inlineScript: |
       az config set extension.use_dynamic_install=yes_without_prompt
       $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-$(Environment)-$(IntegerVersion) --name $(DatabaseName) --client ado.net
-      $connstring = $connstring -replace '<username>', '$(DatabaseUser)' -replace '<password>', '$(DatabasePasswor)' -replace '"', ''
+      $connstring = $connstring -replace '<username>', '$(DatabaseUser)' -replace '<password>', '$(DatabasePassword)' -replace '"', ''
       Write-Host "##vso[task.setvariable variable=DbConnString]$connstring"
 
 - task: AzureResourceGroupDeployment@2
