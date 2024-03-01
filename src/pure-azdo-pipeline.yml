@@ -266,3 +266,67 @@ stages:
                 codeCoverageEnabled: true
                 testRunTitle: 'Acceptance Tests'
                 diagnosticsEnabled: True
+
+- stage: 'Prod'
+  displayName: 'Prod'
+  jobs:
+    - deployment: 'DeployToProd'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Pure-Azure-Build
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
+      - name: TDDResourceGroup
+        value: '$(ResourceGroupName)-Prod'
+      - name: Environment
+        value: 'prod'
+      - name: DatabaseUser
+        value: '$(DatabaseUserProd)'
+      - name: DatabasePassword
+        value: '$(DatabasePasswordTest)'
+      - name: DatabaseName
+        value: '$(DatabaseNameProd)'
+      - name: ContainerAppName
+        value: '$(ContainerAppNameProd)'
+      - name: ContainerImage
+        value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      environment: 'Prod'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            
+            - template: .\deploy-env.yml
+            
+            - task: DownloadPackage@1
+              displayName: 'Download Acceptance Test Package'
+              inputs:
+                packageType: 'nuget'
+                feed: '$(AzureFeedName)'
+                view: 'Local'
+                definition: 'ChurchBulletin.AcceptanceTests'
+                version: '$(Build.Buildnumber)'
+                downloadPath: '$(System.DefaultWorkingDirectory)/tests'
+                extract: true
+
+            - task: PowerShell@2
+              displayName: 'Download Playwright'
+              inputs:
+                targetType: filePath
+                filePath: ./tests/playwright.ps1
+                arguments: 'install'
+
+            - task: VSTest@2
+              displayName: 'VsTest - AcceptanceTests'
+              inputs:
+                testSelector: 'testAssemblies'
+                testAssemblyVer2: |
+                  **\*AcceptanceTests.dll
+                  !**\*TestAdapter.dll
+                  !**\obj\**
+                  searchFolder: '$(System.DefaultWorkingDirectory)/tests'
+                uiTests: true
+                codeCoverageEnabled: true
+                testRunTitle: 'Acceptance Tests'
+                diagnosticsEnabled: True
