@@ -204,7 +204,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
-        value: '$(ResourceGroupName)-UAT-$(Build.BuildNumber)'
+        value: '$(ResourceGroupName)-UAT'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
       environment: 'UAT'
