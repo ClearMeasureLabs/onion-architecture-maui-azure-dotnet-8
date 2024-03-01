@@ -111,7 +111,7 @@ stages:
       - name: TDDResourceGroup
         value: '$(ResourceGroupName)-TDD-$(Build.BuildNumber)'
       - name: Environment
-        value: 'TDD'
+        value: 'tdd'
       - name: DatabaseUser
         value: '$(DatabaseUserTest)'
       - name: DatabasePassword
@@ -227,7 +227,7 @@ stages:
         value: '$(ContainerAppNameUAT)'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
-      environment: 'UAT'
+      environment: 'uat'
       strategy:
         runOnce:
           deploy:
