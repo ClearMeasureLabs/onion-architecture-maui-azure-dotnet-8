@@ -220,7 +220,7 @@ stages:
       - name: DatabaseUser
         value: '$(DatabaseUserUAT)'
       - name: DatabasePassword
-        value: '$(DatabasePasswordUAT)'
+        value: '$(DatabasePasswordTest)'
       - name: DatabaseName
         value: '$(DatabaseNameUAT)'
       - name: ContainerAppName
