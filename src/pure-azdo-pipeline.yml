@@ -5,7 +5,7 @@ trigger:
     
 variables:
     major: 1
-    minor: 1
+    minor: 3
 name: $(major).$(minor).$(Rev:r)
 
 stages:
@@ -214,7 +214,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
-        value: '$(ResourceGroupName)-UAT'
+        value: '$(ResourceGroupName)-UAT-$(Build.BuildNumber)'
       - name: Environment
         value: 'uat'
       - name: DatabaseUser
