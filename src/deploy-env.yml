@@ -1,12 +1,3 @@
-variables:
-- group: Pure-Azure-Build
-- name: branch
-  value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
-- name: TDDResourceGroup
-  value: '$(ResourceGroupName)-TDD-$(Build.BuildNumber)'
-- name: ContainerImage
-  value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
-
 steps:
 
 - task: AzureCLI@2
