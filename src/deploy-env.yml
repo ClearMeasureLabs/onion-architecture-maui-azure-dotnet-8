@@ -38,14 +38,14 @@ steps:
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Database/DatabaseARM.json
-    overrideParameters: -databaseserverName $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) -databaseLogin $(DatabaseUserTest) -databaseLoginPassword $(DatabasePasswordTest) -skuCapacity 1 -databaseName $(DatabaseNameTest) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
+    overrideParameters: -databaseserverName $(SubscriptionId)-dotnet8-$(Environment)-$(IntegerVersion) -databaseLogin $(DatabaseUser) -databaseLoginPassword $(DatabasePassword) -skuCapacity 1 -databaseName $(DatabaseName) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
 
 - task: PowerShell@2
   displayName: 'Create database schema'
   inputs:
     targetType: filePath
     filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
-    arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-tdd-$(IntegerVersion).database.windows.net' -DatabaseName '$(DatabaseNameTest)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUserTest)' -DatabasePassword '$(DatabasePasswordTest)'
+    arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-$(Environment)-$(IntegerVersion).database.windows.net' -DatabaseName '$(DatabaseName)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUser)' -DatabasePassword '$(DatabasePassword)'
 
 - task: AzureCLI@2
   displayName: 'Get database connection string'
@@ -55,8 +55,8 @@ steps:
     scriptLocation: 'inlineScript' 
     inlineScript: |
       az config set extension.use_dynamic_install=yes_without_prompt
-      $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-tdd-$(IntegerVersion) --name $(DatabaseNameTest) --client ado.net
-      $connstring = $connstring -replace '<username>', '$(DatabaseUserTest)' -replace '<password>', '$(DatabasePasswordTest)' -replace '"', ''
+      $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-$(Environment)-$(IntegerVersion) --name $(DatabaseName) --client ado.net
+      $connstring = $connstring -replace '<username>', '$(DatabaseUser)' -replace '<password>', '$(DatabasePasswor)' -replace '"', ''
       Write-Host "##vso[task.setvariable variable=DbConnString]$connstring"
 
 - task: AzureResourceGroupDeployment@2
@@ -66,7 +66,7 @@ steps:
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Core/ContainerEnvironmentARM.json
-    overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-TDD-cae
+    overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-$(Environment)-cae
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app'
@@ -75,7 +75,7 @@ steps:
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Core/ContainerARM.json
-    overrideParameters: -containerappName "$(ContainerAppNameTest)" -location "$(AzureLocation)" -environment_name "$(ResourceGroupName)-TDD-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "$(ContainerRegistryPassword)" -connection_string "$(DbConnString)" -http_port "$(HttpPort)" -registry_login_server "$(RegistryLoginServer)" -app_id "$(AcrContainerAppId)"
+    overrideParameters: -containerappName "$(ContainerAppName)" -location "$(AzureLocation)" -environment_name "$(ResourceGroupName)-$(Environment)-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "$(ContainerRegistryPassword)" -connection_string "$(DbConnString)" -http_port "$(HttpPort)" -registry_login_server "$(RegistryLoginServer)" -app_id "$(AcrContainerAppId)"
 
 - task: AzureCLI@2
   displayName: 'Get the Fully Qualified Domain Name for the container app'
@@ -84,7 +84,7 @@ steps:
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      $fqdn = az containerapp show --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
+      $fqdn = az containerapp show --name $(ContainerAppName) --resource-group $(TDDResourceGroup) --query properties.configuration.ingress.fqdn
       $fqdn = $fqdn -replace '"', ''
       [System.Environment]::SetEnvironmentVariable("containerAppURL", $fqdn, "User")
       Write-Host "##vso[task.setvariable variable=fullyQualifiedDomainName]$fqdn"
@@ -96,7 +96,7 @@ steps:
     azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
-    inlineScript: az containerapp update --name $(ContainerAppNameTest) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=$(HttpPort) 
+    inlineScript: az containerapp update --name $(ContainerAppName) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=$(HttpPort) 
 
 - task: PowerShell@2
   displayName: 'Check version of deployed app'

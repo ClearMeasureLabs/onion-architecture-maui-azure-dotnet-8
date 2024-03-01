@@ -110,6 +110,16 @@ stages:
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
         value: '$(ResourceGroupName)-TDD-$(Build.BuildNumber)'
+        - name: Environment
+        value: 'TDD'
+      - name: DatabaseUser
+        value: '$(DatabaseUserTest)'
+      - name: DatabasePassword
+        value: '$(DatabasePasswordTest)'
+      - name: DatabaseName
+        value: '$(DatabaseNameTest)'
+      - name: ContainerAppName
+        value: '$(ContainerAppNameTest)'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
       environment: 'TDD'
@@ -205,6 +215,16 @@ stages:
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
         value: '$(ResourceGroupName)-UAT'
+      - name: Environment
+        value: 'UAT'
+      - name: DatabaseUser
+        value: '$(DatabaseUserUAT)'
+      - name: DatabasePassword
+        value: '$(DatabasePasswordUAT)'
+      - name: DatabaseName
+        value: '$(DatabaseNameUAT)'
+      - name: ContainerAppName
+        value: '$(ContainerAppNameUAT)'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
       environment: 'UAT'
