@@ -267,7 +267,7 @@ stages:
                 testRunTitle: 'Acceptance Tests'
                 diagnosticsEnabled: True
 
-- stage: 'Prod'
+- stage: 'Production'
   displayName: 'Prod'
   jobs:
     - deployment: 'DeployToProd'
