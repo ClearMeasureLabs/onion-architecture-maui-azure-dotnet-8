@@ -214,7 +214,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
-        value: '$(ResourceGroupName)-UAT-$(Build.BuildNumber)'
+        value: '$(ResourceGroupName)-UAT'
       - name: Environment
         value: 'uat'
       - name: DatabaseUser
@@ -278,7 +278,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
-        value: '$(ResourceGroupName)-Prod-$(Build.BuildNumber)'
+        value: '$(ResourceGroupName)-Prod'
       - name: Environment
         value: 'prod'
       - name: DatabaseUser
