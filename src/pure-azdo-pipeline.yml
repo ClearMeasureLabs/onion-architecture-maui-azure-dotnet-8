@@ -330,3 +330,39 @@ stages:
                 codeCoverageEnabled: true
                 testRunTitle: 'Acceptance Tests'
                 diagnosticsEnabled: True
+
+- stage: 'AmazonAppStore'
+  displayName: 'AmazonAppStore' 
+  dependsOn: [Production]
+  jobs: 
+    - job: 'DeployToAmazonStore'
+      displayName: 'DeployToAmazonStore'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Integration-Build 
+      - name: Prod-Resource-Group
+        value: onion-architecture-maui-azure-dotnet-8-prod
+      - name: Prod-App-Name
+        value: prod-ui   
+      condition: and(succeeded(), eq(variables['AmazonStoreDeploy'], true))      
+      steps:
+      - template: deploy-amazon.yml
+
+- stage: 'PlayStore'
+  displayName: 'PlayStore' 
+  dependsOn: Production
+  jobs: 
+    - job: 'DeployToPlayStore'
+      displayName: 'DeployToPlayStore'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Integration-Build 
+      - name: Prod-Resource-Group
+        value: onion-architecture-maui-azure-dotnet-8-prod
+      - name: Prod-App-Name
+        value: prod-ui   
+      condition: and(succeeded(), eq(variables['PlayStoreDeploy'], true))      
+      steps:
+      - template: deploy-apple.yml
