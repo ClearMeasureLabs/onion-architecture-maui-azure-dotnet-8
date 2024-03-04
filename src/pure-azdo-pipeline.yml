@@ -278,7 +278,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
-        value: '$(ResourceGroupName)-Prod'
+        value: '$(ResourceGroupName)-Prod-$(Build.BuildNumber)'
       - name: Environment
         value: 'prod'
       - name: DatabaseUser
