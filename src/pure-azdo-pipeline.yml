@@ -365,4 +365,4 @@ stages:
         value: prod-ui   
       condition: and(succeeded(), eq(variables['PlayStoreDeploy'], true))      
       steps:
-      - template: deploy-apple.yml
+      - template: deploy-google.yml
