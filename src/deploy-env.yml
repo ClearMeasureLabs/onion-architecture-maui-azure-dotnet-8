@@ -45,7 +45,7 @@ steps:
   inputs:
     targetType: filePath
     filePath: src/Database/scripts/UpdateAzurePipelineSql.ps1
-    arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-$(Environment)-$(IntegerVersion).database.windows.net' -DatabaseName '$(DatabaseName)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUser)' -DatabasePassword '$(DatabasePassword)'
+    arguments: -DatabaseServer '$(SubscriptionId)-dotnet8-$(Environment).database.windows.net' -DatabaseName '$(DatabaseName)' -DatabaseAction '$(DatabaseAction)' -DatabaseUser '$(DatabaseUser)' -DatabasePassword '$(DatabasePassword)'
 
 - task: AzureCLI@2
   displayName: 'Get database connection string'
@@ -55,7 +55,7 @@ steps:
     scriptLocation: 'inlineScript' 
     inlineScript: |
       az config set extension.use_dynamic_install=yes_without_prompt
-      $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-$(Environment)-$(IntegerVersion) --name $(DatabaseName) --client ado.net
+      $connstring = az sql db show-connection-string --server $(SubscriptionId)-dotnet8-$(Environment) --name $(DatabaseName) --client ado.net
       $connstring = $connstring -replace '<username>', '$(DatabaseUser)' -replace '<password>', '$(DatabasePassword)' -replace '"', ''
       Write-Host "##vso[task.setvariable variable=DbConnString]$connstring"
 
