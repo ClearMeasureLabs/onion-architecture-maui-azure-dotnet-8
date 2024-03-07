@@ -13,7 +13,7 @@ RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor
 RUN curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
 RUN apt-get update
 RUN apt-get update
-RUN apt-get install mssql-tools18 unixodbc-dev
+RUN apt-get install -y mssql-tools18 unixodbc-dev
 
 
 USER $APP_UID
