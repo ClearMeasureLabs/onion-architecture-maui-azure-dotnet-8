@@ -9,7 +9,9 @@ RUN mkdir /sqlcmd
 RUN apt-get update
 RUN apt-get install -y curl
 
-RUN curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list |  tee /etc/apt/sources.list.d/mssql-release.list
+RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+RUN curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
+RUN apt-get update
 RUN apt-get update
 RUN apt-get install mssql-tools18 unixodbc-dev
 
