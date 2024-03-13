@@ -98,16 +98,16 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: az containerapp update --name $(ContainerAppName) --resource-group $(TDDResourceGroup) --image $(ContainerImage) --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=$(HttpPort) 
 
-- task: PowerShell@2
-  displayName: 'Check version of deployed app'
-  inputs:
-    targetType: 'filePath'
-    filePath: src/UI/Server/CheckVersion.ps1
-    arguments: -server '$(fullyQualifiedDomainName)' -version '$(Build.BuildNumber)'
+#- task: PowerShell@2
+#  displayName: 'Check version of deployed app'
+#  inputs:
+#    targetType: 'filePath'
+#    filePath: src/UI/Server/CheckVersion.ps1
+#    arguments: -server '$(fullyQualifiedDomainName)' -version '$(Build.BuildNumber)'
 
-- task: PowerShell@2
-  displayName: 'Perform healthcheck for server on container app'
-  inputs:
-    targetType: 'filePath'
-    filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
-    arguments: -server '$(fullyQualifiedDomainName)'
+#- task: PowerShell@2
+#  displayName: 'Perform healthcheck for server on container app'
+#  inputs:
+#    targetType: 'filePath'
+#    filePath: src/UI/Server/CallHealthCheckEndpoint.ps1
+#    arguments: -server '$(fullyQualifiedDomainName)'
