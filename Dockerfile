@@ -5,3 +5,4 @@
 
 FROM mcr.microsoft.com/mssql/server:2019-latest
 
+EXPOSE 8080 80
