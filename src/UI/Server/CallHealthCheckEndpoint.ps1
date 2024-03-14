@@ -1,9 +1,13 @@
 param(
     [string]$server
 )
+
+Write-Host "Provided server url: $server"
+
 Start-Sleep -Seconds 90
 $uri = "$server/_healthcheck"
 Write-Host "Smoke testing $uri"
+
 Invoke-WebRequest $uri -UseBasicParsing | Foreach {
     $_.Content.Contains("Healthy") | Foreach {
         if(-Not($_)) {

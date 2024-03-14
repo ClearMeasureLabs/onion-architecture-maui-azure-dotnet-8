@@ -1,21 +1,22 @@
 ﻿using System.Diagnostics;
+using System.Net.Http;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 using Palermo.BlazorMvc;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
-namespace UI.Client.Pages;
+namespace UI.Shared.Pages;
 
-[Route("/fetchchurchbulletin")]
-public class FetchChurchBulletinController : ControllerComponentBase<FetchChurchBulletinView>
+[Route("/fetchdata")]
+public class FetchDataController : ControllerComponentBase<FetchDataView>
 {
-    private ChurchBulletinItem[]? _bulletins;
+    private WeatherForecast[]? _forecasts;
     [Inject] public HttpClient? Http { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Debug.Assert(Http != null, nameof(Http) + " != null");
-        _bulletins = await Http.GetFromJsonAsync<ChurchBulletinItem[]>("ChurchBulletinItem");
-        View.Model = _bulletins;
+        _forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        View.Model = _forecasts;
     }
 }

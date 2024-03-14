@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <Configurations>Debug;Release;exclude-maui.slnf</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Core.csproj" />
+    <ProjectReference Include="..\..\UI.Shared\UI.Shared.csproj" />
   </ItemGroup>
 
 </Project>
