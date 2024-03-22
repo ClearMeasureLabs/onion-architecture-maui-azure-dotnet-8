@@ -509,6 +509,8 @@ stages:
       condition: and(succeeded(), eq(variables['AppStoreDeploy'], true))      
       steps:
 
+      - script: ls -lsaR $(Build.SourcesDirectory)
+
       - task: Bash@3
         displayName: Install MAUI
         inputs:
@@ -567,7 +569,7 @@ stages:
           packageType: 'runtime'
           version: '8.0.0'
 
-      - script: tree $(Build.SourcesDirectory)
+
       - task: DotNetCoreCLI@2
         displayName: 'Build iOS target'
         inputs:
