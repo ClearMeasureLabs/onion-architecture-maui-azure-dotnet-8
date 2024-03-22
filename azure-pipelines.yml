@@ -567,7 +567,7 @@ stages:
           packageType: 'runtime'
           version: '8.0.0'
 
-    - task: DotNetCoreCLI@2
+      - task: DotNetCoreCLI@2
         displayName: 'dotnet restore'
         inputs:
           command: restore
