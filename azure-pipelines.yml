@@ -498,7 +498,8 @@ stages:
     - job: 'DeployToAppStore'
       displayName: 'DeployToAppStore'
       pool:
-        vmImage: 'windows-latest'
+        vmImage: 'macos-latest'
+        demands: xcode
       variables:
       - group: Integration-Build 
       - name: Prod-Resource-Group
@@ -508,13 +509,13 @@ stages:
       condition: and(succeeded(), eq(variables['AppStoreDeploy'], true))      
       steps:
 
-      # - task: Bash@3
-      #   displayName: Install MAUI
-      #   inputs:
-      #     targetType: 'inline'
-      #     script: |
-      #       dotnet nuget locals all --clear 
-      #       dotnet workload install maui android ios
+      - task: Bash@3
+        displayName: Install MAUI
+        inputs:
+          targetType: 'inline'
+          script: |
+            dotnet nuget locals all --clear 
+            dotnet workload install maui android ios
 
       - task: AzureCLI@2
         displayName: Set up env vars
@@ -539,24 +540,48 @@ stages:
             $json = $appSettings | ConvertTo-Json
             Set-Content -Path $appSettingsPath -Value $json
 
+      - task: InstallAppleCertificate@2
+        displayName: 'Install Apple P12 Cert'
+        inputs:
+          certSecureFile: 'iOSCertificate.p12'
+          certPwd: '$(AppleCertPass)'
+          keychain: 'temp'
+
+      - task: InstallAppleProvisioningProfile@1
+        displayName: 'Install Apple Provisioning Profile'
+        inputs:
+          provisioningProfileLocation: 'secureFiles'
+          provProfileSecureFile: 'AircraftFactsDev.mobileprovision'
+      
       - task: DotNetCoreCLI@2
-        displayName: 'Build and sign Android target'
+        displayName: 'Build  target'
         inputs:
           command: 'publish'
           projects: '**/Ui.Maui.csproj'
           publishWebProjects: false
-          arguments: '-c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$(keystore.secureFilePath) -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=OnionArch8 -o ./build -p:TreatWarningsAsErrors=True'
-      
+          arguments: '-c Release -f net8.0-ios -p:ArchiveOnBuild=true -p:EnableAssemblyILStripping=false -o ./build '
+
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $zipfile = "./build/Maui.zip"
+            $outdir = "./build"
+            [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outdir)
+            Write-Output "build:"
+            Get-ChildItem -Path ./build -File
+
       - task: AppStoreRelease@1
         inputs:
           authType: 'ApiKey'
-          apiKeyId: 'YOUR_KEY_ID'
-          apiKeyIssuerId: 'YOUR_ISSUER_ID'
-          apitoken: 'YOUR_API_KEY_ENCODED'
+          apiKeyId: '$(AppleApiKeyId)'
+          apiKeyIssuerId: '$(AppleApiIssuerId)'
+          apitoken: '$(AppleApiToken)'
           releaseTrack: 'TestFlight'
           appIdentifier: 'com.companyname.ui.maui'
           appType: 'iOS'
-          ipaPath: ./**/*.ipa
+          ipaPath: ./build/*.ipa
           shouldSkipWaitingForProcessing: true
           shouldSkipSubmission: true
-          appSpecificId: 'YOUR_APPLE_ID'
+          appSpecificId: '$(AppleAppId)'
