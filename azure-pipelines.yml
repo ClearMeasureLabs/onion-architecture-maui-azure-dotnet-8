@@ -571,7 +571,7 @@ stages:
         displayName: 'dotnet restore'
         inputs:
           command: restore
-          projects: '$(Build.SourcesDirectory)/src/UI/Maui/Ui.Maui.csproj'
+          projects: '$(Build.SourcesDirectory)/src'
 
 
       - task: DotNetCoreCLI@2
