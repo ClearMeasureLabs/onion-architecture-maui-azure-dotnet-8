@@ -509,8 +509,6 @@ stages:
       condition: and(succeeded(), eq(variables['AppStoreDeploy'], true))      
       steps:
 
-      - script: ls -lsaR $(Build.SourcesDirectory)
-
       - task: Bash@3
         displayName: Install MAUI
         inputs:
@@ -574,7 +572,7 @@ stages:
         displayName: 'Build iOS target'
         inputs:
           command: 'publish'
-          projects: '$(Build.SourcesDirectory)/src/UI/Ui.Maui.csproj'
+          projects: '$(Build.SourcesDirectory)/src/UI/Maui/Ui.Maui.csproj'
           publishWebProjects: false
           arguments: '-c Release -f net8.0-ios -p:ArchiveOnBuild=true -p:EnableAssemblyILStripping=false -o ./build '
 
