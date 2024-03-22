@@ -25,13 +25,23 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
 
-		<AndroidManifest>Platforms\Android\AndroidManifest.xml</AndroidManifest>
 
 		<Configurations>Debug;Release;exclude-maui.slnf</Configurations>
 
     </PropertyGroup>
 
-    <ItemGroup>
+	<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios' AND '$(Configuration)' == 'Release'">
+		<RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+		<ProvisioningType>manual</ProvisioningType>
+		<CodesignKey>Apple Distribution: Richard Ram (8JJ68WG5HW)</CodesignKey>
+		<CodesignProvision>Distribution</CodesignProvision>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<EnableDefaultContentItems>false</EnableDefaultContentItems>
+	</PropertyGroup>
+
+	<ItemGroup>
 
 
 		<AndroidManifest Include="Platforms\Andriod\AndroidManifest.xml"></AndroidManifest>
@@ -66,15 +76,9 @@
 	</ItemGroup>
 
 
-	<ItemGroup>
-	  <Content Remove="appsettings.json" />
-	</ItemGroup>
 
-
-	<ItemGroup>
-	  <EmbeddedResource Include="appsettings.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </EmbeddedResource>
+	<ItemGroup Condition="'$(Configuration)' == 'Release'">
+		<Content Include="appsettings.json" PublishFolderType="None" />
 	</ItemGroup>
 
 
