@@ -552,6 +552,21 @@ stages:
         inputs:
           provisioningProfileLocation: 'secureFiles'
           provProfileSecureFile: 'Distribution.mobileprovision'
+
+      - task: UseDotNet@2
+        displayName: 'Install SDK 8.0.100'
+        inputs:
+          packageType: 'sdk'
+          version: '8.0.100'
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'runtime'
+          version: '6.0.0'
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'runtime'
+          version: '8.0.0'
+
       
       - task: DotNetCoreCLI@2
         displayName: 'Build  target'
