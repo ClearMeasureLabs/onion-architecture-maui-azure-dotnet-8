@@ -567,15 +567,16 @@ stages:
           packageType: 'runtime'
           version: '8.0.0'
 
-      
+      - script: echo "src Directory is $(Build.SourcesDirectory)"
       - task: DotNetCoreCLI@2
-        displayName: 'Build  target'
+        displayName: 'Build iOS target'
         inputs:
           command: 'publish'
           projects: '$(Build.SourcesDirectory)/src/UI/Ui.Maui.csproj'
           publishWebProjects: false
           arguments: '-c Release -f net8.0-ios -p:ArchiveOnBuild=true -p:EnableAssemblyILStripping=false -o ./build '
 
+      
       - task: PowerShell@2
         inputs:
           targetType: 'inline'
