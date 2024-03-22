@@ -498,7 +498,7 @@ stages:
     - job: 'DeployToAppStore'
       displayName: 'DeployToAppStore'
       pool:
-        vmImage: 'macos-latest'
+        vmImage: 'macos-13'
         demands: xcode
       variables:
       - group: Integration-Build 
@@ -508,6 +508,13 @@ stages:
         value: prod-ui   
       condition: and(succeeded(), eq(variables['AppStoreDeploy'], true))      
       steps:
+
+      - task: PowerShell@2
+        displayName: Select Xcode Version 15.0.1
+        inputs:
+          targetType: 'inline'
+          script: |
+            sudo xcode-select -s /Applications/Xcode_15.0.1.app
 
       - task: Bash@3
         displayName: Install MAUI
