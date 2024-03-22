@@ -568,10 +568,10 @@ stages:
           version: '8.0.0'
 
       - task: DotNetCoreCLI@2
-        displayName: 'dotnet restore'
+        displayName: 'dotnet workload restore'
         inputs:
           command: restore
-          projects: '$(Build.SourcesDirectory)/src'
+          projects: '$(Build.SourcesDirectory)/src/UI/Maui/Ui.Maui.csproj'
 
 
       - task: DotNetCoreCLI@2
