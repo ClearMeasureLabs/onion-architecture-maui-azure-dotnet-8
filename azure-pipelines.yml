@@ -516,37 +516,44 @@ stages:
           script: |
             sudo xcode-select -s /Applications/Xcode_15.0.1.app
 
-      - task: Bash@3
-        displayName: Install MAUI
+      # - task: Bash@3
+      #   displayName: Install MAUI
+      #   inputs:
+      #     targetType: 'inline'
+      #     script: |
+      #       dotnet nuget locals all --clear 
+      #       dotnet workload install maui android ios
+
+      
+
+
+      # - task: AzureCLI@2
+      #   displayName: Set up env vars
+      #   inputs:
+      #     azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
+      #     scriptType: 'ps'
+      #     scriptLocation: 'inlineScript'
+      #     inlineScript: |
+      #       az config set extension.use_dynamic_install=yes_without_prompt
+      #       $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
+      #       $prodURL = $prodURL -replace '"', ''
+      #       $prodURL = "https://$prodURL"
+      #       [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+      #       $splitVersion = $env:Version -split "\."
+      #       $stringVer = $splitVersion[-1]
+      #       $intVer = [int]$stringVer
+      #       Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
+
+      #       $appSettingsPath = "./src/UI/Maui/appsettings.json"
+      #       $appSettings = Get-Content $appSettingsPath | ConvertFrom-Json
+      #       $appSettings.BaseAddress = $prodURL
+      #       $json = $appSettings | ConvertTo-Json
+      #       Set-Content -Path $appSettingsPath -Value $json
+
+      - task: CmdLine@2
+        displayName: 'Install Maui Workload'
         inputs:
-          targetType: 'inline'
-          script: |
-            dotnet nuget locals all --clear 
-            dotnet workload install maui android ios
-
-      - task: AzureCLI@2
-        displayName: Set up env vars
-        inputs:
-          azureSubscription: 'onion-architecture-maui-azure-dotnet-8'
-          scriptType: 'ps'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            az config set extension.use_dynamic_install=yes_without_prompt
-            $prodURL = az containerapp show --resource-group $(Prod-Resource-Group) --name $(Prod-App-Name) --query properties.configuration.ingress.fqdn
-            $prodURL = $prodURL -replace '"', ''
-            $prodURL = "https://$prodURL"
-            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
-            $splitVersion = $env:Version -split "\."
-            $stringVer = $splitVersion[-1]
-            $intVer = [int]$stringVer
-            Write-Host "##vso[task.setvariable variable=IntegerVersion]$intVer"
-
-            $appSettingsPath = "./src/UI/Maui/appsettings.json"
-            $appSettings = Get-Content $appSettingsPath | ConvertFrom-Json
-            $appSettings.BaseAddress = $prodURL
-            $json = $appSettings | ConvertTo-Json
-            Set-Content -Path $appSettingsPath -Value $json
-
+          script: 'dotnet workload install maui'
       - task: InstallAppleCertificate@2
         displayName: 'Install Apple P12 Cert'
         inputs:
