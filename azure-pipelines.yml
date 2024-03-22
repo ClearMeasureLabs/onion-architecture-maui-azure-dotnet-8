@@ -567,7 +567,7 @@ stages:
           packageType: 'runtime'
           version: '8.0.0'
 
-      - script: echo "src Directory is $(Build.SourcesDirectory)"
+      - script: tree $(Build.SourcesDirectory)
       - task: DotNetCoreCLI@2
         displayName: 'Build iOS target'
         inputs:
