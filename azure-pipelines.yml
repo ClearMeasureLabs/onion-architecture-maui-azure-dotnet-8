@@ -609,4 +609,4 @@ stages:
           appType: 'iOS'
           ipaPath: './build/*.ipa'
           appSpecificId: '$(AppleAppId)'
-          installFastlane: false
+          installFastlane: true
