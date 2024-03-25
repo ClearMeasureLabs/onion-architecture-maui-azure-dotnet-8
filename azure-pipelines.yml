@@ -607,7 +607,6 @@ stages:
           releaseTrack: 'TestFlight'
           appIdentifier: 'com.companyname.ui.maui'
           appType: 'iOS'
-          ipaPath: ./build/*.ipa
-          shouldSkipWaitingForProcessing: true
-          shouldSkipSubmission: true
+          ipaPath: './build/*.ipa'
           appSpecificId: '$(AppleAppId)'
+          installFastlane: false
