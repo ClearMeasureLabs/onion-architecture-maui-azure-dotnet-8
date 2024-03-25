@@ -572,7 +572,7 @@ stages:
         displayName: 'Install Apple Provisioning Profile'
         inputs:
           provisioningProfileLocation: 'secureFiles'
-          provProfileSecureFile: 'Distribution.mobileprovision'
+          provProfileSecureFile: 'DistributionV2.mobileprovision'
 
        
 
