@@ -564,7 +564,7 @@ stages:
       - task: InstallAppleCertificate@2
         displayName: 'Install Apple P12 Cert'
         inputs:
-          certSecureFile: 'iOSCertificate.p12'
+          certSecureFile: 'iOS Cert.p12'
           certPwd: '$(AppleCertPass)'
           keychain: 'temp'
 
