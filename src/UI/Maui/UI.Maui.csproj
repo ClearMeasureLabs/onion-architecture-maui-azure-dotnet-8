@@ -42,8 +42,10 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios'">
-	  <CodesignKey>Apple Development: Created via API (V826A63J2X)</CodesignKey>
-	  <CodesignProvision>VS: com.companyname.ui.maui Development</CodesignProvision>
+	   <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+	  <CodesignKey>Apple Distribution: Richard Ram (8JJ68WG5HW)</CodesignKey>
+	  <CodesignProvision>Distribution</CodesignProvision>
+	  <ProvisioningType>manual</ProvisioningType>
 	</PropertyGroup>
 
 	<ItemGroup>
