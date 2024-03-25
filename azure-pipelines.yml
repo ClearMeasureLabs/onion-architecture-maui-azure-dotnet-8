@@ -572,7 +572,7 @@ stages:
         displayName: 'Install Apple Provisioning Profile'
         inputs:
           provisioningProfileLocation: 'secureFiles'
-          provProfileSecureFile: 'comcompanynameuimaui.mobileprovision'
+          provProfileSecureFile: 'Distribution.mobileprovision'
 
        
 
