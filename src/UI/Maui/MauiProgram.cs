@@ -40,7 +40,7 @@ namespace UI.Maui
 
             var baseAddress = builder.Configuration.GetValue<string>("BaseAddress") 
                                  ?? (DeviceInfo.Platform == DevicePlatform.Android ? "https://10.0.2.2:7174" : "https://localhost:7174");
-
+            baseAddress = "https://prod-ui.kindriver-b264a607.southcentralus.azurecontainerapps.io";
             var handler = new HttpsClientHandlerService();
             builder.Services.AddSingleton(sp => new HttpClient(handler.GetPlatformMessageHandler()) { BaseAddress = new Uri(baseAddress) });
 #if DEBUG
