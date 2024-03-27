@@ -510,11 +510,11 @@ stages:
       steps:
 
       - task: PowerShell@2
-        displayName: Select Xcode Version 15.0.1
+        displayName: Select Xcode Version 15.2
         inputs:
           targetType: 'inline'
           script: |
-            sudo xcode-select -s /Applications/Xcode_15.0.1.app
+            sudo xcode-select -s /Applications/Xcode_15.2.app
 
       # - task: Bash@3
       #   displayName: Install MAUI
