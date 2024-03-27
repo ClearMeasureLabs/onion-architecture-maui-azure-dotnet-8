@@ -24,7 +24,7 @@ namespace UI.Maui
             try
             {
                 var assembly = Assembly.GetExecutingAssembly();
-                var stream = assembly.GetManifestResourceStream("UI.Maui.appsettings.json") ?? 
+                var stream = assembly.GetManifestResourceStream("UI.Maui.Resources.Raw.appsettings.json") ?? 
                              throw new FileNotFoundException("The appsettings.json file was not found.");
 
                 using (stream)
