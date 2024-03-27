@@ -598,23 +598,23 @@ stages:
             Write-Output "build:"
             Get-ChildItem -Path ./build -File
 
-      # - task: AppStoreRelease@1
-      #   inputs:
-      #     authType: 'ApiKey'
-      #     apiKeyId: '$(AppleApiKeyId)'
-      #     apiKeyIssuerId: '$(AppleApiIssuerId)'
-      #     apitoken: '$(AppleApiToken)'
-      #     releaseTrack: 'TestFlight'
-      #     appIdentifier: 'com.companyname.ui.maui'
-      #     appType: 'iOS'
-      #     ipaPath: './build/*.ipa'
-      #     appSpecificId: '$(AppleAppId)'
-      #     shouldSkipWaitingForProcessing: true
-      #     installFastlane: true
+      - task: AppStoreRelease@1
+        inputs:
+          authType: 'ApiKey'
+          apiKeyId: '$(AppleApiKeyId)'
+          apiKeyIssuerId: '$(AppleApiIssuerId)'
+          apitoken: '$(AppleApiToken)'
+          releaseTrack: 'TestFlight'
+          appIdentifier: 'com.companyname.ui.maui'
+          appType: 'iOS'
+          ipaPath: './build/*.ipa'
+          appSpecificId: '$(AppleAppId)'
+          shouldSkipWaitingForProcessing: true
+          installFastlane: true
 
             
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: './build/Ui.Maui.ipa'
-          ArtifactName: 'UIMAUIIOS'
-          publishLocation: 'Container'
+      # - task: PublishBuildArtifacts@1
+      #   inputs:
+      #     PathtoPublish: './build/Ui.Maui.ipa'
+      #     ArtifactName: 'UIMAUIIOS'
+      #     publishLocation: 'Container'

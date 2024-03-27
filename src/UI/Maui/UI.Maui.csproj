@@ -85,7 +85,6 @@
     
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Core.csproj" />
-		<ProjectReference Include="..\..\UI.Shared\UI.Shared.csproj" />
 	</ItemGroup>
 
 </Project>
