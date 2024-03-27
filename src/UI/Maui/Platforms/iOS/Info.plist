@@ -32,5 +32,9 @@
 	<string>5</string>
 	<key>CFBundleVersion</key>
 	<string>5</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.companyname.ui.maui</string>
+	<key>CFBundleDisplayName</key>
+	<string>UI.Maui</string>
 </dict>
 </plist>
