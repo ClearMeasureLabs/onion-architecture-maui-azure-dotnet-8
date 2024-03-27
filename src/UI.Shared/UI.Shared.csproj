@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
+    <SupportedPlatform Include="macOS" />
   </ItemGroup>
 
   <ItemGroup>
