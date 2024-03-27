@@ -611,3 +611,10 @@ stages:
           appSpecificId: '$(AppleAppId)'
           shouldSkipWaitingForProcessing: true
           installFastlane: true
+
+            
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: './build/*.ipa'
+          ArtifactName: 'UIMAUIIOS'
+          publishLocation: 'Container'

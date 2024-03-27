@@ -12,15 +12,6 @@
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
         <Nullable>enable</Nullable>
 
-        <!-- Display name -->
-        <ApplicationTitle>UI.Maui</ApplicationTitle>
-
-        <!-- App Identifier -->
-        <ApplicationId>com.companyname.ui.maui</ApplicationId>
-
-        <!-- Versions -->
-        <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
-        <ApplicationVersion>4</ApplicationVersion>
 
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
