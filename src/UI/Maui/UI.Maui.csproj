@@ -30,18 +30,7 @@
 
     </PropertyGroup>
 
-	<!--<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios' AND '$(Configuration)' == 'Release'">
-		<RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
-		<ProvisioningType>manual</ProvisioningType>
-		<CodesignKey>Apple Distribution: Richard Ram (8JJ68WG5HW)</CodesignKey>
-		<CodesignProvision>Distribution</CodesignProvision>
-	</PropertyGroup>-->
-
-	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
-		<EnableDefaultContentItems>false</EnableDefaultContentItems>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios'">
+	<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios' AND '$(Configuration)' == 'Release'">
 	   <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
 	  <CodesignKey>iPhone Distribution: Richard Ram (8JJ68WG5HW)</CodesignKey>
 	  <CodesignProvision>Distribution</CodesignProvision>
@@ -80,12 +69,6 @@
 	<ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-ios')) != true">
 		<Compile Remove="**\iOS\**\*.cs" />
 		<None Include="**\iOS\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	</ItemGroup>
-
-
-
-	<ItemGroup Condition="'$(Configuration)' == 'Release'">
-		<Content Include="appsettings.json" PublishFolderType="None" />
 	</ItemGroup>
 
 
