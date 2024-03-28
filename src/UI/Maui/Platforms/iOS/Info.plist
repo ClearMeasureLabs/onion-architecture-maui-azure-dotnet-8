@@ -29,7 +29,7 @@
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
 	<key>CFBundleShortVersionString</key>
-	<string>5</string>
+	<string>6</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.companyname.ui.maui</string>
 	<key>CFBundleDisplayName</key>
@@ -43,9 +43,9 @@
 			<string>Editor</string>
 		</dict>
 	</array>
-	<key>CFBundleVersion</key>
-	<string>7</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 </dict>
 </plist>
