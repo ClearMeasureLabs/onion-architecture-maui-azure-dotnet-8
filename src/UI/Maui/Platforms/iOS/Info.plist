@@ -45,5 +45,7 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>7</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

@@ -33,11 +33,17 @@
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<EnableDefaultContentItems>false</EnableDefaultContentItems>
 	</PropertyGroup>
+
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+		<AndroidManifest Include="Platforms\Andriod\AndroidManifest.xml"></AndroidManifest>
+	</ItemGroup>
 		
 	<ItemGroup>
+		
 
 
-		<AndroidManifest Include="Platforms\Andriod\AndroidManifest.xml"></AndroidManifest>
+		
 		<!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 

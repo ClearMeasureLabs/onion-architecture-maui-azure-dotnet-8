@@ -19,7 +19,7 @@ namespace UI.Maui
                 });
 
             builder.Services.AddMauiBlazorWebView();
-            builder.Services.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
+           // builder.Services.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
