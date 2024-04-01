@@ -21,18 +21,18 @@
 
     </PropertyGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-android' AND '$(Configuration)' == 'Release'">
-		<!-- Display name -->
+	<!--<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-android' AND '$(Configuration)' == 'Release'">
+		--><!-- Display name --><!--
 		<ApplicationTitle>UI.Maui</ApplicationTitle>
 
-		<!-- App Identifier -->
+		--><!-- App Identifier --><!--
 		<ApplicationId>com.companyname.ui.maui</ApplicationId>
 
-		<!-- Versions -->
+		--><!-- Versions --><!--
 		<ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
 		<ApplicationVersion>5</ApplicationVersion>
 
-	</PropertyGroup>
+	</PropertyGroup>-->
 
 
 	<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios' AND '$(Configuration)' == 'Release'">
