@@ -17,6 +17,14 @@
     "containerAppLogAnalyticsName": {
       "defaultValue": "",
       "type": "String"
+    },
+    "subscriptionId": {
+      "defaultValue": "",
+      "type": "String"
+    },
+    "ResourceGroupName": {
+      "defaultValue": "",
+      "type": "String"
     }
   },
   "variables": {},
@@ -30,7 +38,7 @@
             "appLogsConfiguration": {
             "destination": "log-analytics",
             "logAnalyticsConfiguration": {
-              "customerId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName'))).customerId]",
+              "customerId": "[reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')),'2022-10-01').customerId]",
               "sharedKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01').primarySharedKey]"
             },
             "daprAIConnectionString": "[parameters('appInsightsConnectionString')]"

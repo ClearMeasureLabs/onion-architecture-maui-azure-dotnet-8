@@ -232,6 +232,8 @@ stages:
         value: '$(AppInsightsConnectionStringUAT)'
       - name: containerAppLogAnalyticsName
         value: 'UAT-Log-Analytics'
+      - name: SubscriptionId
+        value: $(SubscriptionId)
       environment: 'UAT'
       strategy:
         runOnce:
