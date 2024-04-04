@@ -13,7 +13,7 @@ builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(
 var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .AddAzureMonitorTraceExporter(options =>
     {
-        options.ConnectionString = "InstrumentationKey=36d786d6-ec04-4eaa-aed3-dfe7e71f1840;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
+        options.ConnectionString = "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
     });
 
 // Create a new OpenTelemetry meter provider.
@@ -21,7 +21,7 @@ var tracerProvider = Sdk.CreateTracerProviderBuilder()
 var metricsProvider = Sdk.CreateMeterProviderBuilder()
     .AddAzureMonitorMetricExporter(options =>
     {
-        options.ConnectionString = "InstrumentationKey=36d786d6-ec04-4eaa-aed3-dfe7e71f1840;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
+        options.ConnectionString = "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
     });
 
 // Create a new logger factory.
@@ -32,7 +32,7 @@ var loggerFactory = LoggerFactory.Create(builder =>
     {
         options.AddAzureMonitorLogExporter(options =>
         {
-            options.ConnectionString = "InstrumentationKey=36d786d6-ec04-4eaa-aed3-dfe7e71f1840;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
+            options.ConnectionString = "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
         });
     });
 });
