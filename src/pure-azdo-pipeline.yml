@@ -205,7 +205,7 @@ stages:
 
 - stage: 'UAT'
   displayName: 'UAT'
-  dependsOn: TDD
+  # dependsOn: TDD
   jobs:
     - deployment: 'DeployToUAT'
       pool:
