@@ -75,7 +75,11 @@
               "username": "[parameters('app_id')]",
               "passwordSecretRef": "registrypassword"
             }
-          ]
+          ],
+          "dapr": {
+            "enabled": true,
+            "appId": "churchbulletin"
+          }
         },
         "template": {
           "revisionSuffix": "[uniqueString(resourceGroup().id, deployment().name)]",
