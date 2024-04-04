@@ -1,8 +1,41 @@
+using Azure.Monitor.OpenTelemetry.Exporter;
+using OpenTelemetry;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); });
+
+
+// Create a new OpenTelemetry tracer provider.
+// It is important to keep the TracerProvider instance active throughout the process lifetime.
+var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    .AddAzureMonitorTraceExporter(options =>
+    {
+        options.ConnectionString = "InstrumentationKey=36d786d6-ec04-4eaa-aed3-dfe7e71f1840;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
+    });
+
+// Create a new OpenTelemetry meter provider.
+// It is important to keep the MetricsProvider instance active throughout the process lifetime.
+var metricsProvider = Sdk.CreateMeterProviderBuilder()
+    .AddAzureMonitorMetricExporter(options =>
+    {
+        options.ConnectionString = "InstrumentationKey=36d786d6-ec04-4eaa-aed3-dfe7e71f1840;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
+    });
+
+// Create a new logger factory.
+// It is important to keep the LoggerFactory instance active throughout the process lifetime.
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddOpenTelemetry(options =>
+    {
+        options.AddAzureMonitorLogExporter(options =>
+        {
+            options.ConnectionString = "InstrumentationKey=36d786d6-ec04-4eaa-aed3-dfe7e71f1840;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
+        });
+    });
+});
 
 var app = builder.Build();
 //Configure the HTTP request pipeline.
