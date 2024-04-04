@@ -228,6 +228,10 @@ stages:
         value: '$(ContainerAppNameUAT)'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      - name: AppInsightsConnectionString
+        value: '$(AppInsightsConnectionStringUAT)'
+      - name: containerAppLogAnalyticsName
+        value: 'UAT-Log-Analytics'
       environment: 'UAT'
       strategy:
         runOnce:
