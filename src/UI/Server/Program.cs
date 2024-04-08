@@ -1,5 +1,6 @@
 using Azure.Monitor.OpenTelemetry.Exporter;
 using OpenTelemetry;
+using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -7,13 +8,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); });
 
-
+const string serviceName = "ChurchBulletin";
+const string conString =
+    "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/;ApplicationId=38d77475-c6fa-47a0-9488-e9d6b88c6a7b";
 // Create a new OpenTelemetry tracer provider.
 // It is important to keep the TracerProvider instance active throughout the process lifetime.
 var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .AddAzureMonitorTraceExporter(options =>
     {
-        options.ConnectionString = "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
+        options.ConnectionString = conString;
     });
 
 // Create a new OpenTelemetry meter provider.
@@ -21,7 +24,7 @@ var tracerProvider = Sdk.CreateTracerProviderBuilder()
 var metricsProvider = Sdk.CreateMeterProviderBuilder()
     .AddAzureMonitorMetricExporter(options =>
     {
-        options.ConnectionString = "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
+        options.ConnectionString = conString;
     });
 
 // Create a new logger factory.
@@ -32,10 +35,14 @@ var loggerFactory = LoggerFactory.Create(builder =>
     {
         options.AddAzureMonitorLogExporter(options =>
         {
-            options.ConnectionString = "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/";
-        });
+            options.ConnectionString = conString;
+        }).SetResourceBuilder(ResourceBuilder.CreateDefault()
+            .AddService(serviceName));
     });
 });
+
+builder.Services.AddOpenTelemetry().ConfigureResource(resource => resource.AddService(serviceName))
+    .WithTracing().WithMetrics();
 
 var app = builder.Build();
 //Configure the HTTP request pipeline.
