@@ -1,6 +1,8 @@
 using Azure.Monitor.OpenTelemetry.Exporter;
 using OpenTelemetry;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -12,13 +14,28 @@ const string serviceName = "ChurchBulletin";
 const string conString =
     "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/;ApplicationId=38d77475-c6fa-47a0-9488-e9d6b88c6a7b";
 
+var resource = ResourceBuilder.CreateDefault()
+    .AddService(serviceName);
+
 builder.Logging.AddOpenTelemetry(options =>
 {
-    options.AddAzureMonitorLogExporter(configo => configo.ConnectionString = conString);
-    options.SetResourceBuilder(
-        ResourceBuilder.CreateDefault()
-            .AddService(serviceName));
+    options.AddAzureMonitorLogExporter(config => config.ConnectionString = conString);
+    options.SetResourceBuilder(resource);
 });
+
+using var meterProvider = Sdk.CreateMeterProviderBuilder()
+        .AddAzureMonitorMetricExporter(config => config.ConnectionString = conString)
+        .SetResourceBuilder(resource)
+        .AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation()
+        .Build();
+
+using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    .AddAzureMonitorTraceExporter(config => config.ConnectionString = conString)
+    .SetResourceBuilder(resource)
+    .AddHttpClientInstrumentation()
+    .AddAspNetCoreInstrumentation()
+    .Build();
 
 var app = builder.Build();
 //Configure the HTTP request pipeline.
