@@ -11,38 +11,14 @@ builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(
 const string serviceName = "ChurchBulletin";
 const string conString =
     "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/;ApplicationId=38d77475-c6fa-47a0-9488-e9d6b88c6a7b";
-// Create a new OpenTelemetry tracer provider.
-// It is important to keep the TracerProvider instance active throughout the process lifetime.
-var tracerProvider = Sdk.CreateTracerProviderBuilder()
-    .AddAzureMonitorTraceExporter(options =>
-    {
-        options.ConnectionString = conString;
-    });
 
-// Create a new OpenTelemetry meter provider.
-// It is important to keep the MetricsProvider instance active throughout the process lifetime.
-var metricsProvider = Sdk.CreateMeterProviderBuilder()
-    .AddAzureMonitorMetricExporter(options =>
-    {
-        options.ConnectionString = conString;
-    });
-
-// Create a new logger factory.
-// It is important to keep the LoggerFactory instance active throughout the process lifetime.
-var loggerFactory = LoggerFactory.Create(builder =>
+builder.Logging.AddOpenTelemetry(options =>
 {
-    builder.AddOpenTelemetry(options =>
-    {
-        options.AddAzureMonitorLogExporter(options =>
-        {
-            options.ConnectionString = conString;
-        }).SetResourceBuilder(ResourceBuilder.CreateDefault()
+    options.AddAzureMonitorLogExporter(configo => configo.ConnectionString = conString);
+    options.SetResourceBuilder(
+        ResourceBuilder.CreateDefault()
             .AddService(serviceName));
-    });
 });
-
-builder.Services.AddOpenTelemetry().ConfigureResource(resource => resource.AddService(serviceName))
-    .WithTracing().WithMetrics();
 
 var app = builder.Build();
 //Configure the HTTP request pipeline.
