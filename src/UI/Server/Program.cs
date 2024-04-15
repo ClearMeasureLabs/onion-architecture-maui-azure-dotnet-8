@@ -10,28 +10,24 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); });
 
-const string serviceName = "ChurchBulletin";
-const string conString =
-    "InstrumentationKey=62370908-c8ab-42cb-85ca-e08f56998971;IngestionEndpoint=https://southcentralus-3.in.applicationinsights.azure.com/;LiveEndpoint=https://southcentralus.livediagnostics.monitor.azure.com/;ApplicationId=38d77475-c6fa-47a0-9488-e9d6b88c6a7b";
-
 var resource = ResourceBuilder.CreateDefault()
-    .AddService(serviceName);
+    .AddService("ChurchBulletin");
 
 builder.Logging.AddOpenTelemetry(options =>
 {
-    options.AddAzureMonitorLogExporter(config => config.ConnectionString = conString);
+    options.AddAzureMonitorLogExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"]);
     options.SetResourceBuilder(resource);
 });
 
 using var meterProvider = Sdk.CreateMeterProviderBuilder()
-        .AddAzureMonitorMetricExporter(config => config.ConnectionString = conString)
+        .AddAzureMonitorMetricExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"])
         .SetResourceBuilder(resource)
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation()
         .Build();
 
 using var tracerProvider = Sdk.CreateTracerProviderBuilder()
-    .AddAzureMonitorTraceExporter(config => config.ConnectionString = conString)
+    .AddAzureMonitorTraceExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"])
     .SetResourceBuilder(resource)
     .AddHttpClientInstrumentation()
     .AddAspNetCoreInstrumentation()
