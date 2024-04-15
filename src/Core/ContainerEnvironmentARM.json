@@ -30,18 +30,19 @@
   "variables": {},
   "resources": [
     {
+      "condition": "[or(equals(parameters('environment_name'), 'uat'), (equals(parameters('environment_name'), 'prod')]",
       "type": "Microsoft.App/managedEnvironments",
       "apiVersion": "2022-03-01",
       "name": "[parameters('environment_name')]",
       "location": "[parameters('location')]",
       "properties": {
-            "appLogsConfiguration": {
-            "destination": "log-analytics",
-            "logAnalyticsConfiguration": {
-              "customerId": "[reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')),'2022-10-01').customerId]",
-              "sharedKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01').primarySharedKey]"
-            },
-            "daprAIConnectionString": "[parameters('appInsightsConnectionString')]"
+        "appLogsConfiguration": {
+          "destination": "log-analytics",
+          "logAnalyticsConfiguration": {
+            "customerId": "[reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')),'2022-10-01').customerId]",
+            "sharedKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01').primarySharedKey]"
+          },
+          "daprAIConnectionString": "[parameters('appInsightsConnectionString')]"
         }
       }
     }
