@@ -30,7 +30,7 @@
   "variables": {},
   "resources": [
     {
-      "condition": "[or(equals(parameters('environment_name'), 'uat')), (equals(parameters('environment_name'), 'prod'))]",
+      "condition": "[or(equals(parameters('environment_name'), 'uat'), equals(parameters('environment_name'), 'prod'))]",
       "type": "Microsoft.App/managedEnvironments",
       "apiVersion": "2022-03-01",
       "name": "[parameters('environment_name')]",
