@@ -40,7 +40,7 @@
           "destination": "log-analytics",
           "logAnalyticsConfiguration": {
             "customerId": "[if(empty(reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')))), null(), reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')),'2022-10-01').customerId)]",
-            "sharedKey": "[if(empty(listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')))), null(), listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01').primarySharedKey)]"
+            "sharedKey": "[if(empty(reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')))), null(), listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01').primarySharedKey)]"
           },
           "daprAIConnectionString": "[parameters('appInsightsConnectionString')]"
         }
