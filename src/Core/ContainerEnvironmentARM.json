@@ -38,7 +38,7 @@
       "tags": {},
       "properties": {
         "sku": {
-          "name": "Free"
+          "name": "PerGB2018"
         },
         "retentionInDays": 1
       }
