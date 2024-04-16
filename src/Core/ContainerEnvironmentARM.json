@@ -30,7 +30,7 @@
   "variables": {},
   "resources": [
     {
-      "condition": "[not(equals(parameters('environment_name'), 'tdd'))]",
+      "condition": "[not(contains(parameters('environment_name'), 'tdd'))]",
       "type": "Microsoft.App/managedEnvironments",
       "apiVersion": "2022-03-01",
       "name": "[parameters('environment_name')]",
