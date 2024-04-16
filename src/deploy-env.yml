@@ -20,6 +20,15 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
 
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Create container app environment'
+  inputs:
+    azureSubscription: 'onion-architecture-maui-azure-dotnet-8-pure-azdo'
+    resourceGroupName: $(TDDResourceGroup)
+    location: $(AzureLocation)
+    csmFile: src/Core/ContainerEnvironmentARM.json
+    overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-$(Environment)-cae -appInsightsConnectionString $(AppInsightsConnectionString) -containerAppLogAnalyticsName $(containerAppLogAnalyticsName) -subscriptionId $(SubscriptionId) -ResourceGroupName $(TDDResourceGroup)
+
 - task: PowerShell@2
   displayName: 'Generate version integer for database server name'
   inputs:
