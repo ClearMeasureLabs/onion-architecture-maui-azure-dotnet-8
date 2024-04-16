@@ -122,6 +122,8 @@ stages:
         value: '$(ContainerAppNameTest)'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      - name: containerAppLogAnalyticsName
+        value: 'tdd-Log-Analytics'
       environment: 'TDD'
       strategy:
         runOnce:
