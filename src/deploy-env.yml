@@ -27,7 +27,7 @@ steps:
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Core/ContainerEnvironmentARM.json
-    overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-$(Environment)-cae -appInsightsConnectionString $(AppInsightsConnectionString) -containerAppLogAnalyticsName $(containerAppLogAnalyticsName) -appInsightsName $(appInsightsName) -subscriptionId $(SubscriptionId) -ResourceGroupName $(TDDResourceGroup)
+    overrideParameters: -location $(AzureLocation) -environment_name $(ResourceGroupName)-$(Environment)-cae -appInsightsConnectionString $(AppInsightsConnectionString) -containerAppLogAnalyticsName $(containerAppLogAnalyticsName) -subscriptionId $(SubscriptionId) -ResourceGroupName $(TDDResourceGroup)
 
 - task: PowerShell@2
   displayName: 'Generate version integer for database server name'
