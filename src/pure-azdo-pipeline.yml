@@ -235,7 +235,7 @@ stages:
       - name: AppInsightsConnectionString
         value: '$(AppInsightsConnectionStringUAT)'
       - name: appInsightsName
-        valeu: 'onion-architecture-maui-azure-dotnet-8-UAT-Insights'
+        value: 'onion-architecture-maui-azure-dotnet-8-UAT-Insights'
       - name: containerAppLogAnalyticsName
         value: 'UAT-Log-Analytics'
       - name: SubscriptionId
@@ -305,7 +305,7 @@ stages:
       - name: AppInsightsConnectionString
         value: '$(AppInsightsConnectionStringProd)'
       - name: appInsightsName
-        valeu: 'onion-architecture-maui-azure-dotnet-8-Prod-Insights'
+        value: 'onion-architecture-maui-azure-dotnet-8-Prod-Insights'
       - name: containerAppLogAnalyticsName
         value: 'Prod-Log-Analytics'
       - name: ContainerImage
