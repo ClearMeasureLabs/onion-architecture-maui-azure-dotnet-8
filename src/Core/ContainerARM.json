@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "containerappName": {
@@ -22,12 +22,16 @@
       "defaultValue": "registryPass",
       "type": "SecureString"
     },
+    "appInsightsConnectionString": {
+      "defaultValue": "",
+      "type": "String"
+    },
     "connection_string": {
       "defaultValue": "connStr",
       "type": "SecureString"
     },
     "http_port": {
-      "defaultValue": "httpPort",
+      "defaultValue": 80,
       "type": "int"
     },
     "registry_login_server": {
@@ -91,6 +95,10 @@
                 {
                   "name": "HTTP_PORT",
                   "value": "8080"
+                },
+                {
+                  "name": "OpenTelemetry.ConnectionString",
+                  "value": "[parameters('appInsightsConnectionString')]"
                 },
                 {
                   "name": "ConnectionStrings__SqlConnectionString",
