@@ -29,18 +29,37 @@
   },
   "variables": {},
   "resources": [
+
     {
-      "condition": "[not(contains(parameters('environment_name'), 'tdd'))]",
+      "name": "[parameters('containerAppLogAnalyticsName')]",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2015-11-01-preview",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 30
+      }
+
+  },
+
+    {
       "type": "Microsoft.App/managedEnvironments",
       "apiVersion": "2022-03-01",
       "name": "[parameters('environment_name')]",
       "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('containerAppLogAnalyticsName'))]"
+      ],
+
       "properties": {
         "appLogsConfiguration": {
           "destination": "log-analytics",
           "logAnalyticsConfiguration": {
-            "customerId": "[if(empty(reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01')), null(), reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')),'2022-10-01').customerId)]",
-            "sharedKey": "[if(empty(reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01')), null(), listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01').primarySharedKey)]"
+            "customerId": "[reference(resourceId(parameters('subscriptionId'), parameters('ResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')),'2022-10-01').customerId]",
+            "sharedKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('containerAppLogAnalyticsName')), '2022-10-01').primarySharedKey]"
           },
           "daprAIConnectionString": "[parameters('appInsightsConnectionString')]"
         }
