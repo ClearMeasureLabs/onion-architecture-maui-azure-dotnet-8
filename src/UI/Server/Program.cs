@@ -1,8 +1,37 @@
+using Azure.Monitor.OpenTelemetry.Exporter;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); });
+
+var resource = ResourceBuilder.CreateDefault()
+    .AddService("ChurchBulletin");
+
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options.AddAzureMonitorLogExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"]);
+    options.SetResourceBuilder(resource);
+});
+
+using var meterProvider = Sdk.CreateMeterProviderBuilder()
+        .AddAzureMonitorMetricExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"])
+        .SetResourceBuilder(resource)
+        .AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation()
+        .Build();
+
+using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    .AddAzureMonitorTraceExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"])
+    .SetResourceBuilder(resource)
+    .AddHttpClientInstrumentation()
+    .AddAspNetCoreInstrumentation()
+    .Build();
 
 var app = builder.Build();
 //Configure the HTTP request pipeline.

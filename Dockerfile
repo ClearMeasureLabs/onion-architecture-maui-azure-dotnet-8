@@ -3,7 +3,6 @@ EXPOSE 8080 80
 WORKDIR /app
 COPY /built/ /app
 
-
 RUN ls -lsa /app
 
 

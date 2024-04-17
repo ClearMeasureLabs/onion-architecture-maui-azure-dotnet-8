@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Palermo.BlazorMvc;
 
-namespace UI.Client.Pages;
+namespace UI.Shared.Pages;
 
 [Route("/counter")]
 public class CounterController : ControllerComponentBase<CounterView>
