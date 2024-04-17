@@ -124,6 +124,8 @@ stages:
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
       - name: containerAppLogAnalyticsName
         value: 'tdd-Log-Analytics'
+      - name: appInsightsName
+        value: 'tdd-App-Insights'
       environment: 'TDD'
       strategy:
         runOnce:
@@ -232,6 +234,8 @@ stages:
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
       - name: AppInsightsConnectionString
         value: '$(AppInsightsConnectionStringUAT)'
+      - name: appInsightsName
+        valeu: 'onion-architecture-maui-azure-dotnet-8-UAT-Insights'
       - name: containerAppLogAnalyticsName
         value: 'UAT-Log-Analytics'
       - name: SubscriptionId
@@ -298,6 +302,12 @@ stages:
         value: '$(DatabaseNameProd)'
       - name: ContainerAppName
         value: '$(ContainerAppNameProd)'
+      - name: AppInsightsConnectionString
+        value: '$(AppInsightsConnectionStringProd)'
+      - name: appInsightsName
+        valeu: 'onion-architecture-maui-azure-dotnet-8-Prod-Insights'
+      - name: containerAppLogAnalyticsName
+        value: 'Prod-Log-Analytics'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
       environment: 'Prod'
