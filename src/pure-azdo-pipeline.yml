@@ -125,7 +125,7 @@ stages:
       - name: containerAppLogAnalyticsName
         value: 'tdd-Log-Analytics'
       - name: appInsightsName
-        value: 'tdd-App-Insights'
+        value: 'onion-architecture-maui-azure-dotnet-8-TDD-Insights'
       environment: 'TDD'
       strategy:
         runOnce:
