@@ -30,6 +30,10 @@
       "defaultValue": "connStr",
       "type": "SecureString"
     },
+    "aspnetcore_environment": {
+      "defaultValue": "tdd",
+      "type": "String"
+    },
     "http_port": {
       "defaultValue": 80,
       "type": "int"
@@ -103,6 +107,10 @@
                 {
                   "name": "ConnectionStrings__SqlConnectionString",
                   "value": "[parameters('connection_string')]"
+                },
+                {
+                  "name": "ASPNETCORE_ENVIRONMENT",
+                  "value": "[parameters('aspnetcore_environment')]"
                 }
               ],
               "resources": {

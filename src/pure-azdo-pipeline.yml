@@ -128,6 +128,8 @@ stages:
         value: 'onion-architecture-maui-azure-dotnet-8-TDD-Insights'
       - name: AppInsightsConnectionString
         value: $(AppInsightsConnectionStringTDD)
+      - name: aspnetcore_environment
+        value: $(AspnetcoreEnvironmentTest)
       environment: 'TDD'
       strategy:
         runOnce:
@@ -244,6 +246,8 @@ stages:
         value: $(SubscriptionId)
       - name: AppInsightsConnectionString
         value: $(AppInsightsConnectionStringUAT)
+      - name: aspnetcore_environment
+        value: $(AspnetcoreEnvironmentUAT)
       environment: 'UAT'
       strategy:
         runOnce:
@@ -314,6 +318,8 @@ stages:
         value: 'Prod-Log-Analytics'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      - name: aspnetcore_environment
+        value: $(AspnetcoreEnvironmentProd)
       environment: 'Prod'
       strategy:
         runOnce:
