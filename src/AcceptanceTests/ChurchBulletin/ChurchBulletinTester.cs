@@ -41,7 +41,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin
 
             await TakeScreenshotAsync(30, TestContext.CurrentContext.Test.Name, "Assert");
 
-            await Expect(Page.Locator("#bulletinTable > tbody > tr > td").Nth(1)).ToContainTextAsync("one");
+            await Expect(Page.Locator("#bulletinTable > thead > tr > th").Nth(1)).ToContainTextAsync("Name");
 
             //await Expect(totalCount).ToContainTextAsync($"{expectedCount}");
         }
