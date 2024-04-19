@@ -10,35 +10,35 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); });
 
-builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-    .AddEnvironmentVariables()
-    .Build();
-
+var ConnectionString = Environment.GetEnvironmentVariable("OpenTelemetry.ConnectionString");
 
 var resource = ResourceBuilder.CreateDefault()
     .AddService("ChurchBulletin");
 
-builder.Logging.AddOpenTelemetry(options =>
-{
-    options.AddAzureMonitorLogExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"]);
-    options.SetResourceBuilder(resource);
-});
 
-using var meterProvider = Sdk.CreateMeterProviderBuilder()
-        .AddAzureMonitorMetricExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"])
+if (ConnectionString != null)
+{
+    builder.Logging.AddOpenTelemetry(options =>
+    {
+        options.AddAzureMonitorLogExporter(config => config.ConnectionString = ConnectionString);
+        options.SetResourceBuilder(resource);
+    });
+
+    using var meterProvider = Sdk.CreateMeterProviderBuilder()
+        .AddAzureMonitorMetricExporter(config => config.ConnectionString = ConnectionString)
         .SetResourceBuilder(resource)
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation()
         .Build();
 
-using var tracerProvider = Sdk.CreateTracerProviderBuilder()
-    .AddAzureMonitorTraceExporter(config => config.ConnectionString = builder.Configuration["OpenTelemetry:ConnectionString"])
-    .SetResourceBuilder(resource)
-    .AddHttpClientInstrumentation()
-    .AddAspNetCoreInstrumentation()
-    .Build();
+    using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+        .AddAzureMonitorTraceExporter(config => config.ConnectionString = ConnectionString)
+        .SetResourceBuilder(resource)
+        .AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation()
+        .Build();
+}
+
 
 var app = builder.Build();
 //Configure the HTTP request pipeline.
