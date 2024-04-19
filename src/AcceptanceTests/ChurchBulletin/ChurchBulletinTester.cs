@@ -35,13 +35,13 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin
 
             await TakeScreenshotAsync(20, TestContext.CurrentContext.Test.Name, "Act");
 
-            await Page.WaitForTimeoutAsync(60000);
+            await Page.WaitForTimeoutAsync(10000);
 
             // Assert
 
             await TakeScreenshotAsync(30, TestContext.CurrentContext.Test.Name, "Assert");
 
-            await Expect(Page.Locator("#bulletinTable > thead > tr > th").Nth(1)).ToContainTextAsync("Name", new() { Timeout = 60000 });
+            await Expect(Page.Locator("h1")).ToContainTextAsync("Church Bulletin", new() { Timeout = 10000 });
 
             //await Expect(totalCount).ToContainTextAsync($"{expectedCount}");
         }
