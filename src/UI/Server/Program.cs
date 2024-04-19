@@ -20,6 +20,7 @@ if (ConnectionString != null)
 {
     builder.Logging.AddOpenTelemetry(options =>
     {
+        options.IncludeScopes = true;
         options.AddAzureMonitorLogExporter(config => config.ConnectionString = ConnectionString);
         options.SetResourceBuilder(resource);
     });
@@ -29,6 +30,7 @@ if (ConnectionString != null)
         .SetResourceBuilder(resource)
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation()
+        .AddRuntimeInstrumentation()
         .Build();
 
     using var tracerProvider = Sdk.CreateTracerProviderBuilder()
