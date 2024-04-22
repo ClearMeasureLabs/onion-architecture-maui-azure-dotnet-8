@@ -1,7 +1,8 @@
-﻿<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new []{ typeof(MainLayout).Assembly }">
+﻿<ApplicationInsightsInit IsWasmStandalone="true" />
+<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] {typeof(MainLayout).Assembly}">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>

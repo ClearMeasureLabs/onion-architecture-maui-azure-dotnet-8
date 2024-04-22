@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorApplicationInsights.Interfaces;
+using BlazorApplicationInsights.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using Palermo.BlazorMvc;
 
 namespace UI.Shared.Pages;
@@ -12,11 +15,13 @@ public class CounterController : ControllerComponentBase<CounterView>
     {
         View.Model = _currentCount;
         View.OnIncrement = IncrementCount;
+        Logger.LogInformation("counter init");
     }
 
     private void IncrementCount()
     {
         _currentCount++;
+        Logger.LogInformation("counter log new" + _currentCount);
         View.Model = _currentCount;
     }
 }
