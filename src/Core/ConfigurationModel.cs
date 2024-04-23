@@ -2,6 +2,6 @@
 {
     public class ConfigurationModel
     {
-        public string AppInsightsConnectionString { get; set; }
+        public string? AppInsightsConnectionString { get; set; }
     }
 }
