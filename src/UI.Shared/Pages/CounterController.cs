@@ -15,13 +15,13 @@ public class CounterController : ControllerComponentBase<CounterView>
     {
         View.Model = _currentCount;
         View.OnIncrement = IncrementCount;
-        Logger.LogInformation("counter init");
+        Logger.LogInformation("Counter Page init");
     }
 
     private void IncrementCount()
     {
         _currentCount++;
-        Logger.LogInformation("counter log new" + _currentCount);
+        Logger.LogInformation("Increment Count to: " + _currentCount);
         View.Model = _currentCount;
     }
 }
