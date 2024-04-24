@@ -84,7 +84,8 @@ steps:
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Core/ContainerARM.json
-    overrideParameters: -containerappName "$(ContainerAppName)" -location "$(AzureLocation)" -environment_name "$(ResourceGroupName)-$(Environment)-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "$(ContainerRegistryPassword)" -connection_string "$(DbConnString)" -http_port "$(HttpPort)" -registry_login_server "$(RegistryLoginServer)" -app_id "$(AcrContainerAppId)"
+    #overrideParameters: -containerappName "$(ContainerAppName)" -location "$(AzureLocation)" -environment_name "$(ResourceGroupName)-$(Environment)-cae" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -registry_password "$(ContainerRegistryPassword)" -connection_string "$(DbConnString)" -http_port "$(HttpPort)" -appInsightsConnectionString "$(AppInsightsConnectionString)" -registry_login_server "$(RegistryLoginServer)" -app_id "$(AcrContainerAppId)"
+    overrideParameters: -app_id "$(AcrContainerAppId)" -aspnetcore_environment "$(AspnetcoreEnvironment)" -appInsightsConnectionString "$(AppInsightsConnectionString)" -connection_string "$(DbConnString)" -containerappName "$(ContainerAppName)" -container_image "$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)" -environment_name "$(ResourceGroupName)-$(Environment)-cae" -http_port "$(HttpPort)" -location "$(AzureLocation)" -registry_login_server "$(RegistryLoginServer)" -registry_password "$(ContainerRegistryPassword)"
 
 - task: AzureCLI@2
   displayName: 'Get the Fully Qualified Domain Name for the container app'

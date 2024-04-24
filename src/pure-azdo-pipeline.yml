@@ -126,6 +126,10 @@ stages:
         value: 'tdd-Log-Analytics'
       - name: appInsightsName
         value: 'onion-architecture-maui-azure-dotnet-8-TDD-Insights'
+      - name: AppInsightsConnectionString
+        value: $(AppInsightsConnectionStringTDD)
+      - name: AspnetcoreEnvironment
+        value: $(AspnetcoreEnvironmentTest)
       environment: 'TDD'
       strategy:
         runOnce:
@@ -240,6 +244,10 @@ stages:
         value: 'UAT-Log-Analytics'
       - name: SubscriptionId
         value: $(SubscriptionId)
+      - name: AppInsightsConnectionString
+        value: $(AppInsightsConnectionStringUAT)
+      - name: AspnetcoreEnvironment
+        value: $(AspnetcoreEnvironmentUAT)
       environment: 'UAT'
       strategy:
         runOnce:
@@ -310,6 +318,8 @@ stages:
         value: 'Prod-Log-Analytics'
       - name: ContainerImage
         value: '$(RegistryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      - name: AspnetcoreEnvironment
+        value: $(AspnetcoreEnvironmentProd)
       environment: 'Prod'
       strategy:
         runOnce:
@@ -350,38 +360,38 @@ stages:
                 testRunTitle: 'Acceptance Tests'
                 diagnosticsEnabled: True
 
-- stage: 'AmazonAppStore'
-  displayName: 'AmazonAppStore' 
-  dependsOn: [Production]
-  jobs: 
-    - job: 'DeployToAmazonStore'
-      displayName: 'DeployToAmazonStore'
-      pool:
-        vmImage: 'windows-latest'
-      variables:
-      - group: Integration-Build 
-      - name: Prod-Resource-Group
-        value: onion-architecture-maui-azure-dotnet-8-prod
-      - name: Prod-App-Name
-        value: prod-ui   
-      condition: and(succeeded(), eq(variables['AmazonStoreDeploy'], true))      
-      steps:
-      - template: deploy-amazon.yml
+#- stage: 'AmazonAppStore'
+#  displayName: 'AmazonAppStore' 
+#  dependsOn: [Production]
+#  jobs: 
+#    - job: 'DeployToAmazonStore'
+#      displayName: 'DeployToAmazonStore'
+#      pool:
+#        vmImage: 'windows-latest'
+#      variables:
+#      - group: Integration-Build 
+#      - name: Prod-Resource-Group
+#        value: onion-architecture-maui-azure-dotnet-8-prod
+#      - name: Prod-App-Name
+#       value: prod-ui   
+#      condition: and(succeeded(), eq(variables['AmazonStoreDeploy'], true))      
+#      steps:
+#      - template: deploy-amazon.yml
 
-- stage: 'PlayStore'
-  displayName: 'PlayStore' 
-  dependsOn: Production
-  jobs: 
-    - job: 'DeployToPlayStore'
-      displayName: 'DeployToPlayStore'
-      pool:
-        vmImage: 'windows-latest'
-      variables:
-      - group: Integration-Build 
-      - name: Prod-Resource-Group
-        value: onion-architecture-maui-azure-dotnet-8-prod
-      - name: Prod-App-Name
-        value: prod-ui   
-      condition: and(succeeded(), eq(variables['PlayStoreDeploy'], true))      
-      steps:
-      - template: deploy-google.yml
+#- stage: 'PlayStore'
+#  displayName: 'PlayStore' 
+#  dependsOn: Production
+#  jobs: 
+#    - job: 'DeployToPlayStore'
+#      displayName: 'DeployToPlayStore'
+#      pool:
+#        vmImage: 'windows-latest'
+#      variables:
+#     - group: Integration-Build 
+#     - name: Prod-Resource-Group
+#       value: onion-architecture-maui-azure-dotnet-8-prod
+#      - name: Prod-App-Name
+#       value: prod-ui   
+#      condition: and(succeeded(), eq(variables['PlayStoreDeploy'], true))      
+#      steps:
+#      - template: deploy-google.yml

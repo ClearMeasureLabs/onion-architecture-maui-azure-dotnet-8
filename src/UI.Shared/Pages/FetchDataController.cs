@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using Palermo.BlazorMvc;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
@@ -15,6 +16,7 @@ public class FetchDataController : ControllerComponentBase<FetchDataView>
 
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("FetchDataController");
         Debug.Assert(Http != null, nameof(Http) + " != null");
         _forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
         View.Model = _forecasts;

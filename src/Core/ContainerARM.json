@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "containerappName": {
@@ -22,12 +22,20 @@
       "defaultValue": "registryPass",
       "type": "SecureString"
     },
+    "appInsightsConnectionString": {
+      "defaultValue": "",
+      "type": "String"
+    },
     "connection_string": {
       "defaultValue": "connStr",
       "type": "SecureString"
     },
+    "aspnetcore_environment": {
+      "defaultValue": "tdd",
+      "type": "String"
+    },
     "http_port": {
-      "defaultValue": "httpPort",
+      "defaultValue": 80,
       "type": "int"
     },
     "registry_login_server": {
@@ -93,8 +101,16 @@
                   "value": "8080"
                 },
                 {
+                  "name": "OpenTelemetry.ConnectionString",
+                  "value": "[parameters('appInsightsConnectionString')]"
+                },
+                {
                   "name": "ConnectionStrings__SqlConnectionString",
                   "value": "[parameters('connection_string')]"
+                },
+                {
+                  "name": "ASPNETCORE_ENVIRONMENT",
+                  "value": "[parameters('aspnetcore_environment')]"
                 }
               ],
               "resources": {
