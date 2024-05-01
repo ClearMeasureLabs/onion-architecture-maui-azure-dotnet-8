@@ -10,9 +10,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.1.0" />
-		<PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="12.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
+		<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.1.1" />
+		<PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="13.0.3" />
+		<PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.22.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
 		<PackageReference Include="OpenTelemetry" Version="1.8.1" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />

@@ -10,35 +10,38 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); });
 
-var ConnectionString = Environment.GetEnvironmentVariable("OpenTelemetry.ConnectionString");
+var connectionString = Environment.GetEnvironmentVariable("OpenTelemetry.ConnectionString");
 
-var resource = ResourceBuilder.CreateDefault()
+var otelResource = ResourceBuilder.CreateDefault()
     .AddService("ChurchBulletin");
 
 
-if (ConnectionString != null)
+if (connectionString != null)
 {
     builder.Logging.AddOpenTelemetry(options =>
     {
         options.IncludeScopes = true;
-        options.AddAzureMonitorLogExporter(config => config.ConnectionString = ConnectionString);
-        options.SetResourceBuilder(resource);
+        options.AddAzureMonitorLogExporter(config => config.ConnectionString = connectionString);
+        options.SetResourceBuilder(otelResource); ;
     });
 
     using var meterProvider = Sdk.CreateMeterProviderBuilder()
-        .AddAzureMonitorMetricExporter(config => config.ConnectionString = ConnectionString)
-        .SetResourceBuilder(resource)
+        .AddAzureMonitorMetricExporter(config => config.ConnectionString = connectionString)
+        .SetResourceBuilder(otelResource)
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation()
         .AddRuntimeInstrumentation()
         .Build();
 
     using var tracerProvider = Sdk.CreateTracerProviderBuilder()
-        .AddAzureMonitorTraceExporter(config => config.ConnectionString = ConnectionString)
-        .SetResourceBuilder(resource)
+        .AddAzureMonitorTraceExporter(config => config.ConnectionString = connectionString)
+        .SetResourceBuilder(otelResource)
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation()
         .Build();
+
+    new ApplicationInsightsLiveMetricsStartup(connectionString).Start();
+
 }
 
 
